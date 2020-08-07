@@ -13,11 +13,7 @@ router.post("/doesEmailExist", userController.doesEmailExist);
 router.post("/logout", userController.logout);
 
 // Post related routs
-router.get(
-  "/create-post",
-  userController.mustBeLoggedIn,
-  postController.viewCreateScreen
-);
+
 router.post(
   "/create-post",
   userController.mustBeLoggedIn,

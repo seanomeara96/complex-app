@@ -2,10 +2,6 @@ const Post = require("../models/Post");
 const sendGrid = require("@sendgrid/mail");
 sendGrid.setApiKey(process.env.SENDGRIDAPIKEY);
 
-exports.viewCreateScreen = function (req, res) {
-  res.render("create-post");
-};
-
 exports.create = function (req, res) {
   let post = new Post(req.body, req.session.user._id);
   post
