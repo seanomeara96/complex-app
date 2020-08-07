@@ -9,7 +9,6 @@ const sanitizeHTML = require("sanitize-html");
 // To recognize the incoming Request Object as strings or arrays.
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
-app.use("/api", require("./router-api"));
 let sessionOptions = session({
   secret: "Javacript is toit",
   store: new MongoStore({ client: require("./db") }),

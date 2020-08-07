@@ -10,7 +10,7 @@ exports.create = function (req, res) {
   let post = new Post(req.body, req.session.user._id);
   post
     .create()
-    .then(function (newId) {
+    .then((newId) => {
       sendGrid.send({
         to: "redabihsot@gmail.com",
         from: "test@test.com",
@@ -20,35 +20,24 @@ exports.create = function (req, res) {
       });
       req.flash("success", "New post successfully created.");
       req.session.save(() => {
-        res.redirect(`/post/${newId}`);
+        res.status(201).send(newId);
       });
     })
-    .catch(function (errors) {
-      errors.forEach((error) => req.flash("errors", error));
+    .catch((errors) => {
       req.session.save(() => {
-        res.redirect("/create-post");
+        res.status(500).send(errors);
       });
-    });
-};
-
-exports.apiCreate = function (req, res) {
-  let post = new Post(req.body, req.apiUser._id);
-  post
-    .create()
-    .then(function (newId) {
-      res.json("Congrats");
-    })
-    .catch(function (errors) {
-      res.json(errors);
     });
 };
 
 exports.viewSingle = async function (req, res) {
   try {
     let post = await Post.findSingleById(req.params.id, req.visitorId);
-    res.render("single-post-screen", { post: post, title: post.title });
+    res.send({ post: post, title: post.title });
   } catch {
-    res.render("404");
+    res.status(404).send({
+      errors: ["Post not found"],
+    });
   }
 };
 
@@ -56,49 +45,46 @@ exports.viewEditScreen = async function (req, res) {
   try {
     let post = await Post.findSingleById(req.params.id, req.visitorId);
     if (post.isVisitorOwner) {
-      res.render("edit-post", { post: post });
+      res.status(200).send({ post: post });
     } else {
-      console.log(post);
-      req.flash("errors", "you do not have permission to perform that action");
-      req.session.save(() => res.redirect("/"));
+      req.session.save(() =>
+        res.status(401).send({
+          errors: ["you do not have permission to perform that action"],
+        })
+      );
     }
   } catch {
-    res.render("404");
+    res.status(404).send({
+      errors: ["Post not found."],
+    });
   }
 };
 
 exports.edit = function (req, res) {
-  let post = new Post(
-    req.body,
-    req.visitorId,
-    req.params.id /*params are in the url*/
-  );
+  let post = new Post(req.body, req.visitorId, req.params.id);
   post
     .update()
     .then((status) => {
-      // The post was successfully updated in the database
-      // or user did have permission but there were validation errors
       if (status == "success") {
-        // post was updated in db
         req.flash("success", "post successfully updated");
-        req.session.save(function () {
-          res.redirect(`/post/${req.params.id}/edit`);
+        req.session.save(() => {
+          res.status(201).send(req.params.id);
         });
       } else {
-        post.errors.forEach(function (error) {
-          req.flash("errors", error);
-        });
-        req.session.save(function () {
-          res.redirect(`/post/${req.params.id}/edit`);
+        req.session.save(() => {
+          res.status(400).send({ errors: post.errors }); // Bad request
         });
       }
     })
     .catch(() => {
       // post with the requested id does not exist
-      //or the current visitor is not the owner of the requested post
+      // or the current visitor is not the owner of the requested post
       req.flash("errors", "you do not have permission to perform that action");
-      req.session.save(function () {
-        res.redirect("/");
+      req.session.save(() => {
+        // not authorized
+        res.status(401).send({
+          errors: ["you do not have permission to perform that action"],
+        });
       });
     });
 };
@@ -106,26 +92,17 @@ exports.edit = function (req, res) {
 exports.delete = function (req, res) {
   Post.delete(req.params.id, req.visitorId)
     .then(() => {
-      req.flash("success", "post successfully deleted");
       req.session.save(() => {
-        res.redirect(`/profile/${req.session.user.username}`);
+        res.status(200);
+        // return to user profile
       });
     })
     .catch(() => {
-      req.flash("errors", "you do have permission to perform that action.");
       req.session.save(() => {
-        res.redirect("/");
+        res
+          .status(401)
+          .send({ errors: ["you do have permission to perform that action."] });
       });
-    });
-};
-
-exports.apiDelete = function (req, res) {
-  Post.delete(req.params.id, req.apiUser._id)
-    .then(() => {
-      res.json("success");
-    })
-    .catch(() => {
-      res.json("you do not have permission to perform that action");
     });
 };
 
