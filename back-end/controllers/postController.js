@@ -93,7 +93,7 @@ exports.delete = function (req, res) {
   Post.delete(req.params.id, req.visitorId)
     .then(() => {
       req.session.save(() => {
-        res.status(200);
+        res.sendStatus(200);
         // return to user profile
       });
     })
