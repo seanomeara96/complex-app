@@ -1,4 +1,5 @@
 import React from "react";
+import { connect } from "react-redux";
 const Flash = ({ errors, successes }) => {
   // For each error
   let errorMessages = errors.map((message) => {
@@ -20,5 +21,11 @@ const Flash = ({ errors, successes }) => {
     return <div></div>;
   }
 };
-
-export default Flash;
+const mapStateToProps = ({ flash }) => {
+  let { errors, successes } = flash;
+  return {
+    errors,
+    successes,
+  };
+};
+export default connect(mapStateToProps)(Flash);

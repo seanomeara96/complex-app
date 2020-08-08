@@ -1,11 +1,13 @@
 import React from "react";
 import UserBlock from "./USerBlock";
+import Flash from "../Flash";
+import ProfileShared from "./ProfileShared";
 
 const ProfileFollowing = () => {
   return (
     <div className="container py-md-5 container--narrow">
-      {/* <%- include('includes/flash')%> */}
-      {/* <%- include('includes/profileShared')%> */}
+      <Flash />
+      <ProfileShared />
       <div className="list-group">
         {/* Output an array of user blocks */}
         <UserBlock />

@@ -1,58 +1,42 @@
 import React from "react";
-import { Field, reduxForm } from "redux-form";
-import { Link } from "react-router-dom";
-import PostInputs from "./PostInputs";
-const EditPost = (props) => {
-  return (
-    <div className="container py-md-5 container--narrow">
-      {/* <%- include('includes/flash')%> */}
-      <Link to="/post/<%=post._id%>" className="small font-weight-bold">
-        &laquo; Back to post permalink
-      </Link>
-      {/* action="/post/<%= post._id %>/edit" */}
-      <form className="mt-3" onSubmit={props.handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="post-title" className="text-muted mb-1">
-            <small>Title</small>
-          </label>
-          <Field
-            component={PostInputs}
-            required
-            name="title"
-            id="post-title"
-            value="<%= post.title%>"
-            className="form-control form-control-lg form-control-title"
-            type="text"
-            placeholder=""
-            autocomplete="off"
-          />
-        </div>
+import { Link, Redirect } from "react-router-dom";
+import { connect } from "react-redux";
 
-        <div className="form-group">
-          <label htmlFor="post-body" className="text-muted mb-1">
-            <small>Body Content</small>
-          </label>
-          <Field
-            component={PostInputs}
-            textarea
-            required
-            name="body"
-            id="post-body"
-            className="body-content tall-textarea form-control"
-            type="text"
+import Flash from "../Flash";
+
+class EditPost extends React.Component {
+  componentDidMount() {
+    // clear errors and successes
+    // fetch post data
+  }
+  onSubmit = (formvalues) => {
+    console.log("success");
+    axios.post(`/post/${this.props.post._id}/edit`, formvalues).then(() => {
+      return <Redirect to={`/post/${this.props.post._id}`} />;
+    });
+  };
+  render() {
+    if (this.props.user.userId === this.props.author.userId) {
+      return (
+        <div className="container py-md-5 container--narrow">
+          <Flash errors={this.props.errors} successes={this.props.successes} />
+          <Link
+            to={`/post/${this.props.post._id}`}
+            className="small font-weight-bold"
           >
-            {" "}
-            post.body{" "}
-          </Field>
+            &laquo; Back to post permalink
+          </Link>
         </div>
-
-        {/* <input type="hidden" name="_csrf" value="<%= csrfToken %>" /> */}
-        <button className="btn btn-primary">Save Updates</button>
-      </form>
-    </div>
-  );
+      );
+    } else {
+      <Redirect to="/" />;
+    }
+  }
+}
+const mapStateToProps = (state) => {
+  return {
+    post: state.post,
+    user: state.auth,
+  };
 };
-
-export default reduxForm({
-  form: "editPost"
-})(EditPost);
+export default connect(mapStateToProps)(EditPost);

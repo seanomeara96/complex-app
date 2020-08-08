@@ -1,25 +1,26 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const AuthorPostControls = (props) => {
-  if (props.true) {
+  if (props.isViewerOwner === true) {
     return (
       <span className="pt-2">
         {/* why is this edit button not working */}
-        <a
-          href="/post/<%= post._id %>/edit"
+        <Link
+          to={`/post/${props.postId}/edit`}
           className="text-primary mr-2"
           data-toggle="tooltip"
           data-placement="top"
           title="Edit"
         >
           <i className="fas fa-edit"></i>
-        </a>
+        </Link>
         <form
           className="delete-post-form d-inline"
-          action="/post/<%= post._id %>/delete"
+          action={`/post/${props.postId}/delete`}
           method="POST"
         >
-          <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+          <input type="hidden" name="_csrf" value={props.csrfToken} />
           <button
             className="delete-post-button text-danger"
             data-toggle="tooltip"

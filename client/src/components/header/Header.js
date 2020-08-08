@@ -12,18 +12,20 @@ import { Link } from "react-router-dom";
 class Header extends React.Component {
   toggleChatbox = () => {
     if (this.props.isChatBoxOpen === false) {
-      this.props.openChatBox()
+      this.props.openChatBox();
     } else {
-      this.props.closeChatBox()
+      this.props.closeChatBox();
     }
-  }
+  };
   renderUserControls() {
-    if (this.props.isSignedIn === null) {
+    if (this.props.user.isSignedIn === null) {
       return <UserLoggedOut signIn={this.props.signIn} />;
     } else {
       return (
         <UserLoggedIn
+          csrfToken={this.props.csrfToken}
           engageChat={this.toggleChatbox}
+          user={this.props.user}
           signOut={this.props.signOut}
         />
       );
@@ -46,7 +48,8 @@ class Header extends React.Component {
 }
 const mapStateToProps = (state) => {
   return {
-    isSignedIn: state.auth.isSignedIn,
+    csrfToken: state.csrfToken,
+    user: state.auth,
     isChatBoxOpen: state.chatBox,
   };
 };

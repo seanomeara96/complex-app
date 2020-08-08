@@ -4,7 +4,6 @@ import { Field, reduxForm } from "redux-form";
 import SignupInputs from "./SignupInputs";
 
 class SignupForm extends React.Component {
-  
   render() {
     return (
       <form onSubmit={this.props.handleSubmit} id="registration-form">
@@ -51,7 +50,7 @@ class SignupForm extends React.Component {
           />
         </div>
 
-        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+        <input type="hidden" name="_csrf" value={this.props.csrfToken} />
         <button
           type="submit"
           className="py-3 mt-4 btn btn-lg btn-success btn-block"

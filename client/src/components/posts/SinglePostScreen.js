@@ -1,28 +1,44 @@
 import React from "react";
 import AuthorPostControls from "./AuthorPostControls";
-
-const SinglePostScreen = () => {
+import Flash from "../Flash";
+import { Link } from "react-router-dom";
+import { connect } from "react-redux";
+const SinglePostScreen = (props) => {
   return (
     <div className="container py-md-5 container--narrow">
-      {/* <%- include('includes/flash')%> */}
+      <Flash errors={props.errors} successes={props.successes} />
       <div className="d-flex justify-content-between">
-        <h2>Post Title Goes Here</h2>
-        <AuthorPostControls />
+        <h2>{props.post.title}</h2>
+        <AuthorPostControls
+          isViewerOwner={
+            props.post.author.userId === props.user.userId ? true : false
+          }
+          postId={props.post._id}
+          csrfToken={props.csrfToken}
+        />
       </div>
       <p className="text-muted small mb-4">
-        <a href="/profile/<%= post.author.username %>">
-          <img className="avatar-tiny" src="<%= post.author.avatar %>" />
-        </a>
+        <Link to={`/profile/${props.post.author.username}`}>
+          <img className="avatar-tiny" src={post.author.avatar} />
+        </Link>
         Posted by{" "}
-        <a href="/profile/<%= post.author.username %>">post.author.username</a>
-        on DD/MM/YYYY
+        <Link to={`/profile/${props.post.author.username}`}>
+          {props.post.author.username}
+        </Link>
+        on {props.post.createdDate}
       </p>
       <div className="body-content">
-        post.body
+        {props.post.body}
         {/* <%- filterUserHTML(post.body) %> */}
       </div>
     </div>
   );
 };
-
-export default SinglePostScreen;
+const mapStateToProps = (state) => {
+  return {
+    post: state.post,
+    user: state.auth,
+    csrfToken: state.csrfToken,
+  };
+};
+export default connect(mapStateToProps)(SinglePostScreen);

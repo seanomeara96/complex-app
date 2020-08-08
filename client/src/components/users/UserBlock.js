@@ -1,14 +1,15 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
-const UserBlock = () => {
+const UserBlock = (props) => {
   return (
-    <a
-      href="/profile/<%= followedUser.username %>"
+    <Link
+      to={`/profile/${props.followedUser.username}`}
       className="list-group-item list-group-item-action"
     >
-      <img className="avatar-tiny" src="<%= followedUser.avatar%>" />
-      followedUser.username
-    </a>
+      <img className="avatar-tiny" src={props.followedUser.avatar} />
+      {props.followedUser.username}
+    </Link>
   );
 };
 

@@ -1,26 +1,34 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
-const ProfileRelationships = () => {
+const ProfileRelationships = (props) => {
+  let currentPage;
   return (
     <div className="profile-nav nav nav-tabs pt-2 mb-4">
-      <a
-        href="/profile/<%=profileUsername%>"
-        className="profile-nav-link nav-item nav-link <%if(currentPage == 'posts'){%>active<%}%>"
+      <Link
+        to={`/profile/${props.profileUsername}`}
+        className={`profile-nav-link nav-item nav-link ${
+          currentPage === "posts" ? "active" : ""
+        }`}
       >
-        Posts: counts.postCount{" "}
-      </a>
-      <a
-        href="/profile/<%=profileUsername%>/followers"
-        className="profile-nav-link nav-item nav-link <%if(currentPage == 'followers'){%>active<%}%> "
+        Posts: {props.counts.postCount}{" "}
+      </Link>
+      <Link
+        to={`/profile/${props.profileUsername}/followers`}
+        className={`profile-nav-link nav-item nav-link ${
+          currentPage === "followers" ? "active" : ""
+        }`}
       >
-        Followers: counts.followerCount
-      </a>
-      <a
-        href="/profile/<%=profileUsername%>/following"
-        className="profile-nav-link nav-item nav-link <%if(currentPage == 'following'){%>active<%}%>"
+        Followers: {props.counts.followerCount}
+      </Link>
+      <Link
+        to={`/profile/${props.profileUsername}/following`}
+        className={`profile-nav-link nav-item nav-link ${
+          currentPage === "following" ? "active" : ""
+        }`}
       >
-        Following: counts.followingCount
-      </a>
+        Following: {props.counts.followingCount}
+      </Link>
     </div>
   );
 };

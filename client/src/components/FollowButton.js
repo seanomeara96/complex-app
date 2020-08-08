@@ -1,14 +1,14 @@
 import React from "react";
 
-const FollowButton = () => {
+const FollowButton = (props) => {
   if (false) {
     return (
       <form
         className="ml-2 d-inline"
-        action="/removeFollow/<%=profileUsername%>"
+        action={`/removeFollow/${props.profileUsername}`}
         method="POST"
       >
-        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+        <input type="hidden" name="_csrf" value={props.csrfToken} />
         <button className="btn btn-danger btn-sm">
           Stop Following <i className="fas fa-user-times"></i>
         </button>

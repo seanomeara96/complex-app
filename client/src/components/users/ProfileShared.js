@@ -4,10 +4,10 @@ import ProfileRelationships from "./ProfileRelationships";
 
 const ProfileShared = () => {
   return (
-    <div>
+    <React.Fragment>
       <ProfileInteraction />
       <ProfileRelationships />
-    </div>
+    </React.Fragment>
   );
 };
 

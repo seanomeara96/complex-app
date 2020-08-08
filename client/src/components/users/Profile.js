@@ -1,13 +1,14 @@
 import React from "react";
-import PostBlock from "./PostBlock";
+import PostFeed from "../PostFeed";
+import Flash from "../Flash";
+import ProfileShared from "./ProfileShared";
 const Profile = () => {
   return (
     <div className="container py-md-5 container--narrow">
-      {/* <%- include('includes/flash')%> */}
-      {/* <%- include('includes/profileShared')%> */}
+      <Flash />
+      <ProfileShared />
       <div className="list-group">
-        <PostBlock />
-        {/* Output an array of postblocks */}
+        <PostFeed />
       </div>
     </div>
   );

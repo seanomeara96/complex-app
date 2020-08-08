@@ -1,14 +1,14 @@
 import React from "react";
-const EmptyFeed = () => {
+import Flash from "../Flash";
+import { connect } from "react-redux";
+
+const EmptyFeed = (props) => {
   return (
     <div className="container py-md-5 container--narrow">
-      {/* 
-          <%- include('includes/flash')%>
-          Error Message when redirectin to homepage here
-      */}
+      <Flash errors={props.errors} successes={props.successes} />
       <div className="text-center">
         <h2>
-          Hello <strong>Sean</strong>, your feed is empty.
+          Hello <strong>{props.user.userName}</strong>, your feed is empty.
         </h2>
         <p className="lead text-muted">
           Your feed displays the latest posts from the people you follow. If you
@@ -20,4 +20,9 @@ const EmptyFeed = () => {
     </div>
   );
 };
-export default EmptyFeed;
+const mapStateToProps = (state) => {
+  return {
+    user: state.auth,
+  };
+};
+export default connect(mapStateToProps)(EmptyFeed);

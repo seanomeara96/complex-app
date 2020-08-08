@@ -1,13 +1,12 @@
 import React from "react";
 import { connect } from "react-redux";
-//import ErrorMessage from "../../ErrorMessage";
 import SignupForm from "./SignupForm";
 import Flash from "../Flash";
 class GuestHome extends React.Component {
   render() {
     return (
       <div className="container py-md-5">
-        <Flash successes={this.props.successes} errors={this.props.errors} />
+        <Flash />
         <div className="row align-items-center">
           <div className="col-lg-7 py-3 py-md-5">
             <h1 className="display-3">Remember Writing?</h1>
@@ -19,17 +18,16 @@ class GuestHome extends React.Component {
             </p>
           </div>
           <div className="col-lg-5 pl-lg-5 pb-3 py-lg-5">
-            <SignupForm />
+            <SignupForm csrfToken={this.props.csrfToken} />
           </div>
         </div>
       </div>
     );
   }
 }
-const mapStateToProps = ({ flash }) => {
+const mapStateToProps = (state) => {
   return {
-    errors: flash.errors,
-    successes: flash.successes,
+    csrfToken: state.csrfToken,
   };
 };
 export default connect(mapStateToProps)(GuestHome);

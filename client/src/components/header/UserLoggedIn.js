@@ -22,7 +22,7 @@ const UserLoggedIn = (props) => {
       >
         <i className="fas fa-comment"></i>
       </span>
-      <Link to="/profile/:id" className="mr-2">
+      <Link to={`/profile/${props.user.userId}`} className="mr-2">
         <img
           title="My Profile"
           alt="profile pic"
@@ -36,7 +36,7 @@ const UserLoggedIn = (props) => {
         Create Post
       </Link>
       <form onSubmit={props.handleSubmit(props.signOut)} className="d-inline">
-        {/* <input type="hidden" name="_csrf" value="<%= csrfToken %>" /> */}
+        <input type="hidden" name="_csrf" value={props.csrfToken} />
         <button className="btn btn-sm btn-secondary">Sign Out</button>
       </form>
     </div>

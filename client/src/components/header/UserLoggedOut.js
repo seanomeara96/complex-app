@@ -3,7 +3,10 @@ import { Field, reduxForm } from "redux-form";
 import LoginInputs from "./LoginInputs";
 const UserLoggedOut = (props) => {
   return (
-    <form onSubmit={props.handleSubmit(props.signIn)} className="mb-0 pt-2 pt-md-0">
+    <form
+      onSubmit={props.handleSubmit(props.signIn)}
+      className="mb-0 pt-2 pt-md-0"
+    >
       <div className="row align-items-center">
         <div className="col-md mr-0 pr-md-0 mb-3 mb-md-0">
           <Field
@@ -24,7 +27,7 @@ const UserLoggedOut = (props) => {
           />
         </div>
         <div className="col-md-auto">
-          {/*<input type="hidden" name="_csrf" value="<%= csrfToken %>" />*/}
+          <input type="hidden" name="_csrf" value={props.csrfToken} />
           <button className="btn btn-primary btn-sm">Sign In</button>
         </div>
       </div>

@@ -6,16 +6,27 @@ import CreatePostForm from "./CreatePostForm";
 import Flash from "../Flash";
 
 class CreatePost extends React.Component {
-  handleSubmit = (e) => {
-    e.preventDefault();
+  onSubmit = ({ title, body }) => {
+    // implement redux thunk here
+    axios
+      .post("/create-post", { title, body, userId: this.props.user.userId })
+      .then(() => {
+        // redirect after success message has shown
+        return <Redirect to="/posts" />;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
   render() {
-    console.log("the state", this.props);
-    if (this.props.isSignedIn === true) {
+    if (this.props.user.isSignedIn === true) {
       return (
         <div className="container py-md-5 container--narrow">
-          <Flash successes={this.props.successes} errors={this.props.errors} />
-          <CreatePostForm handleSubmit={this.handleSubmit} />
+          <Flash />
+          <CreatePostForm
+            onSubmit={this.onSubmit}
+            csrfToken={this.props.csrfToken}
+          />
         </div>
       );
     } else {
@@ -25,10 +36,9 @@ class CreatePost extends React.Component {
 }
 const mapStateToProps = (state) => {
   return {
-    isSignedIn: state.auth.isSignedIn,
-    successes: state.flash.successes,
-    errors: state.flash.errors,
-    form: state,
+    user: state.auth,
+    form: state.form.createPost,
+    csrfToken: state.csrfToken,
   };
 };
 export default connect(mapStateToProps)(CreatePost);
