@@ -2,6 +2,7 @@ import React from "react";
 import { reduxForm } from "redux-form";
 import { Link } from "react-router-dom";
 import styles from "./UserLoggedIn.module.css";
+import Search from "../Search";
 const UserLoggedIn = (props) => {
   return (
     <div className="flex-row my-3 my-md-0">
@@ -10,6 +11,7 @@ const UserLoggedIn = (props) => {
         title="Search"
         data-toggle="tooltip"
         data-placement="bottom"
+        onClick={props.handleClick}
       >
         <i className="fas fa-search"></i>
       </i>
@@ -39,6 +41,7 @@ const UserLoggedIn = (props) => {
         <input type="hidden" name="_csrf" value={props.csrfToken} />
         <button className="btn btn-sm btn-secondary">Sign Out</button>
       </form>
+      <Search open={props.searchIsOpen} />
     </div>
   );
 };

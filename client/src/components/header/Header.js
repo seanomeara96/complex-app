@@ -10,11 +10,19 @@ import { Link } from "react-router-dom";
 */
 
 class Header extends React.Component {
+  state = { modalOpen: false };
   toggleChatbox = () => {
     if (this.props.isChatBoxOpen === false) {
       this.props.openChatBox();
     } else {
       this.props.closeChatBox();
+    }
+  };
+  handleClick = () => {
+    if (this.state.modalOpen === true) {
+      this.setState({ modalOpen: false });
+    } else {
+      this.setState({ modalOpen: true });
     }
   };
   renderUserControls() {
@@ -27,6 +35,8 @@ class Header extends React.Component {
           engageChat={this.toggleChatbox}
           user={this.props.user}
           signOut={this.props.signOut}
+          handleClick={this.handleClick}
+          searchIsOpen={this.state.modalOpen}
         />
       );
     }
