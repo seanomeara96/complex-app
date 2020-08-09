@@ -1,7 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
 import EmptyFeed from "./EmptyFeed";
-import axios from "axios";
 import { posts } from "../../actions";
 import Flash from "../Flash";
 import PostFeed from "../posts/PostFeed";
