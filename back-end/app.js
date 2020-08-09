@@ -1,20 +1,23 @@
 const express = require("express");
 const session = require("express-session");
 const MongoStore = require("connect-mongo")(session);
-const flash = require("connect-flash");
 const markdown = require("marked");
+const cors = require("cors");
+
 const csrf = require("csurf");
 const app = express();
 const sanitizeHTML = require("sanitize-html");
-// To recognize the incoming Request Object as strings or arrays.
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+app.use(
+  cors({
+    credentials: true,
+    origin: "http://localhost:3000",
+  })
+);
 let sessionOptions = session({
   secret: "Javacript is toit",
   store: new MongoStore({ client: require("./db") }),
-  // By default this session package will store session data in memory
-  // but we can overide that default by using the store property
-  // mongostore gets passed an object; directions to the database
   resave: false,
   saveUninitialized: false,
   cookie: {
@@ -23,8 +26,7 @@ let sessionOptions = session({
   },
 });
 app.use(sessionOptions);
-app.use(flash()); // Still need this?
-app.use(function (req, res, next) {
+app.use((req, res, next) => {
   // This needs refactoring as we no longer are using templates
   res.locals.filterUserHTML = function (content) {
     return sanitizeHTML(markdown(content), {
@@ -49,11 +51,6 @@ app.use(function (req, res, next) {
     });
   };
 
-  // Make all error and success flash messages available from all templates
-  // Again can probably remove now
-  res.locals.errors = req.flash("errors");
-  res.locals.success = req.flash("success");
-
   // Make current user id available on the req object
   if (req.session.user) {
     req.visitorId = req.session.user._id;
@@ -63,22 +60,28 @@ app.use(function (req, res, next) {
   next();
 });
 const router = require("./router");
+const { compareSync } = require("bcryptjs");
+
+/* This is casuing issues for the time being
+   csrf protection can be worked in later
+
 app.use(csrf());
-app.use(function (req, res, next) {
-  // Reafctoring required
+
+app.use((req, res, next) => {
   res.locals.csrfToken = req.csrfToken();
   next();
 });
-app.use(function (err, req, res, next) {
+
+app.use((err, req, res, next) => {
   if (err) {
     if (err.code == "EBADCSRFTOKEN") {
-      req.flash("errors", "cross site request forgery detected");
       req.session.save(() => res.redirect("/"));
     } else {
-      res.render("404");
+      res.sendStatus("404");
     }
   }
-});
+}); */
+
 app.use("/", router);
 const server = require("http").createServer(app);
 const io = require("socket.io")(server);

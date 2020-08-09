@@ -1,9 +1,14 @@
 import React from "react";
-import { reduxForm } from "redux-form";
 import { Link } from "react-router-dom";
 import styles from "./UserLoggedIn.module.css";
 import Search from "../Search";
+import SignOutButton from "./SignOutButton";
+import { connect } from "react-redux";
+import { signOut } from "../../actions";
 const UserLoggedIn = (props) => {
+  const onSubmit = () => {
+    props.signOut();
+  };
   return (
     <div className="flex-row my-3 my-md-0">
       <i
@@ -37,16 +42,12 @@ const UserLoggedIn = (props) => {
       <Link className="btn btn-sm btn-success mr-2" to="/create-post">
         Create Post
       </Link>
-      <form onSubmit={props.handleSubmit(props.signOut)} className="d-inline">
-        <input type="hidden" name="_csrf" value={props.csrfToken} />
-        <button className="btn btn-sm btn-secondary">Sign Out</button>
-      </form>
-      <Search open={props.searchIsOpen} />
+      <SignOutButton csrfToken={props.csrfToken} onSubmit={onSubmit} />
+      <Search open={props.searchIsOpen} toggleSearchModal={props.handleClick} />
     </div>
   );
 };
-
-export default reduxForm({
-  // Name of form
-  form: "logOut",
-})(UserLoggedIn);
+const mapstateToProps = (state) => {
+  return { csrfToken: state.csrfToken };
+};
+export default connect(mapstateToProps, { signOut })(UserLoggedIn);

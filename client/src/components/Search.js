@@ -4,7 +4,7 @@ class Search extends React.Component {
   state = { focused: false };
 
   focusField() {
-    if (this.props.open === true && this.state.focused === false) {
+    if (this.props.open === true) {
       console.log("hey");
       this.setState({ focused: true });
       document.querySelector("#live-search-field").focus();
@@ -12,9 +12,11 @@ class Search extends React.Component {
   }
 
   render() {
-    setTimeout(() => {
-      this.focusField();
-    }, 100);
+    if (this.state.focused === false) {
+      setTimeout(() => {
+        this.focusField();
+      }, 100);
+    }
     return ReactDOM.createPortal(
       <div
         className={`search-overlay ${
@@ -32,7 +34,10 @@ class Search extends React.Component {
               className="live-search-field"
               placeholder="What are you interested in?"
             />
-            <span className="close-live-search">
+            <span
+              className="close-live-search"
+              onClick={this.props.toggleSearchModal}
+            >
               <i className="fas fa-times-circle"></i>
             </span>
           </div>

@@ -26,7 +26,7 @@ class Header extends React.Component {
     }
   };
   renderUserControls() {
-    if (this.props.user.isSignedIn === null) {
+    if (this.props.user.isSignedIn === false) {
       return <UserLoggedOut signIn={this.props.signIn} />;
     } else {
       return (

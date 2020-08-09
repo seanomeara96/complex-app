@@ -4,9 +4,15 @@ import { Field, reduxForm } from "redux-form";
 import SignupInputs from "./SignupInputs";
 
 class SignupForm extends React.Component {
+  onSubmit = (formValues) => {
+    this.props.onSubmit(formValues);
+  };
   render() {
     return (
-      <form onSubmit={this.props.handleSubmit} id="registration-form">
+      <form
+        onSubmit={this.props.handleSubmit(this.onSubmit)}
+        id="registration-form"
+      >
         {/* output an array of error messages {errorMessages}*/}
         <div className="form-group">
           <label htmlFor="username-register" className="text-muted mb-1">

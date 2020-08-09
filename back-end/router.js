@@ -12,8 +12,7 @@ router.post("/doesUsernameExist", userController.doesUsernameExist);
 router.post("/doesEmailExist", userController.doesEmailExist);
 router.post("/logout", userController.logout);
 
-// Post related routs
-
+// Post related routes
 router.post(
   "/create-post",
   userController.mustBeLoggedIn,

@@ -4,7 +4,7 @@ import HomeDashboard from "./HomeDashboard";
 import { connect } from "react-redux";
 class Homepage extends Component {
   render() {
-    if (this.props.isSignedIn === null) {
+    if (this.props.isSignedIn === false) {
       return <GuestHome />;
     } else {
       return <HomeDashboard />;

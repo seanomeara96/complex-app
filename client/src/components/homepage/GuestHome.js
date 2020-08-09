@@ -2,7 +2,11 @@ import React from "react";
 import { connect } from "react-redux";
 import SignupForm from "./SignupForm";
 import Flash from "../Flash";
+import { registerUser } from "../../actions";
 class GuestHome extends React.Component {
+  onSubmit = async (data) => {
+    this.props.registerUser(data);
+  };
   render() {
     return (
       <div className="container py-md-5">
@@ -18,7 +22,10 @@ class GuestHome extends React.Component {
             </p>
           </div>
           <div className="col-lg-5 pl-lg-5 pb-3 py-lg-5">
-            <SignupForm csrfToken={this.props.csrfToken} />
+            <SignupForm
+              csrfToken={this.props.csrfToken}
+              onSubmit={this.onSubmit}
+            />
           </div>
         </div>
       </div>
@@ -30,4 +37,4 @@ const mapStateToProps = (state) => {
     csrfToken: state.csrfToken,
   };
 };
-export default connect(mapStateToProps)(GuestHome);
+export default connect(mapStateToProps, { registerUser })(GuestHome);

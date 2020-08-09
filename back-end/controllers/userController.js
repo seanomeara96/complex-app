@@ -2,15 +2,7 @@ const User = require("../models/User");
 const Post = require("../models/Post");
 const Follow = require("../models/Follow");
 const jwt = require("jsonwebtoken");
-exports.apiGetPostsByUsername = async function (req, res) {
-  try {
-    let authorDoc = await User.findByUserName(req.params.username);
-    let posts = await Post.findByAuthorId(authorDoc._id);
-    res.json(posts);
-  } catch (e) {
-    res.json("sorry, invalid user requested");
-  }
-};
+
 exports.doesUsernameExist = function (req, res) {
   User.findByUserName(req.body.username)
     .then(() => {
@@ -36,7 +28,7 @@ exports.sharedProfileData = async function (req, res, next) {
   }
   req.isVisitorsProfile = isVisitorsProfile;
   req.isFollowing = isFollowing;
-  //retreive post, follower, and following counts
+  // Retreive post, follower, and following counts
   let postCountPromise = Post.countPostsByAuthor(req.profileUser._id);
   let followerCountPromise = Follow.countFollowersById(req.profileUser._id);
   let followingCountPromise = Follow.countFollowingById(req.profileUser._id);
@@ -50,113 +42,102 @@ exports.sharedProfileData = async function (req, res, next) {
   req.followingCount = followingCount;
   next();
 };
+
 exports.mustBeLoggedIn = function (req, res, next) {
   if (req.session.user) {
     next();
   } else {
-    req.flash("errors", "log in first dumb ass");
-    req.session.save(function () {
-      res.redirect("/");
+    req.session.save(() => {
+      res.status(401).json({ errors: ["log in first dumb ass"] });
     });
   }
 };
-exports.apiMustBeLoggedIn = function (req, res, next) {
-  try {
-    req.apiUser = jwt.verify(req.body.token, process.env.JWTSECRET);
-    next();
-  } catch {
-    res.json("sorry, you must provide a valid token");
-  }
-};
+
 exports.login = (req, res) => {
+  console.log("logging user in...");
   let user = new User(req.body);
   user
     .login()
-    .then(function (result) {
-      req.session.user = {
+    .then(() => {
+      let authenticatedUser = {
         avatar: user.avatar,
         username: user.data.username,
         _id: user.data._id,
       };
-      req.session.save(function () {
-        res.redirect("/");
+      req.session.user = authenticatedUser;
+      req.session.save(() => {
+        res.send(authenticatedUser);
       });
     })
-    .catch(function (e) {
-      req.flash("errors", e);
-
-      req.session.save(function () {
-        res.redirect("/");
+    .catch((e) => {
+      req.session.save(() => {
+        res.status(500).send(e); // Internal Server Error
       });
     });
 };
-exports.apiLogin = (req, res) => {
-  let user = new User(req.body);
 
-  user
-    .login()
-    .then(function (result) {
-      res.json(
-        jwt.sign({ _id: user.data._id }, process.env.JWTSECRET, {
-          expiresIn: "7d",
-        })
-      );
-    })
-    .catch(function (error) {
-      res.json(`${error}`);
-    });
-};
 exports.logout = (req, res) => {
-  req.session.destroy(function () {
-    res.redirect("/");
+  req.session.destroy(() => {
+    res.sendStatus(200);
   });
-  res.redirect("/");
 };
+
 exports.register = (req, res) => {
+  console.log("registering user...");
   let user = new User(req.body);
   user
     .register()
     .then(() => {
-      req.session.user = {
+      let registeredUser = {
         username: user.data.username,
         avatar: user.avatar,
         _id: user.data._id,
       };
-      req.session.save(function () {
-        res.redirect("/");
+      console.log("user registered", registeredUser);
+      req.session.user = registeredUser;
+      console.log(req.session.user);
+      req.session.save(() => {
+        res.status(201).send(registeredUser);
       });
     })
     .catch((regErrors) => {
-      regErrors.forEach(function (error) {
-        req.flash("regErrors", error);
+      regErrors.forEach((error) => {
+        console.error(error);
       });
-      req.session.save(function () {
-        res.redirect("/");
+      req.session.save(() => {
+        res.sendStatus(500);
       });
     });
 };
+
+// Fetches HomeFeed
 exports.home = async (req, res) => {
   if (req.session.user) {
+    console.log("fetching homefeed...");
     let posts = await Post.getFeed(req.session.user._id);
-    res.render("home-dashboard", { posts: posts });
+    res.json(posts);
   } else {
-    res.render("home-guest", { regErrors: req.flash("regErrors") });
+    res.send({ errors: ["error fetching feed"] });
   }
 };
+
+// Checks if a user exists in the database
 exports.ifUserExists = function (req, res, next) {
   User.findByUserName(req.params.username)
-    .then(function (userDocument) {
+    .then((userDocument) => {
       req.profileUser = userDocument;
       next();
     })
-    .catch(function () {
-      res.render("404");
+    .catch(() => {
+      res.sendStatus("404");
     });
 };
+
+// Fetches data for a users profile
 exports.profilePostsScreen = function (req, res) {
   Post.findByAuthorId(req.profileUser._id)
-    .then(function (posts) {
-      res.render("profile", {
+    .then((posts) => {
+      res.send({
         title: `Profile for ${req.profileUser.username}`,
         currentPage: "posts",
         posts: posts,
@@ -171,15 +152,17 @@ exports.profilePostsScreen = function (req, res) {
         },
       });
     })
-    .catch(function (error) {
-      res.render("404");
+    .catch((error) => {
+      res.sendStatus("404");
       console.log(error);
     });
 };
+
+// Fetches data for a users follower screen
 exports.profileFollowersScreen = async function (req, res) {
   try {
     let followers = await Follow.getFollowersById(req.profileUser._id);
-    res.render("profile-followers", {
+    res.json({
       currentPage: "followers",
       followers: followers,
       profileUsername: req.profileUser.username,
@@ -192,15 +175,17 @@ exports.profileFollowersScreen = async function (req, res) {
         followingCount: req.followingCount,
       },
     });
-  } catch {
-    res.render("404");
-    console.log("error");
+  } catch (error) {
+    res.sendStatus("404");
+    console.log("error in profileFollowerScreen", error);
   }
 };
+
+// Fetches data for a user's following screen
 exports.profileFollowingScreen = async function (req, res) {
   try {
     let following = await Follow.getFollowingById(req.profileUser._id);
-    res.render("profile-following", {
+    res.json({
       currentPage: "following",
       following: following,
       profileUsername: req.profileUser.username,
@@ -213,8 +198,8 @@ exports.profileFollowingScreen = async function (req, res) {
         followingCount: req.followingCount,
       },
     });
-  } catch {
-    res.render("404");
-    console.log("error");
+  } catch (error) {
+    res.sendStatus("404");
+    console.log("error in profileFollowingScreen", error);
   }
 };

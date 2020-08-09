@@ -8,12 +8,7 @@ import PostFeed from "../posts/PostFeed";
 class HomeDashboard extends React.Component {
   componentDidMount() {
     // temporary call to placheolder json server
-    axios({
-      method: "get",
-      url: "https://jsonplaceholder.typicode.com/posts",
-    }).then((res) => {
-      this.props.posts(res.data);
-    });
+    this.props.posts();
   }
 
   render() {
