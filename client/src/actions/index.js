@@ -57,7 +57,7 @@ export const posts = () => {
   return async (dispatch) => {
     console.log("fetching posts...");
     try {
-      let posts = await api.get("/");
+      let posts = await api.get("/posts");
       dispatch({
         type: "POSTS",
         payload: posts.data,
@@ -92,5 +92,17 @@ export const openChatBox = () => {
 export const closeChatBox = () => {
   return {
     type: "CLOSE_BOX",
+  };
+};
+
+export const validateSession = () => {
+  return async (dispatch) => {
+    const response = api.get("/");
+    if (response.data !== {}) {
+      dispatch({
+        type: "SIGN_IN",
+        payload: response.data,
+      });
+    }
   };
 };

@@ -2,6 +2,7 @@ const User = require("../models/User");
 const Post = require("../models/Post");
 const Follow = require("../models/Follow");
 const jwt = require("jsonwebtoken");
+const { send } = require("@sendgrid/mail");
 
 exports.doesUsernameExist = function (req, res) {
   User.findByUserName(req.body.username)
@@ -115,6 +116,7 @@ exports.home = async (req, res) => {
   if (req.session.user) {
     console.log("fetching homefeed...");
     let posts = await Post.getFeed(req.session.user._id);
+    console.log("these are the posts", posts);
     res.json(posts);
   } else {
     res.send({ errors: ["error fetching feed"] });
@@ -201,5 +203,12 @@ exports.profileFollowingScreen = async function (req, res) {
   } catch (error) {
     res.sendStatus("404");
     console.log("error in profileFollowingScreen", error);
+  }
+};
+exports.validateSession = function (req, res) {
+  if (req.session.user) {
+    res.send(req.session.user);
+  } else {
+    send({});
   }
 };

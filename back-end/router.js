@@ -5,7 +5,8 @@ const postController = require("./controllers/postController");
 const followController = require("./controllers/followController");
 
 // User related routes
-router.get("/", userController.home);
+router.get("/", userController.validateSession);
+router.get("/posts", userController.home);
 router.post("/register", userController.register);
 router.post("/login", userController.login);
 router.post("/doesUsernameExist", userController.doesUsernameExist);
