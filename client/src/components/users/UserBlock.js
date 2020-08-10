@@ -7,7 +7,7 @@ const UserBlock = ({ username, avatar }) => {
       to={`/profile/${username}`}
       className="list-group-item list-group-item-action"
     >
-      <img className="avatar-tiny" src={avatar} />
+      <img className="avatar-tiny" alt="tiny avatar" src={avatar} />
       {username}
     </Link>
   );

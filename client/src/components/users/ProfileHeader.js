@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import FollowButton from "../FollowButton";
 import { connect } from "react-redux";
 import PostFeed from "../posts/PostFeed";

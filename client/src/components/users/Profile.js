@@ -4,7 +4,7 @@ import ProfileHeader from "./ProfileHeader";
 import { connect } from "react-redux";
 import { getProfilePosts } from "../../actions";
 import { Redirect } from "react-router-dom";
-import PostFeed from "../posts/PostFeed";
+
 class Profile extends React.Component {
   componentDidMount() {
     this.props.getProfilePosts(window.location.pathname);

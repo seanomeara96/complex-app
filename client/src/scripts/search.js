@@ -23,6 +23,7 @@ export default class Search {
       this.openOverlay();
     });
   }
+  // copied
   keyPressHandler() {
     let value = this.inputField.value;
     if (value == "") {
@@ -41,6 +42,8 @@ export default class Search {
 
     this.previousValue = value;
   }
+  // copied-end
+  // copied
   sendRequest() {
     axios
       .post("/search", { _csrf: this._csrf, searchTerm: this.inputField.value })
@@ -52,6 +55,7 @@ export default class Search {
         alert("hello request failed, idiot");
       });
   }
+  // coped-end
   renderRsultsHTML(posts) {
     if (posts.length) {
       //display

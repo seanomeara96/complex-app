@@ -132,21 +132,26 @@ Post.reusablePostQuery = function (uniqueOperations, visitorId) {
       },
     ]);
     // .findOne({_id: new ObjectID(id)}) == this was replaced with the aggregate function
-    let posts = await postsCollection.aggregate(aggOperations).toArray();
-    // Aggregate - when we need to perform complex or multiple operations
-    // aggregate is going to return data in a mongodb format so we push it to array to make it js readable
+    try {
+      let posts = await postsCollection.aggregate(aggOperations).toArray();
+      // Aggregate - when we need to perform complex or multiple operations
+      // aggregate is going to return data in a mongodb format so we push it to array to make it js readable
 
-    // clean up author property in each post object
-    posts = posts.map(function (post) {
-      post.isVisitorOwner = post.authorId.equals(visitorId);
-      post.authorId = undefined;
-      post.author = {
-        username: post.author.username,
-        avatar: new User(post.author, true).avatar,
-      };
-      return post;
-    });
-    resolve(posts);
+      // clean up author property in each post object
+      posts = posts.map(function (post) {
+        post.isVisitorOwner = post.authorId.equals(visitorId);
+        post.authorId = undefined;
+        post.author = {
+          username: post.author.username,
+          avatar: new User(post.author, true).avatar,
+        };
+        return post;
+      });
+      resolve(posts);
+    } catch (err) {
+      console.log("Error from reusablepost query", err);
+      reject(err);
+    }
   });
 };
 
@@ -197,11 +202,18 @@ Post.delete = function (postIdToDelete, currentUserId) {
 Post.search = function (searchTerm) {
   return new Promise(async (resolve, reject) => {
     if (typeof searchTerm == "string") {
-      let posts = await Post.reusablePostQuery([
-        { $match: { $text: { $search: searchTerm } } },
-        { $sort: { score: { $meta: "textScore" } } },
-      ]);
-      resolve(posts);
+      try {
+        console.log("...searching");
+        let posts = await Post.reusablePostQuery([
+          { $match: { $text: { $search: searchTerm } } },
+          { $sort: { score: { $meta: "textScore" } } },
+        ]);
+        console.log(posts);
+        resolve(posts);
+      } catch (err) {
+        console.log("error with search", err);
+        reject();
+      }
     } else {
       reject();
     }

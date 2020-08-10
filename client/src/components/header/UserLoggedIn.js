@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import styles from "./UserLoggedIn.module.css";
-import Search from "../Search";
+import Search from "../search/Search";
 import SignOutButton from "./SignOutButton";
 import { connect } from "react-redux";
 import { signOut } from "../../actions";
