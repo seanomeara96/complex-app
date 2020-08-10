@@ -6,7 +6,7 @@ exports.create = function (req, res) {
   let post = new Post(req.body, req.session.user._id);
   post
     .create()
-    .then((newId) => {
+    .then(() => {
       sendGrid.send({
         to: "redabihsot@gmail.com",
         from: "test@test.com",
@@ -14,9 +14,9 @@ exports.create = function (req, res) {
         text: "you did a great job of creating a post",
         html: "you did a <strong>Great</strong> job of creating a post",
       });
-      req.flash("success", "New post successfully created.");
+
       req.session.save(() => {
-        res.status(201).send(newId);
+        res.status(201).send(post);
       });
     })
     .catch((errors) => {

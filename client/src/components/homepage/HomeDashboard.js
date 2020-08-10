@@ -7,6 +7,7 @@ import PostFeed from "../posts/PostFeed";
 class HomeDashboard extends React.Component {
   componentDidMount() {
     // temporary call to placheolder json server
+    console.log("fetching posts");
     this.props.posts();
   }
 
@@ -17,7 +18,7 @@ class HomeDashboard extends React.Component {
           <Flash successes={this.props.successes} errors={this.props.errors} />
           <h2 className="text-center mb-4">The Latest From Those You Follow</h2>
           <div className="list-group">
-            <PostFeed />
+            <PostFeed posts={this.props.posts} />
           </div>
         </div>
       );
@@ -32,6 +33,7 @@ const mapStateToProps = (state) => {
     homeFeed: state.posts,
     successes: state.flash.successes,
     errors: state.flash.errors,
+    posts: state.posts,
   };
 };
 

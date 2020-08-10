@@ -1,5 +1,4 @@
 import React from "react";
-import { connect } from "react-redux";
 
 import PostBlock from "./PostBlock";
 
@@ -10,16 +9,12 @@ const PostFeed = (props) => {
       <PostBlock
         title={element.title}
         userId={element.userId}
-        key={element.title}
+        key={feed.length}
       />
     );
     feed.push(post);
   });
   return feed;
 };
-const mapStateToProps = (state) => {
-  return {
-    posts: state.posts,
-  };
-};
-export default connect(mapStateToProps)(PostFeed);
+
+export default PostFeed;

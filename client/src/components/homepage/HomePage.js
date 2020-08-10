@@ -1,20 +1,15 @@
-import React, { Component } from "react";
+import React from "react";
 import GuestHome from "./GuestHome";
 import HomeDashboard from "./HomeDashboard";
 import { connect } from "react-redux";
 import { validateSession } from "../../actions";
-class Homepage extends Component {
-  componentDidMount() {
-    this.props.validateSession();
+const Homepage = (props) => {
+  if (props.isSignedIn === false) {
+    return <GuestHome />;
+  } else {
+    return <HomeDashboard />;
   }
-  render() {
-    if (this.props.isSignedIn === false) {
-      return <GuestHome />;
-    } else {
-      return <HomeDashboard />;
-    }
-  }
-}
+};
 const mapStateToProps = (state) => {
   return {
     isSignedIn: state.auth.isSignedIn,

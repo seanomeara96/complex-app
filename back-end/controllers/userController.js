@@ -164,7 +164,7 @@ exports.profilePostsScreen = function (req, res) {
 exports.profileFollowersScreen = async function (req, res) {
   try {
     let followers = await Follow.getFollowersById(req.profileUser._id);
-    res.json({
+    res.send({
       currentPage: "followers",
       followers: followers,
       profileUsername: req.profileUser.username,
@@ -187,7 +187,7 @@ exports.profileFollowersScreen = async function (req, res) {
 exports.profileFollowingScreen = async function (req, res) {
   try {
     let following = await Follow.getFollowingById(req.profileUser._id);
-    res.json({
+    res.send({
       currentPage: "following",
       following: following,
       profileUsername: req.profileUser.username,
@@ -211,4 +211,8 @@ exports.validateSession = function (req, res) {
   } else {
     send({});
   }
+};
+exports.setSelectedProfile = function (req, res) {
+  req.selectedProfile = req.params.username;
+  res.send(req.selectedProfile);
 };

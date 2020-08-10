@@ -29,14 +29,14 @@ const UserLoggedIn = (props) => {
       >
         <i className="fas fa-comment"></i>
       </span>
-      <Link to={`/profile/${props.user.userId}`} className="mr-2">
+      <Link to={`/profile/${props.user.username}`} className="mr-2">
         <img
           title="My Profile"
           alt="profile pic"
           data-toggle="tooltip"
           data-placement="bottom"
           className={styles.avatar}
-          src="https://images.unsplash.com/photo-1505033575518-a36ea2ef75ae?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=633&q=80"
+          src="https://source.unsplash.com/featured/?profile,face"
         />
       </Link>
       <Link className="btn btn-sm btn-success mr-2" to="/create-post">
@@ -48,6 +48,6 @@ const UserLoggedIn = (props) => {
   );
 };
 const mapstateToProps = (state) => {
-  return { csrfToken: state.csrfToken };
+  return { csrfToken: state.csrfToken, user: state.auth.auth };
 };
 export default connect(mapstateToProps, { signOut })(UserLoggedIn);

@@ -1,0 +1,8 @@
+.link {
+  color: #007bff;
+  cursor: pointer;
+}
+.avatar {
+  object-fit: cover;
+  object-position: center;
+}

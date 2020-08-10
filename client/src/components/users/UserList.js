@@ -1,5 +1,4 @@
 import React from "react";
-import { connect } from "react-redux";
 import UserBlock from "./UserBlock";
 const UserList = (props) => {
   let userList = [];
@@ -16,9 +15,4 @@ const UserList = (props) => {
   return userList;
 };
 
-const mapStateToProps = (state) => {
-  return {
-    users: state.users,
-  };
-};
-export default connect(mapStateToProps)(PostFeed);
+export default UserList;

@@ -38,8 +38,9 @@ router.post(
 router.post("/search", postController.search);
 
 // Profile related routes
+
 router.get(
-  "/profile/:username",
+  "/profile/:username/posts",
   userController.ifUserExists,
   userController.sharedProfileData,
   userController.profilePostsScreen

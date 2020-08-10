@@ -1,25 +1,15 @@
 import React from "react";
 import { Redirect } from "react-router-dom";
 import { connect } from "react-redux";
-import axios from "axios";
 import CreatePostForm from "./CreatePostForm";
 import Flash from "../Flash";
-
+import { createPost } from "../../actions";
 class CreatePost extends React.Component {
-  onSubmit = ({ title, body }) => {
-    // implement redux thunk here
-    axios
-      .post("/create-post", { title, body, userId: this.props.user.userId })
-      .then(() => {
-        // redirect after success message has shown
-        return <Redirect to="/posts" />;
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+  onSubmit = (formValues) => {
+    this.props.createPost({ ...formValues, userId: this.props.auth.auth._id });
   };
   render() {
-    if (this.props.user.isSignedIn === true) {
+    if (this.props.auth.isSignedIn === true) {
       return (
         <div className="container py-md-5 container--narrow">
           <Flash />
@@ -36,9 +26,9 @@ class CreatePost extends React.Component {
 }
 const mapStateToProps = (state) => {
   return {
-    user: state.auth,
+    auth: state.auth,
     form: state.form.createPost,
     csrfToken: state.csrfToken,
   };
 };
-export default connect(mapStateToProps)(CreatePost);
+export default connect(mapStateToProps, { createPost })(CreatePost);

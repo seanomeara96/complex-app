@@ -121,7 +121,7 @@ Post.reusablePostQuery = function (uniqueOperations, visitorId) {
       {
         $project: {
           // $project allows us to spell out exactly what fields we want the resulting object to have
-          title: 1,  // 1 is a way to accept the field "as is"
+          title: 1, // 1 is a way to accept the field "as is"
           body: 1,
           createdDate: 1,
           authorId: "$author",
@@ -210,8 +210,12 @@ Post.search = function (searchTerm) {
 
 Post.countPostsByAuthor = function (id) {
   return new Promise(async (resolve, reject) => {
-    let postCount = await postsCollection.countDocuments({ author: id });
-    resolve(postCount);
+    try {
+      let postCount = await postsCollection.countDocuments({ author: id });
+      resolve(postCount);
+    } catch (err) {
+      reject(err);
+    }
   });
 };
 
