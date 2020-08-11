@@ -5,7 +5,7 @@ import ChatBox from "./components/ChatBox";
 import { BrowserRouter, Route } from "react-router-dom";
 import HomePage from "./components/homepage/HomePage";
 import CreatePost from "./components/posts/CreatePost";
-import Profile from "./components/users/Profile";
+import Profile from "./components/profile/Profile";
 import SinglePostScreen from "./components/posts/SinglePostScreen";
 import { connect } from "react-redux";
 import { validateSession } from "./actions";

@@ -1,11 +1,19 @@
-import React from "react";
+import React, { useEffect } from "react";
 import AuthorPostControls from "./AuthorPostControls";
 import Flash from "../Flash";
-import { Link, Redirect } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { connect } from "react-redux";
+import { fetchSinglePost } from "../../actions";
 const SinglePostScreen = (props) => {
+  const { fetchSinglePost } = props;
+  useEffect(() => {
+    if (props.post._id === "") {
+      console.log("fetching post..");
+      fetchSinglePost(window.location.pathname);
+    }
+  }, [fetchSinglePost, props.post._id]);
   if (props.post._id === "") {
-    return <Redirect to="/" />;
+    return <div>loading...</div>;
   } else {
     return (
       <div className="container py-md-5 container--narrow">
@@ -47,4 +55,4 @@ const mapStateToProps = (state) => {
     csrfToken: state.csrfToken,
   };
 };
-export default connect(mapStateToProps)(SinglePostScreen);
+export default connect(mapStateToProps, { fetchSinglePost })(SinglePostScreen);

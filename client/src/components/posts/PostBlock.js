@@ -1,10 +1,10 @@
 import React from "react";
 import { Link } from "react-router-dom";
 const createdDate = new Date(); // temporary
-const PostBlock = ({ userId, title }) => {
+const PostBlock = ({ postId, title }) => {
   return (
     <Link
-      to={`/post/${userId}`}
+      to={`/post/${postId}`}
       className="list-group-item list-group-item-action"
     >
       <img

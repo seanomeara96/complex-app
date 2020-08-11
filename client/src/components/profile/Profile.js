@@ -7,7 +7,14 @@ import { Redirect } from "react-router-dom";
 
 class Profile extends React.Component {
   componentDidMount() {
-    this.props.getProfilePosts(window.location.pathname);
+    console.log(
+      window.location.pathname.endsWith(this.props.profile.profileUsername)
+    );
+    if (
+      !window.location.pathname.endsWith(this.props.profile.profileUsername)
+    ) {
+      this.props.getProfilePosts(window.location.pathname);
+    }
   }
 
   render() {

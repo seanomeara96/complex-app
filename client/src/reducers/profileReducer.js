@@ -3,7 +3,7 @@ const INITIAL_STATE = {
   posts: [],
   followers: [],
   following: [],
-  profileUsername: "",
+  profileUsername: "loading...",
   profileAvatar: "",
   isFollowing: false,
   isVisitorsProfile: false,

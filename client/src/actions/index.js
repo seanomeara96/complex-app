@@ -1,13 +1,12 @@
 import api from "../axios/config";
 export const signIn = ({ username, password }) => {
-  console.log(username, password);
   return async (dispatch) => {
     try {
       const response = await api.post("/login", {
         username,
         password,
       });
-      console.log(response.data);
+
       dispatch({
         type: "SIGN_IN",
         payload: response.data,
@@ -23,9 +22,8 @@ export const signIn = ({ username, password }) => {
 export const signOut = () => {
   return async (dispatch) => {
     try {
-      console.log("logging out");
-      const response = await api.post("/logout", {});
-      console.log(response);
+      await api.post("/logout", {});
+
       dispatch({
         type: "SIGN_OUT",
       });
@@ -38,7 +36,6 @@ export const registerUser = (formValues) => {
   return async (dispatch) => {
     try {
       const response = await api.post("/register", formValues);
-      console.log("register user response data", response.data);
       dispatch({
         type: "SIGN_IN",
         payload: response.data,
@@ -55,7 +52,6 @@ export const registerUser = (formValues) => {
 export const posts = () => {
   // Payload should be an array of posts
   return async (dispatch) => {
-    console.log("fetching posts...");
     try {
       let posts = await api.get("/posts");
       dispatch({
@@ -97,7 +93,6 @@ export const closeChatBox = () => {
 
 export const validateSession = () => {
   return async (dispatch) => {
-    console.log("validating session");
     const response = await api.get("/");
     if (response.data !== {}) {
       dispatch({
@@ -130,6 +125,22 @@ export const setPost = (post) => {
     payload: post,
   };
 };
+export const fetchSinglePost = (url) => {
+  return async (dispatch) => {
+    try {
+      let response = await api.get(`${url}`);
+      dispatch({
+        type: "SET_POST",
+        payload: response.data.post,
+      });
+    } catch (err) {
+      dispatch({
+        type: "PUSH_ERRORS",
+        payload: ["there was a problem fetching this post"],
+      });
+    }
+  };
+};
 export const getProfilePosts = (url) => {
   return async (dispatch) => {
     try {
@@ -139,7 +150,6 @@ export const getProfilePosts = (url) => {
         payload: response.data,
       });
     } catch (err) {
-      console.log("actions/index -> getProfilePosts", err);
       dispatch({
         type: "PUSH_ERRORS",
         payload: ["problem fetching profile data"],
@@ -156,7 +166,6 @@ export const getProfileFollowers = (url) => {
         payload: response.data,
       });
     } catch (err) {
-      console.log("actions/index -> getProfileFollowers", err);
       dispatch({
         type: "PUSH_ERRORS",
         payload: ["problem fetching profile data"],
@@ -173,7 +182,6 @@ export const getProfileFollowing = (url) => {
         payload: response.data,
       });
     } catch (err) {
-      console.log("actions/index -> getProfileFollowing", err);
       dispatch({
         type: "PUSH_ERRORS",
         payload: ["problem fetching profile data"],
