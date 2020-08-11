@@ -2,7 +2,9 @@ import React from "react";
 import ReactDOM from "react-dom";
 import api from "../../axios/config";
 import DOMPurify from "dompurify";
-
+import { Link } from "react-router-dom";
+import { connect } from "react-redux";
+import { setPost } from "../../actions";
 class Search extends React.Component {
   state = {
     focused: false,
@@ -16,7 +18,6 @@ class Search extends React.Component {
   constructor(props) {
     super(props);
     this.typingWaitTimer = null;
-    this.inputField = document.querySelector("#live-search-field");
   }
 
   keyPressHandler = (e) => {
@@ -81,10 +82,14 @@ class Search extends React.Component {
             let postAuthor = DOMPurify.sanitize(post.author.username);
             let postDate = new Date(DOMPurify.sanitize(post.createdDate));
             return (
-              <a
+              <Link
                 key={index}
-                href={`/post/${postID}`}
+                to={`/post/${postID}`}
                 className="list-group-item list-group-item-action"
+                onClick={() => {
+                  this.props.setPost(this.state.searchResults[index]);
+                  this.props.toggleSearchModal();
+                }}
               >
                 <img className="avatar-tiny" src={postAvatar} alt={postTitle} />{" "}
                 <strong>{postTitle}</strong>{" "}
@@ -92,7 +97,7 @@ class Search extends React.Component {
                   by {postAuthor} on {postDate.getMonth() + 1}/
                   {postDate.getDate()}/{postDate.getFullYear()}
                 </span>
-              </a>
+              </Link>
             );
           })}
         </div>
@@ -115,7 +120,6 @@ class Search extends React.Component {
       .then((response) => {
         this.hideLoaderIcon();
         this.showResultsArea();
-        let resultsArray = response.data.map((item) => item);
         this.renderSearchResults(response.data);
         this.setState({ searchResults: response.data });
       })
@@ -184,4 +188,4 @@ class Search extends React.Component {
   }
 }
 
-export default Search;
+export default connect(null, { setPost })(Search);

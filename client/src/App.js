@@ -1,13 +1,14 @@
 import React, { useEffect } from "react";
-import Header from "./header/Header";
-import Footer from "./Footer";
-import ChatBox from "./ChatBox";
+import Header from "./components/header/Header";
+import Footer from "./components/Footer";
+import ChatBox from "./components/ChatBox";
 import { BrowserRouter, Route } from "react-router-dom";
-import HomePage from "./homepage/HomePage";
-import CreatePost from "./posts/CreatePost";
-import Profile from "./users/Profile";
+import HomePage from "./components/homepage/HomePage";
+import CreatePost from "./components/posts/CreatePost";
+import Profile from "./components/users/Profile";
+import SinglePostScreen from "./components/posts/SinglePostScreen";
 import { connect } from "react-redux";
-import { validateSession } from "../actions";
+import { validateSession } from "./actions";
 const App = (props) => {
   const { validateSession } = props;
   useEffect(() => {
@@ -23,6 +24,7 @@ const App = (props) => {
         currentPage="posts"
         component={Profile}
       />
+      <Route path="/post/:postId" component={SinglePostScreen} />
       <Footer />
       <ChatBox />
     </BrowserRouter>

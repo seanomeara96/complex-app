@@ -124,6 +124,12 @@ export const createPost = (formValues) => {
     }
   };
 };
+export const setPost = (post) => {
+  return {
+    type: "SET_POST",
+    payload: post,
+  };
+};
 export const getProfilePosts = (url) => {
   return async (dispatch) => {
     try {
