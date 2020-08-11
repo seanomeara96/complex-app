@@ -7,7 +7,7 @@ import PostFeed from "../posts/PostFeed";
 class HomeDashboard extends React.Component {
   componentDidMount() {
     // temporary call to placheolder json server
-    console.log("fetching posts");
+
     this.props.posts();
   }
 

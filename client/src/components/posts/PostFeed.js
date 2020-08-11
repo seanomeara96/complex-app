@@ -5,9 +5,13 @@ import PostBlock from "./PostBlock";
 const PostFeed = (props) => {
   let feed = [];
   props.posts.forEach((element) => {
-    console.log("elements", element);
     let post = (
-      <PostBlock title={element.title} postId={element._id} key={feed.length} />
+      <PostBlock
+        title={element.title}
+        postId={element._id}
+        key={feed.length}
+        avatar={element.author.avatar}
+      />
     );
     feed.push(post);
   });

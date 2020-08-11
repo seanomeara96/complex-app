@@ -21,13 +21,12 @@ class ProfileHeader extends React.Component {
     }
   }
   render() {
-    console.log("profile header", this.props);
     return (
       <div>
         <h2>
           <img
             className={`avatar-small ${style.avatar}`}
-            src="https://source.unsplash.com/featured/?profile,face"
+            src={this.props.profileAvatar}
             alt="a users profile"
           />
           {this.props.profileUsername}
@@ -83,7 +82,7 @@ class ProfileHeader extends React.Component {
   }
 }
 const mapStateToProps = (state) => {
-  return { user: state.auth.auth };
+  return { user: state.auth.auth, profileAvatar: state.profile.profileAvatar };
 };
 export default connect(mapStateToProps, {
   getProfileFollowers,

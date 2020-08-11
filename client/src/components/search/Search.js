@@ -63,7 +63,7 @@ class Search extends React.Component {
   renderSearchResults = () => {
     const { searchResults } = this.state;
 
-    if (typeof searchResults === "object") {
+    if (typeof searchResults === "object" && searchResults.length) {
       //display
 
       return (

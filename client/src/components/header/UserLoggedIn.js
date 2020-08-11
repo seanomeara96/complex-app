@@ -9,6 +9,7 @@ const UserLoggedIn = (props) => {
   const onSubmit = () => {
     props.signOut();
   };
+
   return (
     <div className="flex-row my-3 my-md-0">
       <i
@@ -36,7 +37,7 @@ const UserLoggedIn = (props) => {
           data-toggle="tooltip"
           data-placement="bottom"
           className={styles.avatar}
-          src="https://source.unsplash.com/featured/?profile,face"
+          src={props.user.avatar}
         />
       </Link>
       <Link className="btn btn-sm btn-success mr-2" to="/create-post">
