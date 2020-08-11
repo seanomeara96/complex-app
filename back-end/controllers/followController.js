@@ -4,18 +4,15 @@ exports.addFollow = function (req, res) {
   //we want to create a follow document in the database that says x user is following y user
   follow
     .create()
-    .then(() => {
-      req.flash("success", `successfully followed ${req.params.username}`);
+    .then((result) => {
       req.session.save(() => {
-        res.redirect(`/profile/${req.params.username}`);
+        res.json(result);
       });
     })
     .catch((errors) => {
-      errors.forEach((error) => {
-        req.flash("errors", error);
-      });
+      console.log(errors, "followController addFollow");
       req.session.save(() => {
-        res.redirect("/");
+        res.json("there was a problem");
       });
     });
 };
@@ -25,20 +22,14 @@ exports.removeFollow = function (req, res) {
   follow
     .delete()
     .then(() => {
-      req.flash(
-        "success",
-        `successfully stopped following ${req.params.username}`
-      );
       req.session.save(() => {
-        res.redirect(`/profile/${req.params.username}`);
+        res.json(`successfully stopped following ${req.params.username}`);
       });
     })
     .catch((errors) => {
-      errors.forEach((error) => {
-        req.flash("errors", error);
-      });
       req.session.save(() => {
-        res.redirect("/");
+        console.log(errors);
+        res.json("oops try again later");
       });
     });
 };

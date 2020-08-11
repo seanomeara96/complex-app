@@ -1,11 +1,15 @@
 import React from "react";
 import { Link } from "react-router-dom";
-
-const UserBlock = ({ username, avatar }) => {
+import { connect } from "react-redux";
+import { getProfilePosts } from "../../actions";
+const UserBlock = ({ username, avatar, getProfilePosts }) => {
   return (
     <Link
       to={`/profile/${username}`}
       className="list-group-item list-group-item-action"
+      onClick={() => {
+        getProfilePosts(`/profile/${username}`);
+      }}
     >
       <img className="avatar-tiny" alt="tiny avatar" src={avatar} />
       {username}
@@ -13,4 +17,4 @@ const UserBlock = ({ username, avatar }) => {
   );
 };
 
-export default UserBlock;
+export default connect(null, { getProfilePosts })(UserBlock);

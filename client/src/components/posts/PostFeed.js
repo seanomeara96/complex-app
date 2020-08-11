@@ -3,6 +3,7 @@ import React from "react";
 import PostBlock from "./PostBlock";
 
 const PostFeed = (props) => {
+  console.log("postfeed", props.posts);
   let feed = [];
   props.posts.forEach((element) => {
     let post = (

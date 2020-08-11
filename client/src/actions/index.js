@@ -49,7 +49,7 @@ export const registerUser = (formValues) => {
   };
 };
 // This may need to be renamed in the future
-export const posts = () => {
+export const fetchPosts = () => {
   // Payload should be an array of posts
   return async (dispatch) => {
     try {
@@ -187,5 +187,25 @@ export const getProfileFollowing = (url) => {
         payload: ["problem fetching profile data"],
       });
     }
+  };
+};
+export const startFollowing = (followeeUsername) => {
+  return async (dispatch) => {
+    await api.post(`/addFollow/${followeeUsername}`, {});
+    let response = await api.get(`/profile/${followeeUsername}/posts`);
+    dispatch({
+      type: "UPDATE_FOLLOW_STATUS",
+      payload: response.data.isFollowing,
+    });
+  };
+};
+export const stopFollowing = (followeeUsername) => {
+  return async (dispatch) => {
+    await api.post(`/removeFollow/${followeeUsername}`, {});
+    let response = await api.get(`/profile/${followeeUsername}/posts`);
+    dispatch({
+      type: "UPDATE_FOLLOW_STATUS",
+      payload: response.data.isFollowing,
+    });
   };
 };

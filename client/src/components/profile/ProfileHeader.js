@@ -32,7 +32,7 @@ class ProfileHeader extends React.Component {
           {this.props.profileUsername}
           {/* if user is logged in && !isVisitorsProfile */}
           {/* button changes based on following status */}
-          <FollowButton following="false" />
+          <FollowButton />
         </h2>
         <div className="profile-nav nav nav-tabs pt-2 mb-4">
           <div

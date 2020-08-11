@@ -1,14 +1,14 @@
 import React from "react";
 import { connect } from "react-redux";
 import EmptyFeed from "./EmptyFeed";
-import { posts } from "../../actions";
+import { fetchPosts } from "../../actions";
 import Flash from "../Flash";
 import PostFeed from "../posts/PostFeed";
 class HomeDashboard extends React.Component {
   componentDidMount() {
     // temporary call to placheolder json server
 
-    this.props.posts();
+    this.props.fetchPosts();
   }
 
   render() {
@@ -38,5 +38,5 @@ const mapStateToProps = (state) => {
 };
 
 export default connect(mapStateToProps, {
-  posts,
+  fetchPosts,
 })(HomeDashboard);

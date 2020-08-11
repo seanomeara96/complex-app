@@ -30,6 +30,11 @@ export default (state = INITIAL_STATE, action) => {
         ...state,
         ...action.payload,
       };
+    case "UPDATE_FOLLOW_STATUS":
+      return {
+        ...state,
+        isFollowing: action.payload,
+      };
     default:
       return { ...state };
   }
