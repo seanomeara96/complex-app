@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import Header from "./components/header/Header";
 import Footer from "./components/Footer";
-import ChatBox from "./components/ChatBox";
+import ChatBox from "./components/chat/ChatBox";
 import { BrowserRouter, Route } from "react-router-dom";
 import HomePage from "./components/homepage/HomePage";
 import CreatePost from "./components/posts/CreatePost";
