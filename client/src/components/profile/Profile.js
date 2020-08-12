@@ -4,7 +4,7 @@ import ProfileHeader from "./ProfileHeader";
 import { connect } from "react-redux";
 import { getProfilePosts } from "../../actions";
 import { Redirect } from "react-router-dom";
-
+import ErrorPage from "../404";
 class Profile extends React.Component {
   componentDidMount() {
     if (window.location.pathname.includes("profile")) {
@@ -17,7 +17,7 @@ class Profile extends React.Component {
       return <Redirect to="/" />;
     } else {
       if (this.props.profile.profileUsername === "") {
-        return <div></div>;
+        return <ErrorPage />;
       } else {
         return (
           <div className="container py-md-5 container--narrow">

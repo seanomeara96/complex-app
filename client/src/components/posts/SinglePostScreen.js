@@ -13,7 +13,9 @@ const SinglePostScreen = (props) => {
     }
   }, [fetchSinglePost, props.post._id]);
   if (props.post._id === "") {
-    return <div>loading...</div>;
+    return (
+      <div className="container py-md-5 container--narrow">loading...</div>
+    );
   } else {
     return (
       <div className="container py-md-5 container--narrow">
