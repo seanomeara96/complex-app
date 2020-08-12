@@ -21,6 +21,9 @@ class ChatBox extends React.Component {
     if (this.props.isOpen === false && this.state.connectionIsOpen === true) {
       console.log("connection closed");
     }
+    if (typeof this.chatLog !== "undefined") {
+      this.scrollIntoView();
+    }
   }
 
   openConnection() {
@@ -77,8 +80,8 @@ class ChatBox extends React.Component {
     if (this.state.chatLog.length) {
       return this.state.chatLog;
     }
-    //this.chatLog.scrollTop = this.chatLog.scrollHeight;
   }
+
   sendMessageToServer() {
     //emit() takes two arguments
     //1st is a name that describes the event
@@ -86,13 +89,15 @@ class ChatBox extends React.Component {
     this.socket.emit("chatMessageFromBrowser", {
       message: this.state.message,
     });
-
     this.renderMessage("self", this.state.message, this.avatar);
-    //this.chatLog.insertAdjacentHTML("beforeend");
-    this.chatLog.scrollTop = this.chatLog.scrollHeight;
     this.chatField.value = "";
     this.chatField.focus();
   }
+
+  scrollIntoView = () => {
+    this.chatLog.scrollTop = this.chatLog.scrollHeight;
+  };
+
   renderChatField() {
     if (this.props.isOpen === true) {
       return (
@@ -114,6 +119,7 @@ class ChatBox extends React.Component {
       return <div></div>;
     }
   }
+
   render() {
     if (this.props.isSignedIn === true) {
       return (
@@ -135,6 +141,11 @@ class ChatBox extends React.Component {
             ref={(chatlog) => (this.chatLog = chatlog)}
           >
             {this.renderChatLog()}
+            <div
+              ref={(end) => {
+                this.end = end;
+              }}
+            ></div>
           </div>
           <form
             id="chatForm"
@@ -152,10 +163,12 @@ class ChatBox extends React.Component {
     }
   }
 }
+
 const mapStateToProps = (state) => {
   return {
     isSignedIn: state.auth.isSignedIn,
     isOpen: state.chatBox,
   };
 };
+
 export default connect(mapStateToProps)(ChatBox);
