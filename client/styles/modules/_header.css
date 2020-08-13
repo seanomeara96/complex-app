@@ -1,0 +1,13 @@
+.header-bar {
+  background-color: #292929;
+}
+.header-search-icon {
+  position: relative;
+  top: 3px;
+}
+
+.header-chat-icon {
+  cursor: pointer;
+  position: relative;
+  top: 3px;
+}

@@ -1,0 +1,12 @@
+.form-control-title {
+  font-size: 2rem;
+  font-weight: 500;
+}
+.form-group {
+  position: relative;
+}
+.form-group input,
+.form-group textarea {
+  position: relative;
+  z-index: 2;
+}
