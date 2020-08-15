@@ -1,14 +1,10 @@
 import React from "react";
-import GuestHome from "./GuestHome";
-import HomeDashboard from "./HomeDashboard";
+import GuestHome from "../components/homepage/GuestHome";
+import HomeDashboard from "../components/homepage/HomeDashboard";
 import { connect } from "react-redux";
-import { validateSession } from "../../actions";
+import { validateSession } from "../actions";
 const Homepage = (props) => {
-  if (props.isSignedIn === false) {
-    return <GuestHome />;
-  } else {
-    return <HomeDashboard />;
-  }
+  return props.isSignedIn === false ? <GuestHome /> : <HomeDashboard />;
 };
 const mapStateToProps = (state) => {
   return {

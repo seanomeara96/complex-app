@@ -1,14 +1,12 @@
 import React, { useEffect } from "react";
-import Header from "./components/header/Header";
-import Footer from "./components/Footer";
-import ChatBox from "./components/chat/ChatBox";
-import { BrowserRouter, Route } from "react-router-dom";
-import HomePage from "./components/homepage/HomePage";
-import CreatePost from "./components/posts/CreatePost";
-import Profile from "./components/profile/Profile";
-import SinglePostScreen from "./components/posts/SinglePostScreen";
 import { connect } from "react-redux";
+import { BrowserRouter, Route } from "react-router-dom";
+import HomePage from "./pages/home";
+import CreatePost from "./pages/create-post";
+import Profile from "./pages/profile";
+import SinglePostScreen from "./pages/single-post";
 import { validateSession } from "./actions";
+import Layout from "./components/Layout";
 const App = (props) => {
   const { validateSession } = props;
   useEffect(() => {
@@ -16,17 +14,16 @@ const App = (props) => {
   }, [validateSession]);
   return (
     <BrowserRouter>
-      <Header />
-      <Route path="/" exact component={HomePage} />
-      <Route path="/create-post" component={CreatePost} />
-      <Route
-        path="/profile/:username"
-        currentPage="posts"
-        component={Profile}
-      />
-      <Route path="/post/:postId" component={SinglePostScreen} />
-      <Footer />
-      <ChatBox />
+      <Layout>
+        <Route path="/" exact component={HomePage} />
+        <Route path="/create-post" component={CreatePost} />
+        <Route
+          path="/profile/:username"
+          currentPage="posts"
+          component={Profile}
+        />
+        <Route path="/post/:postId" component={SinglePostScreen} />
+      </Layout>
     </BrowserRouter>
   );
 };

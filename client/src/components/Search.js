@@ -1,10 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import api from "../../axios/config";
+import api from "../axios/config";
 import DOMPurify from "dompurify";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
-import { setPost } from "../../actions";
+import { setPost } from "../actions";
 class Search extends React.Component {
   state = {
     focused: false,

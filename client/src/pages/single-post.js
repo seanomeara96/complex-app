@@ -1,9 +1,10 @@
 import React, { useEffect } from "react";
-import AuthorPostControls from "./AuthorPostControls";
-import Flash from "../Flash";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
-import { fetchSinglePost } from "../../actions";
+import AuthorPostControls from "../components/posts/AuthorPostControls";
+import Flash from "../components/Flash";
+
+import { fetchSinglePost } from "../actions";
 const SinglePostScreen = (props) => {
   const { fetchSinglePost } = props;
   useEffect(() => {

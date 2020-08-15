@@ -1,10 +1,11 @@
 import React from "react";
-import Flash from "../Flash";
-import ProfileHeader from "./ProfileHeader";
 import { connect } from "react-redux";
-import { getProfilePosts } from "../../actions";
 import { Redirect } from "react-router-dom";
-import ErrorPage from "../404";
+
+import Flash from "../components/Flash";
+import ProfileHeader from "../components/profile/ProfileHeader";
+import { getProfilePosts } from "../actions";
+import ErrorPage from "./404";
 class Profile extends React.Component {
   componentDidMount() {
     if (window.location.pathname.includes("profile")) {
