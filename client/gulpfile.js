@@ -14,6 +14,10 @@ gulp.task("style", function () {
     return gulp
       .src("./styles/*.css")
       .pipe(postcss(plugins))
+      .on("error", function (err) {
+        console.log(err.toString());
+        this.emit("end");
+      })
       .pipe(gulp.dest("./src"));
   });
 });
