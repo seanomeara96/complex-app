@@ -1,5 +1,6 @@
-const Follow = require("../models/Follow");
-exports.addFollow = function (req, res) {
+import Follow from "../models/Follow";
+import { Request, Response } from "express";
+export const addFollow = function (req: Request, res: Response) {
   let follow = new Follow(req.params.username, req.visitorId);
   //we want to create a follow document in the database that says x user is following y user
   follow
@@ -16,7 +17,7 @@ exports.addFollow = function (req, res) {
       });
     });
 };
-exports.removeFollow = function (req, res) {
+export const removeFollow = function (req: Request, res: Response) {
   let follow = new Follow(req.params.username, req.visitorId);
   //we want to create a follow document in the database that says x user is following y user
   follow

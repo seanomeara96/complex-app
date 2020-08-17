@@ -189,4 +189,4 @@ User.doesEmailExist = function (email) {
     }
   });
 };
-module.exports = User;
+export default User;

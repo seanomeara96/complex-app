@@ -1,12 +1,11 @@
-const express = require("express");
-const session = require("express-session");
-const MongoStore = require("connect-mongo")(session);
-const markdown = require("marked");
-const cors = require("cors");
-
-const csrf = require("csurf");
+import express, { Request, Response, NextFunction } from "express";
+import session from "express-session";
+import markdown from "marked";
+import cors from "cors";
+// import csrf from "csurf";
+import sanitizeHTML from "sanitize-html";
 const app = express();
-const sanitizeHTML = require("sanitize-html");
+const MongoStore = require("connect-mongo")(session);
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(
@@ -26,9 +25,9 @@ let sessionOptions = session({
   },
 });
 app.use(sessionOptions);
-app.use((req, res, next) => {
+app.use((req: Request, res: Response, next: NextFunction) => {
   // This needs refactoring as we no longer are using templates
-  res.locals.filterUserHTML = function (content) {
+  res.locals.filterUserHTML = function (content: string) {
     return sanitizeHTML(markdown(content), {
       allowedTags: [
         "p",
@@ -47,20 +46,20 @@ app.use((req, res, next) => {
         "h5",
         "h6",
       ],
-      allowedAttributes: [],
+      allowedAttributes: {},
     });
   };
 
   // Make current user id available on the req object
-  if (req.session.user) {
-    req.visitorId = req.session.user._id;
+  if (req.session!.user) {
+    req.visitorId = req.session!.user._id;
   } else {
     req.visitorId = 0;
   }
   next();
 });
-const router = require("./router");
-const { compareSync } = require("bcryptjs");
+
+import router from "./router";
 
 /* This is casuing issues for the time being
    csrf protection can be worked in later
@@ -83,8 +82,9 @@ app.use((err, req, res, next) => {
 }); */
 
 app.use("/", router);
-const server = require("http").createServer(app);
-const io = require("socket.io")(server);
+import { Server } from "http";
+const server: Server = require("http").createServer(app);
+const io: SocketIO.Server = require("socket.io")(server);
 // socket represents the connection between server and browser
 io.use(function (socket, next) {
   sessionOptions(socket.request, socket.request.res, next);
@@ -111,4 +111,5 @@ io.on("connection", function (socket) {
     });
   }
 });
-module.exports = server;
+
+export default server;

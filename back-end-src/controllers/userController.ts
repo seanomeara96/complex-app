@@ -1,10 +1,11 @@
-const User = require("../models/User");
-const Post = require("../models/Post");
-const Follow = require("../models/Follow");
-const jwt = require("jsonwebtoken");
-const { send } = require("@sendgrid/mail");
+import User from "../models/User";
+import Post from "../models/Post";
+import Follow from "../models/Follow";
+import jwt from "jsonwebtoken";
+import { Request, Response, NextFunction } from "express";
+import { send } from "@sendgrid/mail";
 
-exports.doesUsernameExist = function (req, res) {
+export const doesUsernameExist = function (req: Request, res: Response) {
   User.findByUserName(req.body.username)
     .then(() => {
       res.json(true);
@@ -13,11 +14,15 @@ exports.doesUsernameExist = function (req, res) {
       res.json(false);
     });
 };
-exports.doesEmailExist = async function (req, res) {
+export const doesEmailExist = async function (req: Request, res: Response) {
   let emailBool = await User.doesEmailExist(req.body.email);
   res.json(emailBool);
 };
-exports.sharedProfileData = async function (req, res, next) {
+export const sharedProfileData = async function (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   let isVisitorsProfile = false;
   let isFollowing = false;
   if (req.session.user) {
@@ -44,7 +49,11 @@ exports.sharedProfileData = async function (req, res, next) {
   next();
 };
 
-exports.mustBeLoggedIn = function (req, res, next) {
+export const mustBeLoggedIn = function (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   if (req.session.user) {
     next();
   } else {
@@ -54,7 +63,7 @@ exports.mustBeLoggedIn = function (req, res, next) {
   }
 };
 
-exports.login = (req, res) => {
+export const login = (req: Request, res: Response) => {
   console.log("logging user in...");
   let user = new User(req.body);
   user
@@ -77,13 +86,13 @@ exports.login = (req, res) => {
     });
 };
 
-exports.logout = (req, res) => {
+export const logout = (req: Request, res: Response) => {
   req.session.destroy(() => {
     res.sendStatus(200);
   });
 };
 
-exports.register = (req, res) => {
+export const register = (req: Request, res: Response) => {
   console.log("registering user...");
   let user = new User(req.body);
   user
@@ -112,7 +121,7 @@ exports.register = (req, res) => {
 };
 
 // Fetches HomeFeed
-exports.home = async (req, res) => {
+export const home = async (req: Request, res: Response) => {
   if (req.session.user) {
     console.log("fetching homefeed...");
     let posts = await Post.getFeed(req.session.user._id);
@@ -124,7 +133,11 @@ exports.home = async (req, res) => {
 };
 
 // Checks if a user exists in the database
-exports.ifUserExists = function (req, res, next) {
+export const ifUserExists = function (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   User.findByUserName(req.params.username)
     .then((userDocument) => {
       req.profileUser = userDocument;
@@ -136,7 +149,7 @@ exports.ifUserExists = function (req, res, next) {
 };
 
 // Fetches data for a users profile
-exports.profilePostsScreen = function (req, res) {
+export const profilePostsScreen = function (req: Request, res: Response) {
   Post.findByAuthorId(req.profileUser._id)
     .then((posts) => {
       res.send({
@@ -161,7 +174,10 @@ exports.profilePostsScreen = function (req, res) {
 };
 
 // Fetches data for a users follower screen
-exports.profileFollowersScreen = async function (req, res) {
+export const profileFollowersScreen = async function (
+  req: Request,
+  res: Response
+) {
   try {
     let followers = await Follow.getFollowersById(req.profileUser._id);
     res.send({
@@ -184,7 +200,10 @@ exports.profileFollowersScreen = async function (req, res) {
 };
 
 // Fetches data for a user's following screen
-exports.profileFollowingScreen = async function (req, res) {
+export const profileFollowingScreen = async function (
+  req: Request,
+  res: Response
+) {
   try {
     let following = await Follow.getFollowingById(req.profileUser._id);
     res.send({
@@ -205,14 +224,14 @@ exports.profileFollowingScreen = async function (req, res) {
     console.log("error in profileFollowingScreen", error);
   }
 };
-exports.validateSession = function (req, res) {
+export const validateSession = function (req: Request, res: Response) {
   if (req.session.user) {
     res.send(req.session.user);
   } else {
     send({});
   }
 };
-exports.setSelectedProfile = function (req, res) {
+export const setSelectedProfile = function (req: Request, res: Response) {
   req.selectedProfile = req.params.username;
   res.send(req.selectedProfile);
 };

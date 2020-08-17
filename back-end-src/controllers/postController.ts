@@ -1,8 +1,8 @@
-const Post = require("../models/Post");
-const sendGrid = require("@sendgrid/mail");
-sendGrid.setApiKey(process.env.SENDGRIDAPIKEY);
-
-exports.create = function (req, res) {
+import Post from "../models/Post";
+import sendGrid from "@sendgrid/mail";
+sendGrid.setApiKey(process.env.SENDGRIDAPIKEY!);
+import { Request, Response, NextFunction } from "express";
+export const create = function (req: Request, res: Response) {
   let post = new Post(req.body, req.session.user._id);
   post
     .create()
@@ -26,7 +26,7 @@ exports.create = function (req, res) {
     });
 };
 
-exports.viewSingle = async function (req, res) {
+export const viewSingle = async function (req: Request, res: Response) {
   try {
     let post = await Post.findSingleById(req.params.id, req.visitorId);
     res.send({ post: post, title: post.title });
@@ -37,7 +37,7 @@ exports.viewSingle = async function (req, res) {
   }
 };
 
-exports.viewEditScreen = async function (req, res) {
+export const viewEditScreen = async function (req: Request, res: Response) {
   try {
     let post = await Post.findSingleById(req.params.id, req.visitorId);
     if (post.isVisitorOwner) {
@@ -56,7 +56,7 @@ exports.viewEditScreen = async function (req, res) {
   }
 };
 
-exports.edit = function (req, res) {
+export const edit = function (req: Request, res: Response) {
   let post = new Post(req.body, req.visitorId, req.params.id);
   post
     .update()
@@ -75,7 +75,7 @@ exports.edit = function (req, res) {
     .catch(() => {
       // post with the requested id does not exist
       // or the current visitor is not the owner of the requested post
-      req.flash("errors", "you do not have permission to perform that action");
+      // req.flash("errors", "you do not have permission to perform that action");
       req.session.save(() => {
         // not authorized
         res.status(401).send({
@@ -85,7 +85,7 @@ exports.edit = function (req, res) {
     });
 };
 
-exports.delete = function (req, res) {
+export const deletePost = function (req: Request, res: Response) {
   Post.delete(req.params.id, req.visitorId)
     .then(() => {
       req.session.save(() => {
@@ -102,7 +102,7 @@ exports.delete = function (req, res) {
     });
 };
 
-exports.search = function (req, res) {
+export const search = function (req: Rquest, res: Response) {
   Post.search(req.body.searchTerm)
     .then((posts) => {
       res.json(posts);

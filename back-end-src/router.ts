@@ -1,8 +1,8 @@
-const express = require("express");
+import express from "express";
+import * as userController from "./controllers/userController";
+import * as postController from "./controllers/postController";
+import * as followController from "./controllers/followController";
 const router = express.Router();
-const userController = require("./controllers/userController");
-const postController = require("./controllers/postController");
-const followController = require("./controllers/followController");
 
 // User related routes
 router.get("/", userController.validateSession);
@@ -33,7 +33,7 @@ router.post(
 router.post(
   "/post/:id/delete",
   userController.mustBeLoggedIn,
-  postController.delete
+  postController.deletePost
 );
 router.post("/search", postController.search);
 
@@ -70,4 +70,4 @@ router.post(
   followController.removeFollow
 );
 
-module.exports = router;
+export default router;
