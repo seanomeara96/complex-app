@@ -4,17 +4,20 @@ import dotenv from "dotenv";
 import mongodb, { MongoClient } from "mongodb";
 import server from "./app";
 dotenv.config();
-async function startApp() {
-  try {
-    const db = await mongodb.connect(process.env.CONNECTIONSTRING!, {
-      useUnifiedTopology: true,
-    });
+let db: MongoClient | undefined;
+mongodb
+  .connect(process.env.CONNECTIONSTRING!, {
+    useUnifiedTopology: true,
+  })
+  .then((client: MongoClient) => {
+    db = client;
     server.listen(process.env.PORT, () =>
       console.log(`App is listening on port ${process.env.PORT}`)
     );
-  } catch (err) {
+  })
+  .catch((err) => {
     if (err) throw new Error(err);
-  }
-}
-startApp();
+    server.close();
+  });
+
 export default db;

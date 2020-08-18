@@ -2,17 +2,31 @@ const bcrypt = require("bcryptjs");
 const usersCollection = require("../db").db().collection("users");
 const validator = require("validator");
 const md5 = require("md5"); // Gravatar uses md5 hashing
-
-let User = function (data, getAvatar) {
-  this.data = data;
-  this.errors = [];
-  if (getAvatar == undefined) {
-    getAvatar = false;
+interface userData {
+  username: string;
+  email: string;
+  password: string;
+}
+class User {
+  avatar?: string;
+  data: userData;
+  errors: string[];
+  constructor(data: userData, getAvatar: boolean) {
+    this.data = data;
+    this.errors = [];
+    if (getAvatar == undefined) {
+      getAvatar = false;
+    }
+    if (getAvatar) {
+      this.getAvatar();
+    }
   }
-  if (getAvatar) {
-    this.getAvatar();
-  }
-};
+  cleanUp!: () => void;
+  validate!: () => void;
+  login!: () => void;
+  register!: () => void;
+  getAvatar!: () => void;
+}
 
 User.prototype.cleanUp = function () {
   if (typeof this.data.username != "string") {
@@ -102,7 +116,8 @@ User.prototype.login = function () {
         { username: this.data.username }
         // .findOne() and all of mongodb's other functions will return a promise
       )
-      .then((attemptedUser) => {
+      .then((attemptedUser: any) => {
+        // fix this any
         // Hash the login password to check against hashed database password
         // Bcrypt.compareSync takes two parameters
         // 1st is the uhashed password
@@ -147,17 +162,17 @@ User.prototype.getAvatar = function () {
   this.avatar = `https://gravatar.com/avatar/${md5(this.data.email)}?s=128`;
 };
 
-User.findByUserName = function (username) {
+export const findByUserName = function (username: string) {
   return new Promise(function (resolve, reject) {
     if (typeof username != "string") {
       // Dont allow people to pass objects onto mongodb
       reject();
-      return; // Escape the function
     }
     // Object is what we want to find in our database
     usersCollection
       .findOne({ username: username })
-      .then(function (userDoc) {
+      .then(function (userDoc: any) {
+        // fix this any
         if (userDoc) {
           userDoc = new User(userDoc, true);
           userDoc = {
@@ -175,7 +190,7 @@ User.findByUserName = function (username) {
       });
   });
 };
-User.doesEmailExist = function (email) {
+export const doesEmailExist = function (email: string) {
   return new Promise(async function (resolve, reject) {
     if (typeof email != "string") {
       resolve(false);

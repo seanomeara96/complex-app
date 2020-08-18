@@ -1,11 +1,11 @@
-const express = require("express");
+import express, { Request, Response } from "express";
 const router = express.Router();
 
-module.exports = router;
-
-router.get("/test", (req, res) => {
+router.get("/test", (req: Request, res: Response) => {
   res.send("test");
 });
-router.post("/test", (req, res) => {
+router.post("/test", (req: Request, res: Response) => {
   res.json(req.body);
 });
+
+export default router;

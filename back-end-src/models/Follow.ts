@@ -1,14 +1,17 @@
 import db from "../db";
 import mongodb from "mongodb";
 import User from "./User";
-const usersCollection = db.db().collection("users");
-const followsCollection = db.db().collection("follows");
+
+const usersCollection = db!.db().collection("users");
+const followsCollection = db!.db().collection("follows");
+
 const ObjectID = mongodb.ObjectID;
 
 class Follow {
   followedUsername: string;
   authorId: string;
   errors: string[];
+  followedId?: mongodb.ObjectID;
 
   constructor(followedUsername: string, authorId: string) {
     this.followedUsername = followedUsername;
@@ -21,7 +24,7 @@ class Follow {
       this.followedUsername = "";
     }
   }
-  validate(action) {
+  async validate(action: string) {
     //followed usernmae must exist in database
     let followedAccount = await usersCollection.findOne({
       username: this.followedUsername,
@@ -48,7 +51,7 @@ class Follow {
       }
     }
     //shoukld not be able to follow oneself
-    if (this.followedId.equals(this.authorId)) {
+    if (this.followedId!.equals(this.authorId)) {
       this.errors.push("you cannot follow yourself, idiot");
     }
   }
@@ -115,9 +118,10 @@ class Follow {
             },
           ])
           .toArray();
-        followers = followers.map(function (follower) {
+        followers = followers.map(function (follower: any) {
+          //fix this any
           //create a user
-          let user = new User(follower, true);
+          let user: User = new User(follower, true);
           return { username: follower.username, avatar: user.avatar };
         });
         resolve(followers);
@@ -148,7 +152,8 @@ class Follow {
             },
           ])
           .toArray();
-        followers = followers.map(function (follower) {
+        followers = followers.map(function (follower: any) {
+          // fix this any
           //create a user
           let user = new User(follower, true);
           return { username: follower.username, avatar: user.avatar };

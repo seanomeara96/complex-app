@@ -1,15 +1,36 @@
-const postsCollection = require("../db").db().collection("posts");
-const followsCollection = require("../db").db().collection("follows");
-const ObjectID = require("mongodb").ObjectID;
-const User = require("./User");
-const sanitizeHTML = require("sanitize-html");
+import db from "../db";
+import { ObjectID } from "mongodb";
+import User from "./User";
+import sanitizeHTML from "sanitize-html";
+const postsCollection = db!.db().collection("posts");
+const followsCollection = db!.db().collection("follows");
 
-let Post = function (data, userid, requestedPostId) {
-  this.data = data;
-  this.errors = [];
-  this.userid = userid;
-  this.requestedPostId = requestedPostId;
-};
+interface postData {
+  title: string;
+  body: string;
+  createdDate?: Date;
+  author?: ObjectID;
+}
+
+class Post {
+  data: postData;
+  errors: string[];
+  userid: ObjectID;
+  requestedPostId: ObjectID;
+  isVisitorOwner?: string;
+  constructor(data: postData, userid: ObjectID, requestedPostId: ObjectID) {
+    this.data = data;
+    this.errors = [];
+    this.userid = userid;
+    this.requestedPostId = requestedPostId;
+  }
+  create!: () => void;
+  update!: () => void;
+  actuallyUpdate!: () => void;
+  cleanUp!: () => void;
+  validate!: () => void;
+  reusablePostQuery?: () => void;
+}
 
 Post.prototype.create = function () {
   return new Promise((resolve, reject) => {
@@ -19,7 +40,8 @@ Post.prototype.create = function () {
       // Save post to database
       postsCollection
         .insertOne(this.data)
-        .then((info) => {
+        .then((info: any) => {
+          // fix this
           resolve(info.ops[0]._id);
         })
         .catch(() => {
@@ -36,7 +58,7 @@ Post.prototype.create = function () {
 Post.prototype.update = function () {
   return new Promise(async (resolve, reject) => {
     try {
-      let post = await Post.findSingleById(this.requestedPostId, this.userid);
+      let post = await findSingleById(this.requestedPostId, this.userid);
       if (post.isVisitorOwner) {
         // Update the db
         let status = await this.actuallyUpdate();
@@ -77,18 +99,18 @@ Post.prototype.cleanUp = function () {
   this.data = {
     title: sanitizeHTML(this.data.title.trim(), {
       allowedTags: [],
-      allowedAttributes: [],
+      allowedAttributes: {},
     }),
     body: sanitizeHTML(this.data.body.trim(), {
       allowedTags: [],
-      allowedAttributes: [],
+      allowedAttributes: {},
     }),
     // First argument is what you are trying to sanitize
     // Second is an object with configuration options
     createdDate: new Date(),
     // We use this ObjectID function because mongo
     // prefers that we store IDs as objects ratgher than strings of text
-    author: ObjectID(this.userid),
+    author: new ObjectID(this.userid),
   };
 };
 
@@ -101,7 +123,10 @@ Post.prototype.validate = function () {
   }
 };
 
-Post.reusablePostQuery = function (uniqueOperations, visitorId) {
+export const reusablePostQuery = function (
+  uniqueOperations: any,
+  visitorId?: ObjectID
+): Promise<Post[]> {
   return new Promise(async function (resolve, reject) {
     let aggOperations = uniqueOperations.concat([
       // Here we a performing a lookup
@@ -155,14 +180,17 @@ Post.reusablePostQuery = function (uniqueOperations, visitorId) {
   });
 };
 
-Post.findSingleById = function (id, visitorId) {
+export const findSingleById = function (
+  id: ObjectID,
+  visitorId: ObjectID
+): Promise<Post> {
   return new Promise(async function (resolve, reject) {
     if (typeof id != "string" || !ObjectID.isValid(id)) {
       //OjectID converts the string into mongodb format
       reject();
       return;
     }
-    let posts = await Post.reusablePostQuery(
+    let posts: Post[] = await reusablePostQuery(
       [{ $match: { _id: new ObjectID(id) } }],
       visitorId
     );
@@ -176,17 +204,20 @@ Post.findSingleById = function (id, visitorId) {
   });
 };
 
-Post.findByAuthorId = function (authorId) {
-  return Post.reusablePostQuery([
+export const findByAuthorId = function (authorId: string) {
+  return reusablePostQuery([
     { $match: { author: authorId } },
     { $sort: { createdDate: -1 } },
   ]);
 };
 
-Post.delete = function (postIdToDelete, currentUserId) {
+export const deletePost = function (
+  postIdToDelete: ObjectID,
+  currentUserId: ObjectID
+) {
   return new Promise(async (resolve, reject) => {
     try {
-      let post = await Post.findSingleById(postIdToDelete, currentUserId);
+      let post = await findSingleById(postIdToDelete, currentUserId);
       if (post.isVisitorOwner) {
         await postsCollection.deleteOne({ _id: new ObjectID(postIdToDelete) });
         resolve();
@@ -199,12 +230,12 @@ Post.delete = function (postIdToDelete, currentUserId) {
   });
 };
 
-Post.search = function (searchTerm) {
+export const search = function (searchTerm: string) {
   return new Promise(async (resolve, reject) => {
     if (typeof searchTerm == "string") {
       try {
         console.log("...searching");
-        let posts = await Post.reusablePostQuery([
+        let posts = await reusablePostQuery([
           { $match: { $text: { $search: searchTerm } } },
           { $sort: { score: { $meta: "textScore" } } },
         ]);
@@ -220,7 +251,7 @@ Post.search = function (searchTerm) {
   });
 };
 
-Post.countPostsByAuthor = function (id) {
+export const countPostsByAuthor = function (id: ObjectID) {
   return new Promise(async (resolve, reject) => {
     try {
       let postCount = await postsCollection.countDocuments({ author: id });
@@ -231,7 +262,7 @@ Post.countPostsByAuthor = function (id) {
   });
 };
 
-Post.getFeed = async function (id) {
+export const getFeed = async function (id: ObjectID) {
   // Create an array of the user ids that the current user follows
   let followedUsers = await followsCollection
     .find({ authorId: new ObjectID(id) })
@@ -240,9 +271,10 @@ Post.getFeed = async function (id) {
     return followDoc.followedId;
   });
   // Look for posts where author is in the above array of followed users
-  return Post.reusablePostQuery([
+  return reusablePostQuery([
     { $match: { author: { $in: followedUsers } } },
     { $sort: { createdDate: -1 } },
   ]);
 };
-module.exports = Post;
+
+export default Post;
