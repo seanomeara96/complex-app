@@ -6,7 +6,8 @@
   "scripts": {
     "watch": "nodemon --exec ts-node -T ./src/app.ts",
     "prod": "nodemon ./prod/app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "gulp clean && tsc"
   },
   "keywords": [],
   "author": "",
@@ -48,6 +49,8 @@
     "webpack-cli": "^3.3.12"
   },
   "devDependencies": {
+    "del": "^5.1.0",
+    "gulp": "^4.0.2",
     "ts-node": "^8.10.2",
     "typescript": "^3.9.7"
   }

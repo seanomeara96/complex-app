@@ -14,7 +14,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -29,26 +29,62 @@ var cors_1 = __importDefault(require("cors"));
 var router_1 = __importDefault(require("./router"));
 var setVisitorId_1 = __importDefault(require("./setVisitorId"));
 var db_1 = __importStar(require("./db"));
-var sessionOptions_1 = __importDefault(require("./sessionOptions"));
+var sanitize_html_1 = __importDefault(require("sanitize-html"));
+var MongoStore = require("connect-mongo")(express_session_1.default);
 var app = express_1.default();
 var server = require("http").createServer(app);
 var corsConfig = {
     credentials: true,
     origin: "http://localhost:3000",
 };
+var sessionOptions;
 db_1.default()
     .then(function (client) {
     db_1.setGlobalClient(client);
     app.listen(process.env.PORT, function () {
         return console.log("Application listening on port " + process.env.port);
     });
+    sessionOptions = express_session_1.default({
+        secret: "Javacript is toit",
+        store: new MongoStore({ client: client }),
+        resave: false,
+        saveUninitialized: false,
+        cookie: {
+            maxAge: 1000 * 60 * 60 * 24,
+            httpOnly: true,
+        },
+    });
     app.use(express_1.default.urlencoded({ extended: false }));
     app.use(express_1.default.json());
     app.use(cors_1.default(corsConfig));
-    app.use(express_session_1.default(sessionOptions_1.default(client)));
+    app.use(sessionOptions);
     app.use(filterHTML_1.default);
     app.use(setVisitorId_1.default);
     app.use("/", router_1.default);
+    var io = require("socket.io")(server);
+    // socket represents the connection between server and browser
+    io.use(function (socket, next) {
+        sessionOptions(socket.request, socket.request.res, next);
+    });
+    io.on("connection", function (socket) {
+        if (socket.request.session.user) {
+            var user_1 = socket.request.session.user;
+            socket.emit("welcome", {
+                username: user_1.username,
+                avatar: user_1.avatar,
+            });
+            socket.on("chatMessageFromBrowser", function (data) {
+                socket.broadcast.emit("chatMessageFromServer", {
+                    message: sanitize_html_1.default(data.message, {
+                        allowedTags: [],
+                        allowedAttributes: {},
+                    }),
+                    username: user_1.username,
+                    avatar: user_1.avatar,
+                });
+            });
+        }
+    });
 })
     .catch(function () {
     console.log("something went wrong...");
