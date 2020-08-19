@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "watch": "nodemon --exec ts-node -T ./src/app.ts",
-    "prod": "node ./prod/db.js",
+    "prod": "nodemon ./prod/app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
