@@ -71,6 +71,7 @@ export const mustBeLoggedIn = function (
 export const login = (req: Request, res: Response) => {
   console.log("logging user in...");
   let user = new User(req.body);
+  console.log("the user", user);
   user
     .login()
     .then(() => {

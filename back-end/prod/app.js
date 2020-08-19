@@ -41,9 +41,6 @@ var sessionOptions;
 db_1.default()
     .then(function (client) {
     db_1.setGlobalClient(client);
-    app.listen(process.env.PORT, function () {
-        return console.log("Application listening on port " + process.env.port);
-    });
     sessionOptions = express_session_1.default({
         secret: "Javacript is toit",
         store: new MongoStore({ client: client }),
@@ -54,6 +51,11 @@ db_1.default()
             httpOnly: true,
         },
     });
+    app.listen(process.env.PORT, function () {
+        return console.log("Application listening on port " + process.env.port);
+    });
+})
+    .then(function () {
     app.use(express_1.default.urlencoded({ extended: false }));
     app.use(express_1.default.json());
     app.use(cors_1.default(corsConfig));

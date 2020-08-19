@@ -43,8 +43,6 @@ var db_1 = require("../db");
 var mongodb_1 = require("mongodb");
 var User_1 = __importDefault(require("./User"));
 var sanitize_html_1 = __importDefault(require("sanitize-html"));
-var postsCollection = db_1.globalClient === null || db_1.globalClient === void 0 ? void 0 : db_1.globalClient.db().collection("posts");
-var followsCollection = db_1.globalClient === null || db_1.globalClient === void 0 ? void 0 : db_1.globalClient.db().collection("follows");
 var Post = /** @class */ (function () {
     function Post(data, userid, requestedPostId) {
         this.data = data;
@@ -57,11 +55,12 @@ var Post = /** @class */ (function () {
 Post.prototype.create = function () {
     var _this = this;
     return new Promise(function (resolve, reject) {
+        var _a;
         _this.cleanUp();
         _this.validate();
         if (!_this.errors.length) {
             // Save post to database
-            postsCollection === null || postsCollection === void 0 ? void 0 : postsCollection.insertOne(_this.data).then(function (info) {
+            (_a = db_1.fetchCollection("posts")) === null || _a === void 0 ? void 0 : _a.insertOne(_this.data).then(function (info) {
                 // fix this
                 resolve(info.ops[0]._id);
             }).catch(function () {
@@ -108,20 +107,21 @@ Post.prototype.update = function () {
 Post.prototype.actuallyUpdate = function () {
     var _this = this;
     return new Promise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            switch (_a.label) {
+        var _a;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
                 case 0:
                     this.cleanUp();
                     this.validate();
                     if (!!this.errors.length) return [3 /*break*/, 2];
-                    return [4 /*yield*/, (postsCollection === null || postsCollection === void 0 ? void 0 : postsCollection.findOneAndUpdate({ _id: new mongodb_1.ObjectID(this.requestedPostId) }, { $set: { title: this.data.title, body: this.data.body } }))];
+                    return [4 /*yield*/, ((_a = db_1.fetchCollection("posts")) === null || _a === void 0 ? void 0 : _a.findOneAndUpdate({ _id: new mongodb_1.ObjectID(this.requestedPostId) }, { $set: { title: this.data.title, body: this.data.body } }))];
                 case 1:
-                    _a.sent();
+                    _b.sent();
                     resolve("success");
                     return [3 /*break*/, 3];
                 case 2:
                     resolve("failure");
-                    _a.label = 3;
+                    _b.label = 3;
                 case 3: return [2 /*return*/];
             }
         });
@@ -161,6 +161,7 @@ Post.prototype.validate = function () {
     }
 };
 Post.prototype.reusablePostQuery = function (uniqueOperations, visitorId) {
+    console.log("reusable post query called");
     return new Promise(function (resolve, reject) {
         return __awaiter(this, void 0, void 0, function () {
             var aggOperations, posts, err_1;
@@ -189,10 +190,13 @@ Post.prototype.reusablePostQuery = function (uniqueOperations, visitorId) {
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 3, , 4]);
-                        return [4 /*yield*/, (postsCollection === null || postsCollection === void 0 ? void 0 : postsCollection.aggregate(aggOperations).toArray())];
+                        console.log("logging collection", db_1.fetchCollection("posts"));
+                        return [4 /*yield*/, db_1.fetchCollection("posts")
+                                .aggregate(aggOperations)
+                                .toArray()];
                     case 2:
                         posts = _a.sent();
-                        posts = posts === null || posts === void 0 ? void 0 : posts.map(function (post) {
+                        posts = posts.map(function (post) {
                             post.isVisitorOwner = post.authorId.equals(visitorId);
                             post.authorId = undefined;
                             post.author = {
@@ -226,11 +230,11 @@ Post.prototype.findSingleById = function (id, visitorId) {
                             reject();
                             return [2 /*return*/];
                         }
-                        return [4 /*yield*/, Post.prototype.reusablePostQuery([{ $match: { _id: new mongodb_1.ObjectID(id) } }], new mongodb_1.ObjectID(visitorId))];
+                        return [4 /*yield*/, Post.prototype.reusablePostQuery([{ $match: { _id: id } }], visitorId)];
                     case 1:
                         posts = _a.sent();
                         if (posts.length) {
-                            console.log(posts[0]);
+                            console.log("findsingleByid", posts[0]);
                             // If this mongodb finds a post (array has more than 0 items) this will return true
                             resolve(posts[0]);
                         }
@@ -253,25 +257,28 @@ Post.prototype.deletePost = function (postIdToDelete, currentUserId) {
     var _this = this;
     return new Promise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
         var post, _a;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
+        var _b;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
                 case 0:
-                    _b.trys.push([0, 5, , 6]);
+                    _c.trys.push([0, 5, , 6]);
                     return [4 /*yield*/, Post.prototype.findSingleById(postIdToDelete, currentUserId)];
                 case 1:
-                    post = _b.sent();
+                    post = _c.sent();
                     if (!post.isVisitorOwner) return [3 /*break*/, 3];
-                    return [4 /*yield*/, (postsCollection === null || postsCollection === void 0 ? void 0 : postsCollection.deleteOne({ _id: new mongodb_1.ObjectID(postIdToDelete) }))];
+                    return [4 /*yield*/, ((_b = db_1.fetchCollection("posts")) === null || _b === void 0 ? void 0 : _b.deleteOne({
+                            _id: new mongodb_1.ObjectID(postIdToDelete),
+                        }))];
                 case 2:
-                    _b.sent();
+                    _c.sent();
                     resolve();
                     return [3 /*break*/, 4];
                 case 3:
                     reject();
-                    _b.label = 4;
+                    _c.label = 4;
                 case 4: return [3 /*break*/, 6];
                 case 5:
-                    _a = _b.sent();
+                    _a = _c.sent();
                     reject();
                     return [3 /*break*/, 6];
                 case 6: return [2 /*return*/];
@@ -297,7 +304,7 @@ Post.prototype.search = function (searchTerm) {
                         ])];
                 case 2:
                     posts = _a.sent();
-                    console.log(posts);
+                    console.log("search result", posts);
                     resolve(posts);
                     return [3 /*break*/, 4];
                 case 3:
@@ -318,17 +325,20 @@ Post.prototype.countPostsByAuthor = function (id) {
     var _this = this;
     return new Promise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
         var postCount, err_3;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
+        var _a;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
                 case 0:
-                    _a.trys.push([0, 2, , 3]);
-                    return [4 /*yield*/, (postsCollection === null || postsCollection === void 0 ? void 0 : postsCollection.countDocuments({ author: id }))];
+                    _b.trys.push([0, 2, , 3]);
+                    return [4 /*yield*/, ((_a = db_1.fetchCollection("posts")) === null || _a === void 0 ? void 0 : _a.countDocuments({
+                            author: id,
+                        }))];
                 case 1:
-                    postCount = _a.sent();
+                    postCount = _b.sent();
                     resolve(postCount);
                     return [3 /*break*/, 3];
                 case 2:
-                    err_3 = _a.sent();
+                    err_3 = _b.sent();
                     reject(err_3);
                     return [3 /*break*/, 3];
                 case 3: return [2 /*return*/];
@@ -341,7 +351,9 @@ Post.prototype.getFeed = function (id) {
         var followedUsers;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, (followsCollection === null || followsCollection === void 0 ? void 0 : followsCollection.find({ authorId: new mongodb_1.ObjectID(id) }).toArray())];
+                case 0: return [4 /*yield*/, db_1.fetchCollection("follows")
+                        .find({ authorId: new mongodb_1.ObjectID(id) })
+                        .toArray()];
                 case 1:
                     followedUsers = _a.sent();
                     followedUsers = followedUsers === null || followedUsers === void 0 ? void 0 : followedUsers.map(function (followDoc) {

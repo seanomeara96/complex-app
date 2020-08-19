@@ -21,9 +21,6 @@ class ChatBox extends React.Component {
     if (this.props.isOpen === false && this.state.connectionIsOpen === true) {
       console.log("connection closed");
     }
-    if (typeof this.chatLog !== "undefined") {
-      this.scrollIntoView();
-    }
   }
 
   openConnection() {
@@ -93,10 +90,6 @@ class ChatBox extends React.Component {
     this.chatField.value = "";
     this.chatField.focus();
   }
-
-  scrollIntoView = () => {
-    this.chatLog.scrollTop = this.chatLog.scrollHeight;
-  };
 
   renderChatField() {
     if (this.props.isOpen === true) {

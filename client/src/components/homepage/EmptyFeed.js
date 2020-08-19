@@ -3,7 +3,6 @@ import Flash from "../Flash";
 import { connect } from "react-redux";
 
 const EmptyFeed = (props) => {
-  console.log();
   return (
     <div className="container py-md-5 container--narrow">
       <Flash errors={props.errors} successes={props.successes} />

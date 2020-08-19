@@ -1,9 +1,7 @@
-import { globalClient } from "../db";
+import { fetchCollection } from "../db";
 import { ObjectID } from "mongodb";
 import User from "./User";
 import sanitizeHTML from "sanitize-html";
-let postsCollection = globalClient?.db().collection("posts");
-let followsCollection = globalClient?.db().collection("follows");
 
 interface postData {
   title: string;
@@ -50,7 +48,7 @@ Post.prototype.create = function () {
     this.validate();
     if (!this.errors.length) {
       // Save post to database
-      postsCollection
+      fetchCollection("posts")
         ?.insertOne(this.data)
         .then((info: any) => {
           // fix this
@@ -92,7 +90,7 @@ Post.prototype.actuallyUpdate = function () {
     this.cleanUp();
     this.validate();
     if (!this.errors.length) {
-      await postsCollection?.findOneAndUpdate(
+      await fetchCollection("posts")?.findOneAndUpdate(
         { _id: new ObjectID(this.requestedPostId) },
         { $set: { title: this.data.title, body: this.data.body } }
       );
@@ -142,6 +140,7 @@ Post.prototype.reusablePostQuery = function (
   uniqueOperations: any,
   visitorId?: ObjectID
 ) {
+  console.log("reusable post query called");
   return new Promise(async function (resolve, reject) {
     let aggOperations = uniqueOperations.concat([
       {
@@ -163,8 +162,11 @@ Post.prototype.reusablePostQuery = function (
       },
     ]);
     try {
-      let posts = await postsCollection?.aggregate(aggOperations).toArray();
-      posts = posts?.map(function (post: any) {
+      console.log("logging collection", fetchCollection("posts"));
+      let posts = await fetchCollection("posts")
+        .aggregate(aggOperations)
+        .toArray();
+      posts = posts!.map(function (post: any) {
         post.isVisitorOwner = post.authorId.equals(visitorId);
         post.authorId = undefined;
         post.author = {
@@ -189,11 +191,11 @@ Post.prototype.findSingleById = function (id: ObjectID, visitorId: ObjectID) {
       return;
     }
     let posts: Post[] = await Post.prototype.reusablePostQuery(
-      [{ $match: { _id: new ObjectID(id) } }],
-      new ObjectID(visitorId)
+      [{ $match: { _id: id } }],
+      visitorId
     );
     if (posts.length) {
-      console.log(posts[0]);
+      console.log("findsingleByid", posts[0]);
       // If this mongodb finds a post (array has more than 0 items) this will return true
       resolve(posts[0]);
     } else {
@@ -220,7 +222,9 @@ Post.prototype.deletePost = function (
         currentUserId
       );
       if (post.isVisitorOwner) {
-        await postsCollection?.deleteOne({ _id: new ObjectID(postIdToDelete) });
+        await fetchCollection("posts")?.deleteOne({
+          _id: new ObjectID(postIdToDelete),
+        });
         resolve();
       } else {
         reject();
@@ -240,7 +244,7 @@ Post.prototype.search = function (searchTerm: string) {
           { $match: { $text: { $search: searchTerm } } },
           { $sort: { score: { $meta: "textScore" } } },
         ]);
-        console.log(posts);
+        console.log("search result", posts);
         resolve(posts);
       } catch (err) {
         console.log("error with search", err);
@@ -255,7 +259,9 @@ Post.prototype.search = function (searchTerm: string) {
 Post.prototype.countPostsByAuthor = function (id: ObjectID) {
   return new Promise(async (resolve, reject) => {
     try {
-      let postCount = await postsCollection?.countDocuments({ author: id });
+      let postCount = await fetchCollection("posts")?.countDocuments({
+        author: id,
+      });
       resolve(postCount);
     } catch (err) {
       reject(err);
@@ -265,8 +271,8 @@ Post.prototype.countPostsByAuthor = function (id: ObjectID) {
 
 Post.prototype.getFeed = async function (id: ObjectID) {
   // Create an array of the user ids that the current user follows
-  let followedUsers = await followsCollection
-    ?.find({ authorId: new ObjectID(id) })
+  let followedUsers = await fetchCollection("follows")
+    .find({ authorId: new ObjectID(id) })
     .toArray();
   followedUsers = followedUsers?.map(function (followDoc: any) {
     return followDoc.followedId;

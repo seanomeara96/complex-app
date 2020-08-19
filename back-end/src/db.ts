@@ -3,7 +3,7 @@
 import dotenv from "dotenv";
 import mongodb, { MongoClient } from "mongodb";
 dotenv.config();
-export let globalClient: MongoClient | undefined;
+export let globalClient: MongoClient;
 function connectToDatabase(): Promise<MongoClient> {
   console.log("connecting...");
   return new Promise(async (resolve, reject) => {
@@ -25,5 +25,8 @@ export const setGlobalClient = (client: MongoClient) => {
   console.log("setGlobalClient called...");
   globalClient = client;
   console.log(typeof globalClient);
+};
+export const fetchCollection = (collection: string) => {
+  return globalClient.db().collection(collection);
 };
 export default connectToDatabase;

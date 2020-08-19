@@ -1,8 +1,8 @@
 import bcrypt from "bcryptjs";
-import { globalClient } from "../db";
+import { fetchCollection } from "../db";
 import md5 from "md5";
 import validator from "validator";
-const usersCollection = globalClient?.db().collection("users");
+
 interface userInput {
   username: string;
   email: string;
@@ -89,7 +89,7 @@ User.prototype.validate = function () {
       this.data.username!.length < 31 &&
       validator.isAlphanumeric(this.data.username)
     ) {
-      let usernameExists = await usersCollection?.findOne({
+      let usernameExists = await fetchCollection("users").findOne({
         username: this.data.username,
       });
       //usersCollection is our mongodb users collection
@@ -99,7 +99,7 @@ User.prototype.validate = function () {
     }
     //Only if the email is valid then check to see if it's already taken
     if (validator.isEmail(this.data.email)) {
-      let emailExists = await usersCollection?.findOne({
+      let emailExists = await fetchCollection("users").findOne({
         email: this.data.email,
       });
       //usersCollection is our mongodb users collection
@@ -112,6 +112,7 @@ User.prototype.validate = function () {
 };
 
 User.prototype.login = function () {
+  console.log("login function was called");
   return new Promise((resolve, reject) => {
     this.cleanUp();
     // findOne() takes two parameters
@@ -119,8 +120,8 @@ User.prototype.login = function () {
     // The second is a function that .findOne() is going to call once the first-
     // operation has had a chance to complete
     // because we dont know how long the search is going to take
-    usersCollection
-      ?.findOne(
+    fetchCollection("users")
+      .findOne(
         { username: this.data.username }
         // .findOne() and all of mongodb's other functions will return a promise
       )
@@ -158,7 +159,7 @@ User.prototype.register = function () {
       // Overide the users password
       this.data.password = bcrypt.hashSync(this.data.password, salt);
       // Adds the new user to the database
-      await usersCollection?.insertOne(this.data);
+      await fetchCollection("users").insertOne(this.data);
       this.getAvatar();
       resolve();
     } else {
@@ -177,8 +178,8 @@ User.prototype.findByUserName = function (username: string) {
       reject();
     }
     // Object is what we want to find in our database
-    usersCollection
-      ?.findOne({ username: username })
+    fetchCollection("users")
+      .findOne({ username: username })
       .then(function (userDoc: any) {
         // fix this any
         if (userDoc) {
@@ -204,7 +205,7 @@ User.prototype.doesEmailExist = function (email: string) {
       resolve(false);
       return;
     }
-    let user = await usersCollection?.findOne({ email: email });
+    let user = await fetchCollection("users").findOne({ email: email });
     if (user) {
       resolve(true);
     } else {

@@ -76,7 +76,7 @@ exports.viewSingle = function (req, res) {
             switch (_b.label) {
                 case 0:
                     _b.trys.push([0, 2, , 3]);
-                    return [4 /*yield*/, Post_1.default.prototype.findSingleById(new mongodb_1.ObjectID(req.params.id), req.visitorId)];
+                    return [4 /*yield*/, Post_1.default.prototype.findSingleById(new mongodb_1.ObjectID(req.params.id), new mongodb_1.ObjectID(req.visitorId))];
                 case 1:
                     post = _b.sent();
                     res.send({ post: post, title: post.data.title });
@@ -176,6 +176,7 @@ exports.deletePost = function (req, res) {
     });
 };
 exports.search = function (req, res) {
+    console.log("search term", req.body);
     Post_1.default.prototype
         .search(req.body.searchTerm)
         .then(function (posts) {

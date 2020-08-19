@@ -23,9 +23,6 @@ let sessionOptions: RequestHandler;
 connectToDatabase()
   .then((client) => {
     setGlobalClient(client);
-    app.listen(process.env.PORT, () =>
-      console.log(`Application listening on port ${process.env.port}`)
-    );
     sessionOptions = session({
       secret: "Javacript is toit",
       store: new MongoStore({ client }),
@@ -36,6 +33,11 @@ connectToDatabase()
         httpOnly: true,
       },
     });
+    app.listen(process.env.PORT, () =>
+      console.log(`Application listening on port ${process.env.port}`)
+    );
+  })
+  .then(() => {
     app.use(express.urlencoded({ extended: false }));
     app.use(express.json());
     app.use(cors(corsConfig));

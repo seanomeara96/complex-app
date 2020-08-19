@@ -31,7 +31,7 @@ export const viewSingle = async function (req: Request, res: Response) {
   try {
     let post = await Post.prototype.findSingleById(
       new ObjectID(req.params.id),
-      req.visitorId!
+      new ObjectID(req.visitorId)
     );
     res.send({ post: post, title: post.data.title });
   } catch {
@@ -111,6 +111,7 @@ export const deletePost = function (req: Request, res: Response) {
 };
 
 export const search = function (req: Request, res: Response) {
+  console.log("search term", req.body);
   Post.prototype
     .search(req.body.searchTerm)
     .then((posts: Post[]) => {

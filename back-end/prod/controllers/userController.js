@@ -118,6 +118,7 @@ exports.mustBeLoggedIn = function (req, res, next) {
 exports.login = function (req, res) {
     console.log("logging user in...");
     var user = new User_1.default(req.body);
+    console.log("the user", user);
     user
         .login()
         .then(function () {

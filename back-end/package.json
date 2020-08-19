@@ -4,7 +4,7 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "watch": "nodemon --exec ts-node -T ./src/app.ts",
+    "dev": "nodemon --exec ts-node -T ./src/app.ts --watch ./src",
     "prod": "nodemon ./prod/app.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "gulp clean && tsc"

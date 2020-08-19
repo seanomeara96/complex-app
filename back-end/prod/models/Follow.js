@@ -42,8 +42,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var db_1 = require("../db");
 var mongodb_1 = require("mongodb");
 var User_1 = __importDefault(require("./User"));
-var usersCollection = db_1.globalClient === null || db_1.globalClient === void 0 ? void 0 : db_1.globalClient.db().collection("users");
-var followsCollection = db_1.globalClient === null || db_1.globalClient === void 0 ? void 0 : db_1.globalClient.db().collection("follows");
 var Follow = /** @class */ (function () {
     function Follow(followedUsername, authorId) {
         this.followedUsername = followedUsername;
@@ -63,9 +61,9 @@ Follow.prototype.validate = function (action) {
         var followedAccount, doesFollowAlreadyExist;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, (usersCollection === null || usersCollection === void 0 ? void 0 : usersCollection.findOne({
+                case 0: return [4 /*yield*/, db_1.fetchCollection("users").findOne({
                         username: this.followedUsername,
-                    }))];
+                    })];
                 case 1:
                     followedAccount = _a.sent();
                     if (followedAccount) {
@@ -74,10 +72,10 @@ Follow.prototype.validate = function (action) {
                     else {
                         this.errors.push("you cannot follow a user that does not exist");
                     }
-                    return [4 /*yield*/, (followsCollection === null || followsCollection === void 0 ? void 0 : followsCollection.findOne({
+                    return [4 /*yield*/, db_1.fetchCollection("follows").findOne({
                             followedId: this.followedId,
                             authorId: new mongodb_1.ObjectID(this.authorId),
-                        }))];
+                        })];
                 case 2:
                     doesFollowAlreadyExist = _a.sent();
                     if (action == "create") {
@@ -112,10 +110,10 @@ Follow.prototype.create = function () {
                             case 1:
                                 _a.sent();
                                 if (!!this.errors.length) return [3 /*break*/, 3];
-                                return [4 /*yield*/, (followsCollection === null || followsCollection === void 0 ? void 0 : followsCollection.insertOne({
+                                return [4 /*yield*/, db_1.fetchCollection("follows").insertOne({
                                         followedId: this.followedId,
                                         authorId: new mongodb_1.ObjectID(this.authorId),
-                                    }))];
+                                    })];
                             case 2:
                                 _a.sent();
                                 resolve();
@@ -143,10 +141,10 @@ Follow.prototype.deleteFollow = function () {
                             case 1:
                                 _a.sent();
                                 if (!!this.errors.length) return [3 /*break*/, 3];
-                                return [4 /*yield*/, (followsCollection === null || followsCollection === void 0 ? void 0 : followsCollection.deleteOne({
+                                return [4 /*yield*/, db_1.fetchCollection("follows").deleteOne({
                                         followedId: this.followedId,
                                         authorId: new mongodb_1.ObjectID(this.authorId),
-                                    }))];
+                                    })];
                             case 2:
                                 _a.sent();
                                 resolve();
@@ -166,10 +164,10 @@ Follow.prototype.isVisitorFollowing = function (followedId, visitorId) {
         var followDoc;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, (followsCollection === null || followsCollection === void 0 ? void 0 : followsCollection.findOne({
+                case 0: return [4 /*yield*/, db_1.fetchCollection("follows").findOne({
                         followedId: followedId,
                         authorId: new mongodb_1.ObjectID(visitorId),
-                    }))];
+                    })];
                 case 1:
                     followDoc = _a.sent();
                     if (followDoc) {
@@ -187,11 +185,12 @@ Follow.prototype.getFollowersById = function (id) {
     var _this = this;
     return new Promise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
         var followers, _a;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
+        var _b;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
                 case 0:
-                    _b.trys.push([0, 2, , 3]);
-                    return [4 /*yield*/, (followsCollection === null || followsCollection === void 0 ? void 0 : followsCollection.aggregate([
+                    _c.trys.push([0, 2, , 3]);
+                    return [4 /*yield*/, ((_b = db_1.fetchCollection("follows")) === null || _b === void 0 ? void 0 : _b.aggregate([
                             { $match: { followedId: id } },
                             {
                                 $lookup: {
@@ -209,7 +208,7 @@ Follow.prototype.getFollowersById = function (id) {
                             },
                         ]).toArray())];
                 case 1:
-                    followers = _b.sent();
+                    followers = _c.sent();
                     followers = followers === null || followers === void 0 ? void 0 : followers.map(function (follower) {
                         //fix this any
                         //create a user
@@ -219,7 +218,7 @@ Follow.prototype.getFollowersById = function (id) {
                     resolve(followers);
                     return [3 /*break*/, 3];
                 case 2:
-                    _a = _b.sent();
+                    _a = _c.sent();
                     reject();
                     return [3 /*break*/, 3];
                 case 3: return [2 /*return*/];
@@ -235,7 +234,8 @@ Follow.prototype.getFollowingById = function (id) {
             switch (_b.label) {
                 case 0:
                     _b.trys.push([0, 2, , 3]);
-                    return [4 /*yield*/, (followsCollection === null || followsCollection === void 0 ? void 0 : followsCollection.aggregate([
+                    return [4 /*yield*/, db_1.fetchCollection("follows")
+                            .aggregate([
                             { $match: { authorId: id } },
                             {
                                 $lookup: {
@@ -251,7 +251,8 @@ Follow.prototype.getFollowingById = function (id) {
                                     email: { $arrayElemAt: ["$userDoc.email", 0] },
                                 },
                             },
-                        ]).toArray())];
+                        ])
+                            .toArray()];
                 case 1:
                     followers = _b.sent();
                     followers = followers === null || followers === void 0 ? void 0 : followers.map(function (follower) {
@@ -277,9 +278,9 @@ Follow.prototype.countFollowersById = function (id) {
         var followerCount;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, (followsCollection === null || followsCollection === void 0 ? void 0 : followsCollection.countDocuments({
+                case 0: return [4 /*yield*/, db_1.fetchCollection("follows").countDocuments({
                         followedId: id,
-                    }))];
+                    })];
                 case 1:
                     followerCount = _a.sent();
                     resolve(followerCount);
@@ -294,7 +295,9 @@ Follow.prototype.countFollowingById = function (id) {
         var count;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, (followsCollection === null || followsCollection === void 0 ? void 0 : followsCollection.countDocuments({ authorId: id }))];
+                case 0: return [4 /*yield*/, db_1.fetchCollection("follows").countDocuments({
+                        authorId: id,
+                    })];
                 case 1:
                     count = _a.sent();
                     resolve(count);

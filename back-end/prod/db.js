@@ -39,7 +39,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.setGlobalClient = exports.globalClient = void 0;
+exports.fetchCollection = exports.setGlobalClient = exports.globalClient = void 0;
 // Prevents application from starting
 // without a db connection
 var dotenv_1 = __importDefault(require("dotenv"));
@@ -75,5 +75,8 @@ exports.setGlobalClient = function (client) {
     console.log("setGlobalClient called...");
     exports.globalClient = client;
     console.log(typeof exports.globalClient);
+};
+exports.fetchCollection = function (collection) {
+    return exports.globalClient.db().collection(collection);
 };
 exports.default = connectToDatabase;

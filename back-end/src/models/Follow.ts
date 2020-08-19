@@ -1,9 +1,6 @@
-import { globalClient } from "../db";
+import { fetchCollection } from "../db";
 import { ObjectID } from "mongodb";
 import User from "./User";
-
-const usersCollection = globalClient?.db().collection("users");
-const followsCollection = globalClient?.db().collection("follows");
 
 class Follow {
   followedUsername: string;
@@ -38,7 +35,7 @@ Follow.prototype.cleanup = function () {
 };
 Follow.prototype.validate = async function (action: string) {
   //followed usernmae must exist in database
-  let followedAccount = await usersCollection?.findOne({
+  let followedAccount = await fetchCollection("users").findOne({
     username: this.followedUsername,
   });
   if (followedAccount) {
@@ -46,7 +43,7 @@ Follow.prototype.validate = async function (action: string) {
   } else {
     this.errors.push("you cannot follow a user that does not exist");
   }
-  let doesFollowAlreadyExist = await followsCollection?.findOne({
+  let doesFollowAlreadyExist = await fetchCollection("follows").findOne({
     followedId: this.followedId,
     authorId: new ObjectID(this.authorId),
   });
@@ -72,7 +69,7 @@ Follow.prototype.create = async function () {
     this.cleanup();
     await this.validate("create");
     if (!this.errors.length) {
-      await followsCollection?.insertOne({
+      await fetchCollection("follows").insertOne({
         followedId: this.followedId,
         authorId: new ObjectID(this.authorId),
       });
@@ -88,7 +85,7 @@ Follow.prototype.deleteFollow = async function () {
     this.cleanup();
     await this.validate("delete");
     if (!this.errors.length) {
-      await followsCollection?.deleteOne({
+      await fetchCollection("follows").deleteOne({
         followedId: this.followedId,
         authorId: new ObjectID(this.authorId),
       });
@@ -102,7 +99,7 @@ Follow.prototype.isVisitorFollowing = async function (
   followedId: ObjectID,
   visitorId: ObjectID
 ) {
-  let followDoc = await followsCollection?.findOne({
+  let followDoc = await fetchCollection("follows").findOne({
     followedId: followedId,
     authorId: new ObjectID(visitorId),
   });
@@ -115,7 +112,7 @@ Follow.prototype.isVisitorFollowing = async function (
 Follow.prototype.getFollowersById = function (id) {
   return new Promise(async (resolve, reject) => {
     try {
-      let followers = await followsCollection
+      let followers = await fetchCollection("follows")
         ?.aggregate([
           { $match: { followedId: id } },
           {
@@ -149,8 +146,8 @@ Follow.prototype.getFollowersById = function (id) {
 Follow.prototype.getFollowingById = function (id) {
   return new Promise(async (resolve, reject) => {
     try {
-      let followers = await followsCollection
-        ?.aggregate([
+      let followers = await fetchCollection("follows")
+        .aggregate([
           { $match: { authorId: id } },
           {
             $lookup: {
@@ -182,7 +179,7 @@ Follow.prototype.getFollowingById = function (id) {
 };
 Follow.prototype.countFollowersById = function (id: ObjectID) {
   return new Promise(async (resolve, reject) => {
-    let followerCount = await followsCollection?.countDocuments({
+    let followerCount = await fetchCollection("follows").countDocuments({
       followedId: id,
     });
     resolve(followerCount);
@@ -190,7 +187,9 @@ Follow.prototype.countFollowersById = function (id: ObjectID) {
 };
 Follow.prototype.countFollowingById = function (id) {
   return new Promise(async (resolve, reject) => {
-    let count = await followsCollection?.countDocuments({ authorId: id });
+    let count = await fetchCollection("follows").countDocuments({
+      authorId: id,
+    });
     resolve(count);
   });
 };
