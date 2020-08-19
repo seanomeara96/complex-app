@@ -25,6 +25,7 @@ let sessionOptions = session({
   },
 });
 app.use(sessionOptions);
+
 app.use((req: Request, res: Response, next: NextFunction) => {
   // This needs refactoring as we no longer are using templates
   res.locals.filterUserHTML = function (content: string) {
@@ -51,10 +52,10 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   };
 
   // Make current user id available on the req object
-  if (req.session!.user) {
+  if (req.session?.user) {
     req.visitorId = req.session!.user._id;
   } else {
-    req.visitorId = 0;
+    req.visitorId = undefined;
   }
   next();
 });
@@ -83,6 +84,7 @@ app.use((err, req, res, next) => {
 
 app.use("/", router);
 import { Server } from "http";
+import { ObjectId } from "mongodb";
 const server: Server = require("http").createServer(app);
 const io: SocketIO.Server = require("socket.io")(server);
 // socket represents the connection between server and browser

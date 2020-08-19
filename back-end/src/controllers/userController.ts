@@ -1,12 +1,13 @@
 import User from "../models/User";
 import Post from "../models/Post";
 import Follow from "../models/Follow";
-import jwt from "jsonwebtoken";
+// import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
 import { send } from "@sendgrid/mail";
 
 export const doesUsernameExist = function (req: Request, res: Response) {
-  User.findByUserName(req.body.username)
+  User.prototype
+    .findByUserName(req.body.username)
     .then(() => {
       res.json(true);
     })
@@ -15,7 +16,7 @@ export const doesUsernameExist = function (req: Request, res: Response) {
     });
 };
 export const doesEmailExist = async function (req: Request, res: Response) {
-  let emailBool = await User.doesEmailExist(req.body.email);
+  let emailBool = await User.prototype.doesEmailExist(req.body.email);
   res.json(emailBool);
 };
 export const sharedProfileData = async function (
@@ -25,19 +26,23 @@ export const sharedProfileData = async function (
 ) {
   let isVisitorsProfile = false;
   let isFollowing = false;
-  if (req.session.user) {
+  if (req.session?.user) {
     isVisitorsProfile = req.profileUser._id.equals(req.session.user._id);
-    isFollowing = await Follow.isVisitorFollowing(
+    isFollowing = await Follow.prototype.isVisitorFollowing(
       req.profileUser._id,
-      req.visitorId
+      req.visitorId!
     );
   }
   req.isVisitorsProfile = isVisitorsProfile;
   req.isFollowing = isFollowing;
   // Retreive post, follower, and following counts
-  let postCountPromise = Post.countPostsByAuthor(req.profileUser._id);
-  let followerCountPromise = Follow.countFollowersById(req.profileUser._id);
-  let followingCountPromise = Follow.countFollowingById(req.profileUser._id);
+  let postCountPromise = Post.prototype.countPostsByAuthor(req.profileUser._id);
+  let followerCountPromise = Follow.prototype.countFollowersById(
+    req.profileUser._id
+  );
+  let followingCountPromise = Follow.prototype.countFollowingById(
+    req.profileUser._id
+  );
   let [postCount, followerCount, followingCount] = await Promise.all([
     postCountPromise,
     followerCountPromise,
@@ -54,10 +59,10 @@ export const mustBeLoggedIn = function (
   res: Response,
   next: NextFunction
 ) {
-  if (req.session.user) {
+  if (req.session?.user) {
     next();
   } else {
-    req.session.save(() => {
+    req.session?.save(() => {
       res.status(401).json({ errors: ["log in first dumb ass"] });
     });
   }
@@ -74,20 +79,20 @@ export const login = (req: Request, res: Response) => {
         username: user.data.username,
         _id: user.data._id,
       };
-      req.session.user = authenticatedUser;
-      req.session.save(() => {
+      req.session!.user = authenticatedUser;
+      req.session?.save(() => {
         res.send(authenticatedUser);
       });
     })
     .catch((e) => {
-      req.session.save(() => {
+      req.session?.save(() => {
         res.status(500).send(e); // Internal Server Error
       });
     });
 };
 
 export const logout = (req: Request, res: Response) => {
-  req.session.destroy(() => {
+  req.session?.destroy(() => {
     res.sendStatus(200);
   });
 };
@@ -104,17 +109,17 @@ export const register = (req: Request, res: Response) => {
         _id: user.data._id,
       };
       console.log("user registered", registeredUser);
-      req.session.user = registeredUser;
-      console.log(req.session.user);
-      req.session.save(() => {
+      req.session!.user = registeredUser;
+      console.log(req.session?.user);
+      req.session?.save(() => {
         res.status(201).send(registeredUser);
       });
     })
-    .catch((regErrors) => {
+    .catch((regErrors: string[]) => {
       regErrors.forEach((error) => {
         console.error(error);
       });
-      req.session.save(() => {
+      req.session?.save(() => {
         res.sendStatus(500);
       });
     });
@@ -122,9 +127,9 @@ export const register = (req: Request, res: Response) => {
 
 // Fetches HomeFeed
 export const home = async (req: Request, res: Response) => {
-  if (req.session.user) {
+  if (req.session?.user) {
     console.log("fetching homefeed...");
-    let posts = await Post.getFeed(req.session.user._id);
+    let posts = await Post.prototype.getFeed(req.session.user._id);
     console.log("these are the posts", posts);
     res.json(posts);
   } else {
@@ -138,19 +143,21 @@ export const ifUserExists = function (
   res: Response,
   next: NextFunction
 ) {
-  User.findByUserName(req.params.username)
+  User.prototype
+    .findByUserName(req.params.username)
     .then((userDocument) => {
       req.profileUser = userDocument;
       next();
     })
     .catch(() => {
-      res.sendStatus("404");
+      res.sendStatus(404);
     });
 };
 
 // Fetches data for a users profile
 export const profilePostsScreen = function (req: Request, res: Response) {
-  Post.findByAuthorId(req.profileUser._id)
+  Post.prototype
+    .findByAuthorId(req.profileUser._id)
     .then((posts) => {
       res.send({
         title: `Profile for ${req.profileUser.username}`,
@@ -168,7 +175,7 @@ export const profilePostsScreen = function (req: Request, res: Response) {
       });
     })
     .catch((error) => {
-      res.sendStatus("404");
+      res.sendStatus(404);
       console.log(error);
     });
 };
@@ -179,7 +186,9 @@ export const profileFollowersScreen = async function (
   res: Response
 ) {
   try {
-    let followers = await Follow.getFollowersById(req.profileUser._id);
+    let followers = await Follow.prototype.getFollowersById(
+      req.profileUser._id
+    );
     res.send({
       currentPage: "followers",
       followers: followers,
@@ -194,7 +203,7 @@ export const profileFollowersScreen = async function (
       },
     });
   } catch (error) {
-    res.sendStatus("404");
+    res.sendStatus(404);
     console.log("error in profileFollowerScreen", error);
   }
 };
@@ -205,7 +214,9 @@ export const profileFollowingScreen = async function (
   res: Response
 ) {
   try {
-    let following = await Follow.getFollowingById(req.profileUser._id);
+    let following = await Follow.prototype.getFollowingById(
+      req.profileUser._id
+    );
     res.send({
       currentPage: "following",
       following: following,
@@ -220,15 +231,15 @@ export const profileFollowingScreen = async function (
       },
     });
   } catch (error) {
-    res.sendStatus("404");
+    res.sendStatus(404);
     console.log("error in profileFollowingScreen", error);
   }
 };
 export const validateSession = function (req: Request, res: Response) {
-  if (req.session.user) {
-    res.send(req.session.user);
+  if (req.session?.user) {
+    res.send(req.session?.user);
   } else {
-    send({});
+    res.send({});
   }
 };
 export const setSelectedProfile = function (req: Request, res: Response) {

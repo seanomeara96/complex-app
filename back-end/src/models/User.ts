@@ -1,18 +1,25 @@
+import { ObjectID } from "mongodb";
+
 const bcrypt = require("bcryptjs");
 const usersCollection = require("../db").db().collection("users");
 const validator = require("validator");
 const md5 = require("md5"); // Gravatar uses md5 hashing
-interface userData {
+interface userInput {
   username: string;
   email: string;
   password: string;
 }
 class User {
   avatar?: string;
-  data: userData;
+  data: {
+    username?: string;
+    email?: string;
+    password?: string;
+    _id?: string;
+  };
   errors: string[];
-  constructor(data: userData, getAvatar: boolean) {
-    this.data = data;
+  constructor(data: userInput, getAvatar?: boolean) {
+    this.data = { ...data };
     this.errors = [];
     if (getAvatar == undefined) {
       getAvatar = false;
@@ -23,9 +30,11 @@ class User {
   }
   cleanUp!: () => void;
   validate!: () => void;
-  login!: () => void;
-  register!: () => void;
+  login!: () => Promise<string>;
+  register!: () => Promise<void>;
   getAvatar!: () => void;
+  findByUserName!: (username: string) => Promise<User>;
+  doesEmailExist!: (email: string) => Promise<boolean>;
 }
 
 User.prototype.cleanUp = function () {
@@ -62,23 +71,23 @@ User.prototype.validate = function () {
     if (this.data.password == "") {
       this.errors.push("Make a password for yourself");
     }
-    if (this.data.password.length > 0 && this.data.password.length < 12) {
+    if (this.data.password!.length > 0 && this.data.password!.length < 12) {
       this.errors.push("password must be at least 12 characters");
     }
-    if (this.data.password.length > 50) {
+    if (this.data.password!.length > 50) {
       this.errors.push("password cannot exceed 50 chracters");
     }
-    if (this.data.username.length > 0 && this.data.username.length < 3) {
+    if (this.data.username!.length > 0 && this.data.username!.length < 3) {
       this.errors.push("username must be atleast 3 characters");
     }
-    if (this.data.username.length > 30) {
+    if (this.data.username!.length > 30) {
       this.errors.push("username cannot exceed 30 characters");
     }
 
     //Only if the username is valid then check to see if it's already taken
     if (
-      this.data.username.length > 2 &&
-      this.data.username.length < 31 &&
+      this.data.username!.length > 2 &&
+      this.data.username!.length < 31 &&
       validator.isAlphanumeric(this.data.username)
     ) {
       let usernameExists = await usersCollection.findOne({
@@ -162,7 +171,7 @@ User.prototype.getAvatar = function () {
   this.avatar = `https://gravatar.com/avatar/${md5(this.data.email)}?s=128`;
 };
 
-export const findByUserName = function (username: string) {
+User.prototype.findByUserName = function (username: string) {
   return new Promise(function (resolve, reject) {
     if (typeof username != "string") {
       // Dont allow people to pass objects onto mongodb
@@ -190,7 +199,7 @@ export const findByUserName = function (username: string) {
       });
   });
 };
-export const doesEmailExist = function (email: string) {
+User.prototype.doesEmailExist = function (email: string) {
   return new Promise(async function (resolve, reject) {
     if (typeof email != "string") {
       resolve(false);
