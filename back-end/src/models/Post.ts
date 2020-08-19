@@ -1,5 +1,5 @@
-import { fetchCollection } from "../db";
-import { ObjectID } from "mongodb";
+import { globalClient, fetchCollection } from "../db";
+import { ObjectID, Collection } from "mongodb";
 import User from "./User";
 import sanitizeHTML from "sanitize-html";
 
