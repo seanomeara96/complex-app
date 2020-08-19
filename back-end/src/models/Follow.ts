@@ -1,9 +1,9 @@
-import db from "../db";
+import laconnection from "../db";
 import { ObjectID } from "mongodb";
 import User from "./User";
 
-const usersCollection = db!.db().collection("users");
-const followsCollection = db!.db().collection("follows");
+const usersCollection = laconnection.client?.db().collection("users");
+const followsCollection = laconnection.client?.db().collection("follows");
 
 class Follow {
   followedUsername: string;
@@ -38,7 +38,7 @@ Follow.prototype.cleanup = function () {
 };
 Follow.prototype.validate = async function (action: string) {
   //followed usernmae must exist in database
-  let followedAccount = await usersCollection.findOne({
+  let followedAccount = await usersCollection?.findOne({
     username: this.followedUsername,
   });
   if (followedAccount) {
@@ -46,7 +46,7 @@ Follow.prototype.validate = async function (action: string) {
   } else {
     this.errors.push("you cannot follow a user that does not exist");
   }
-  let doesFollowAlreadyExist = await followsCollection.findOne({
+  let doesFollowAlreadyExist = await followsCollection?.findOne({
     followedId: this.followedId,
     authorId: new ObjectID(this.authorId),
   });
@@ -72,7 +72,7 @@ Follow.prototype.create = async function () {
     this.cleanup();
     await this.validate("create");
     if (!this.errors.length) {
-      await followsCollection.insertOne({
+      await followsCollection?.insertOne({
         followedId: this.followedId,
         authorId: new ObjectID(this.authorId),
       });
@@ -88,7 +88,7 @@ Follow.prototype.deleteFollow = async function () {
     this.cleanup();
     await this.validate("delete");
     if (!this.errors.length) {
-      await followsCollection.deleteOne({
+      await followsCollection?.deleteOne({
         followedId: this.followedId,
         authorId: new ObjectID(this.authorId),
       });
@@ -102,7 +102,7 @@ Follow.prototype.isVisitorFollowing = async function (
   followedId: ObjectID,
   visitorId: ObjectID
 ) {
-  let followDoc = await followsCollection.findOne({
+  let followDoc = await followsCollection?.findOne({
     followedId: followedId,
     authorId: new ObjectID(visitorId),
   });
@@ -116,7 +116,7 @@ Follow.prototype.getFollowersById = function (id) {
   return new Promise(async (resolve, reject) => {
     try {
       let followers = await followsCollection
-        .aggregate([
+        ?.aggregate([
           { $match: { followedId: id } },
           {
             $lookup: {
@@ -134,7 +134,7 @@ Follow.prototype.getFollowersById = function (id) {
           },
         ])
         .toArray();
-      followers = followers.map(function (follower: any) {
+      followers = followers?.map(function (follower: any) {
         //fix this any
         //create a user
         let user: User = new User(follower, true);
@@ -150,7 +150,7 @@ Follow.prototype.getFollowingById = function (id) {
   return new Promise(async (resolve, reject) => {
     try {
       let followers = await followsCollection
-        .aggregate([
+        ?.aggregate([
           { $match: { authorId: id } },
           {
             $lookup: {
@@ -168,7 +168,7 @@ Follow.prototype.getFollowingById = function (id) {
           },
         ])
         .toArray();
-      followers = followers.map(function (follower: any) {
+      followers = followers?.map(function (follower: any) {
         // fix this any
         //create a user
         let user = new User(follower, true);
@@ -182,7 +182,7 @@ Follow.prototype.getFollowingById = function (id) {
 };
 Follow.prototype.countFollowersById = function (id: ObjectID) {
   return new Promise(async (resolve, reject) => {
-    let followerCount = await followsCollection.countDocuments({
+    let followerCount = await followsCollection?.countDocuments({
       followedId: id,
     });
     resolve(followerCount);
@@ -190,7 +190,7 @@ Follow.prototype.countFollowersById = function (id: ObjectID) {
 };
 Follow.prototype.countFollowingById = function (id) {
   return new Promise(async (resolve, reject) => {
-    let count = await followsCollection.countDocuments({ authorId: id });
+    let count = await followsCollection?.countDocuments({ authorId: id });
     resolve(count);
   });
 };

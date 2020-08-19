@@ -46,11 +46,15 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-var bcrypt = require("bcryptjs");
-var usersCollection = require("../db").db().collection("users");
-var validator = require("validator");
-var md5 = require("md5"); // Gravatar uses md5 hashing
+var bcryptjs_1 = __importDefault(require("bcryptjs"));
+var db_1 = require("../db");
+var md5_1 = __importDefault(require("md5"));
+var validator_1 = __importDefault(require("validator"));
+var usersCollection = db_1.connection.db().collection("users");
 var User = /** @class */ (function () {
     function User(data, getAvatar) {
         this.data = __assign({}, data);
@@ -91,10 +95,10 @@ User.prototype.validate = function () {
                         this.errors.push("Provide a username...idiot");
                     }
                     if (this.data.username != "" &&
-                        !validator.isAlphanumeric(this.data.username)) {
+                        !validator_1.default.isAlphanumeric(this.data.username)) {
                         this.errors.push("usernames can only contain letters and numbers");
                     }
-                    if (!validator.isEmail(this.data.email)) {
+                    if (!validator_1.default.isEmail(this.data.email)) {
                         this.errors.push("A valid email address please, you moron");
                     }
                     if (this.data.password == "") {
@@ -114,7 +118,7 @@ User.prototype.validate = function () {
                     }
                     if (!(this.data.username.length > 2 &&
                         this.data.username.length < 31 &&
-                        validator.isAlphanumeric(this.data.username))) return [3 /*break*/, 2];
+                        validator_1.default.isAlphanumeric(this.data.username))) return [3 /*break*/, 2];
                     return [4 /*yield*/, usersCollection.findOne({
                             username: this.data.username,
                         })];
@@ -126,7 +130,7 @@ User.prototype.validate = function () {
                     }
                     _a.label = 2;
                 case 2:
-                    if (!validator.isEmail(this.data.email)) return [3 /*break*/, 4];
+                    if (!validator_1.default.isEmail(this.data.email)) return [3 /*break*/, 4];
                     return [4 /*yield*/, usersCollection.findOne({
                             email: this.data.email,
                         })];
@@ -163,7 +167,7 @@ User.prototype.login = function () {
             // Bcrypt.compareSync takes two parameters
             // 1st is the uhashed password
             if (attemptedUser &&
-                bcrypt.compareSync(_this.data.password, attemptedUser.password)) {
+                bcryptjs_1.default.compareSync(_this.data.password, attemptedUser.password)) {
                 // attempteeduser's data becomes the data for this "user object"
                 _this.data = attemptedUser;
                 _this.getAvatar();
@@ -191,9 +195,9 @@ User.prototype.register = function () {
                 case 1:
                     _a.sent();
                     if (!!this.errors.length) return [3 /*break*/, 3];
-                    salt = bcrypt.genSaltSync(10);
+                    salt = bcryptjs_1.default.genSaltSync(10);
                     // Overide the users password
-                    this.data.password = bcrypt.hashSync(this.data.password, salt);
+                    this.data.password = bcryptjs_1.default.hashSync(this.data.password, salt);
                     // Adds the new user to the database
                     return [4 /*yield*/, usersCollection.insertOne(this.data)];
                 case 2:
@@ -211,7 +215,7 @@ User.prototype.register = function () {
     }); });
 };
 User.prototype.getAvatar = function () {
-    this.avatar = "https://gravatar.com/avatar/" + md5(this.data.email) + "?s=128";
+    this.avatar = "https://gravatar.com/avatar/" + md5_1.default(this.data.email) + "?s=128";
 };
 User.prototype.findByUserName = function (username) {
     return new Promise(function (resolve, reject) {

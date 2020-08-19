@@ -1,9 +1,9 @@
-import { ObjectID } from "mongodb";
-
-const bcrypt = require("bcryptjs");
-const usersCollection = require("../db").db().collection("users");
-const validator = require("validator");
-const md5 = require("md5"); // Gravatar uses md5 hashing
+import { Collection } from "mongodb";
+import bcrypt from "bcryptjs";
+import laconnection from "../db";
+import md5 from "md5";
+import validator from "validator";
+const usersCollection = laconnection.client?.db().collection("users");
 interface userInput {
   username: string;
   email: string;
@@ -12,9 +12,9 @@ interface userInput {
 class User {
   avatar?: string;
   data: {
-    username?: string;
-    email?: string;
-    password?: string;
+    username: string;
+    email: string;
+    password: string;
     _id?: string;
   };
   errors: string[];
@@ -90,7 +90,7 @@ User.prototype.validate = function () {
       this.data.username!.length < 31 &&
       validator.isAlphanumeric(this.data.username)
     ) {
-      let usernameExists = await usersCollection.findOne({
+      let usernameExists = await usersCollection?.findOne({
         username: this.data.username,
       });
       //usersCollection is our mongodb users collection
@@ -100,7 +100,7 @@ User.prototype.validate = function () {
     }
     //Only if the email is valid then check to see if it's already taken
     if (validator.isEmail(this.data.email)) {
-      let emailExists = await usersCollection.findOne({
+      let emailExists = await usersCollection?.findOne({
         email: this.data.email,
       });
       //usersCollection is our mongodb users collection
@@ -121,7 +121,7 @@ User.prototype.login = function () {
     // operation has had a chance to complete
     // because we dont know how long the search is going to take
     usersCollection
-      .findOne(
+      ?.findOne(
         { username: this.data.username }
         // .findOne() and all of mongodb's other functions will return a promise
       )
@@ -159,7 +159,7 @@ User.prototype.register = function () {
       // Overide the users password
       this.data.password = bcrypt.hashSync(this.data.password, salt);
       // Adds the new user to the database
-      await usersCollection.insertOne(this.data);
+      await usersCollection?.insertOne(this.data);
       this.getAvatar();
       resolve();
     } else {
@@ -179,7 +179,7 @@ User.prototype.findByUserName = function (username: string) {
     }
     // Object is what we want to find in our database
     usersCollection
-      .findOne({ username: username })
+      ?.findOne({ username: username })
       .then(function (userDoc: any) {
         // fix this any
         if (userDoc) {
@@ -205,7 +205,7 @@ User.prototype.doesEmailExist = function (email: string) {
       resolve(false);
       return;
     }
-    let user = await usersCollection.findOne({ email: email });
+    let user = await usersCollection?.findOne({ email: email });
     if (user) {
       resolve(true);
     } else {

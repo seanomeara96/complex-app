@@ -17,10 +17,9 @@ app.use(cors_1.default({
     credentials: true,
     origin: "http://localhost:3000",
 }));
-var db_1 = __importDefault(require("./db"));
 var sessionOptions = express_session_1.default({
     secret: "Javacript is toit",
-    store: new MongoStore({ client: db_1.default }),
+    //store: new MongoStore({ db }),
     resave: false,
     saveUninitialized: false,
     cookie: {

@@ -1,9 +1,9 @@
-import db from "../db";
+import laconnection from "../db";
 import { ObjectID } from "mongodb";
 import User from "./User";
 import sanitizeHTML from "sanitize-html";
-const postsCollection = db!.db().collection("posts");
-const followsCollection = db!.db().collection("follows");
+let postsCollection = laconnection.client?.db().collection("posts");
+let followsCollection = laconnection.client?.db().collection("follows");
 
 interface postData {
   title: string;
@@ -51,7 +51,7 @@ Post.prototype.create = function () {
     if (!this.errors.length) {
       // Save post to database
       postsCollection
-        .insertOne(this.data)
+        ?.insertOne(this.data)
         .then((info: any) => {
           // fix this
           resolve(info.ops[0]._id);
@@ -92,7 +92,7 @@ Post.prototype.actuallyUpdate = function () {
     this.cleanUp();
     this.validate();
     if (!this.errors.length) {
-      await postsCollection.findOneAndUpdate(
+      await postsCollection?.findOneAndUpdate(
         { _id: new ObjectID(this.requestedPostId) },
         { $set: { title: this.data.title, body: this.data.body } }
       );
@@ -163,8 +163,8 @@ Post.prototype.reusablePostQuery = function (
       },
     ]);
     try {
-      let posts = await postsCollection.aggregate(aggOperations).toArray();
-      posts = posts.map(function (post) {
+      let posts = await postsCollection?.aggregate(aggOperations).toArray();
+      posts = posts?.map(function (post: any) {
         post.isVisitorOwner = post.authorId.equals(visitorId);
         post.authorId = undefined;
         post.author = {
@@ -220,7 +220,7 @@ Post.prototype.deletePost = function (
         currentUserId
       );
       if (post.isVisitorOwner) {
-        await postsCollection.deleteOne({ _id: new ObjectID(postIdToDelete) });
+        await postsCollection?.deleteOne({ _id: new ObjectID(postIdToDelete) });
         resolve();
       } else {
         reject();
@@ -255,7 +255,7 @@ Post.prototype.search = function (searchTerm: string) {
 Post.prototype.countPostsByAuthor = function (id: ObjectID) {
   return new Promise(async (resolve, reject) => {
     try {
-      let postCount = await postsCollection.countDocuments({ author: id });
+      let postCount = await postsCollection?.countDocuments({ author: id });
       resolve(postCount);
     } catch (err) {
       reject(err);
@@ -266,9 +266,9 @@ Post.prototype.countPostsByAuthor = function (id: ObjectID) {
 Post.prototype.getFeed = async function (id: ObjectID) {
   // Create an array of the user ids that the current user follows
   let followedUsers = await followsCollection
-    .find({ authorId: new ObjectID(id) })
+    ?.find({ authorId: new ObjectID(id) })
     .toArray();
-  followedUsers = followedUsers.map(function (followDoc) {
+  followedUsers = followedUsers?.map(function (followDoc: any) {
     return followDoc.followedId;
   });
   // Look for posts where author is in the above array of followed users
