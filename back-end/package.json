@@ -4,7 +4,8 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "watch": "start nodemon db",
+    "watch": "ts-node ./src/db.ts",
+    "prod": "node ./prod/db.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -42,5 +43,9 @@
     "socket.io": "^2.3.0",
     "validator": "^13.1.1",
     "webpack-cli": "^3.3.12"
+  },
+  "devDependencies": {
+    "ts-node": "^8.10.2",
+    "typescript": "^3.9.7"
   }
 }

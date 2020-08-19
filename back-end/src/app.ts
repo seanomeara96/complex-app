@@ -14,9 +14,10 @@ app.use(
     origin: "http://localhost:3000",
   })
 );
+import db from "./db";
 let sessionOptions = session({
   secret: "Javacript is toit",
-  store: new MongoStore({ client: require("./db") }),
+  store: new MongoStore({ client: db }),
   resave: false,
   saveUninitialized: false,
   cookie: {
@@ -84,7 +85,6 @@ app.use((err, req, res, next) => {
 
 app.use("/", router);
 import { Server } from "http";
-import { ObjectId } from "mongodb";
 const server: Server = require("http").createServer(app);
 const io: SocketIO.Server = require("socket.io")(server);
 // socket represents the connection between server and browser

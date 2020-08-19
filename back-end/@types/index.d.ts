@@ -1,6 +1,6 @@
 import Express, { Request } from "express";
 import { ObjectID, ObjectId } from "mongodb";
-declare global {
+export declare global {
   namespace Express {
     interface Request {
       visitorId: ObjectId | undefined;
@@ -11,7 +11,7 @@ declare global {
       followingCount: number;
       selectedProfile: any;
       profileUser: any;
-      session: { user: any };
+      session: any;
     }
   }
   interface PostSchema {
