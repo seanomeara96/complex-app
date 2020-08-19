@@ -1,9 +1,9 @@
-import laconnection from "../db";
+import { globalClient } from "../db";
 import { ObjectID } from "mongodb";
 import User from "./User";
 import sanitizeHTML from "sanitize-html";
-let postsCollection = laconnection.client?.db().collection("posts");
-let followsCollection = laconnection.client?.db().collection("follows");
+let postsCollection = globalClient?.db().collection("posts");
+let followsCollection = globalClient?.db().collection("follows");
 
 interface postData {
   title: string;

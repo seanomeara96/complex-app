@@ -2,10 +2,10 @@
 // without a db connection
 import dotenv from "dotenv";
 import mongodb, { MongoClient } from "mongodb";
-import server from "./app";
 dotenv.config();
-
+export let globalClient: MongoClient | undefined;
 function connectToDatabase(): Promise<MongoClient> {
+  console.log("connecting...");
   return new Promise(async (resolve, reject) => {
     try {
       let res: MongoClient = await mongodb.connect(
@@ -21,5 +21,9 @@ function connectToDatabase(): Promise<MongoClient> {
     }
   });
 }
-
+export const setGlobalClient = (client: MongoClient) => {
+  console.log("setGlobalClient called...");
+  globalClient = client;
+  console.log(typeof globalClient);
+};
 export default connectToDatabase;

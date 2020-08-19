@@ -54,7 +54,7 @@ var bcryptjs_1 = __importDefault(require("bcryptjs"));
 var db_1 = require("../db");
 var md5_1 = __importDefault(require("md5"));
 var validator_1 = __importDefault(require("validator"));
-var usersCollection = db_1.connection.db().collection("users");
+var usersCollection = db_1.globalClient === null || db_1.globalClient === void 0 ? void 0 : db_1.globalClient.db().collection("users");
 var User = /** @class */ (function () {
     function User(data, getAvatar) {
         this.data = __assign({}, data);
@@ -119,9 +119,9 @@ User.prototype.validate = function () {
                     if (!(this.data.username.length > 2 &&
                         this.data.username.length < 31 &&
                         validator_1.default.isAlphanumeric(this.data.username))) return [3 /*break*/, 2];
-                    return [4 /*yield*/, usersCollection.findOne({
+                    return [4 /*yield*/, (usersCollection === null || usersCollection === void 0 ? void 0 : usersCollection.findOne({
                             username: this.data.username,
-                        })];
+                        }))];
                 case 1:
                     usernameExists = _a.sent();
                     //usersCollection is our mongodb users collection
@@ -131,9 +131,9 @@ User.prototype.validate = function () {
                     _a.label = 2;
                 case 2:
                     if (!validator_1.default.isEmail(this.data.email)) return [3 /*break*/, 4];
-                    return [4 /*yield*/, usersCollection.findOne({
+                    return [4 /*yield*/, (usersCollection === null || usersCollection === void 0 ? void 0 : usersCollection.findOne({
                             email: this.data.email,
-                        })];
+                        }))];
                 case 3:
                     emailExists = _a.sent();
                     //usersCollection is our mongodb users collection
@@ -157,11 +157,9 @@ User.prototype.login = function () {
         // The second is a function that .findOne() is going to call once the first-
         // operation has had a chance to complete
         // because we dont know how long the search is going to take
-        usersCollection
-            .findOne({ username: _this.data.username }
+        usersCollection === null || usersCollection === void 0 ? void 0 : usersCollection.findOne({ username: _this.data.username }
         // .findOne() and all of mongodb's other functions will return a promise
-        )
-            .then(function (attemptedUser) {
+        ).then(function (attemptedUser) {
             // fix this any
             // Hash the login password to check against hashed database password
             // Bcrypt.compareSync takes two parameters
@@ -176,8 +174,7 @@ User.prototype.login = function () {
             else {
                 reject("invalid username/password");
             }
-        })
-            .catch(function () {
+        }).catch(function () {
             reject("please try again later");
         });
     });
@@ -199,7 +196,7 @@ User.prototype.register = function () {
                     // Overide the users password
                     this.data.password = bcryptjs_1.default.hashSync(this.data.password, salt);
                     // Adds the new user to the database
-                    return [4 /*yield*/, usersCollection.insertOne(this.data)];
+                    return [4 /*yield*/, (usersCollection === null || usersCollection === void 0 ? void 0 : usersCollection.insertOne(this.data))];
                 case 2:
                     // Adds the new user to the database
                     _a.sent();
@@ -224,9 +221,7 @@ User.prototype.findByUserName = function (username) {
             reject();
         }
         // Object is what we want to find in our database
-        usersCollection
-            .findOne({ username: username })
-            .then(function (userDoc) {
+        usersCollection === null || usersCollection === void 0 ? void 0 : usersCollection.findOne({ username: username }).then(function (userDoc) {
             // fix this any
             if (userDoc) {
                 userDoc = new User(userDoc, true);
@@ -240,8 +235,7 @@ User.prototype.findByUserName = function (username) {
             else {
                 reject();
             }
-        })
-            .catch(function () {
+        }).catch(function () {
             reject();
         });
     });
@@ -257,7 +251,7 @@ User.prototype.doesEmailExist = function (email) {
                             resolve(false);
                             return [2 /*return*/];
                         }
-                        return [4 /*yield*/, usersCollection.findOne({ email: email })];
+                        return [4 /*yield*/, (usersCollection === null || usersCollection === void 0 ? void 0 : usersCollection.findOne({ email: email }))];
                     case 1:
                         user = _a.sent();
                         if (user) {

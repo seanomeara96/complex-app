@@ -39,12 +39,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var db_1 = __importDefault(require("../db"));
+var db_1 = require("../db");
 var mongodb_1 = require("mongodb");
 var User_1 = __importDefault(require("./User"));
 var sanitize_html_1 = __importDefault(require("sanitize-html"));
-var postsCollection = db_1.default.db().collection("posts");
-var followsCollection = db_1.default.db().collection("follows");
+var postsCollection = db_1.globalClient === null || db_1.globalClient === void 0 ? void 0 : db_1.globalClient.db().collection("posts");
+var followsCollection = db_1.globalClient === null || db_1.globalClient === void 0 ? void 0 : db_1.globalClient.db().collection("follows");
 var Post = /** @class */ (function () {
     function Post(data, userid, requestedPostId) {
         this.data = data;
@@ -61,13 +61,10 @@ Post.prototype.create = function () {
         _this.validate();
         if (!_this.errors.length) {
             // Save post to database
-            postsCollection
-                .insertOne(_this.data)
-                .then(function (info) {
+            postsCollection === null || postsCollection === void 0 ? void 0 : postsCollection.insertOne(_this.data).then(function (info) {
                 // fix this
                 resolve(info.ops[0]._id);
-            })
-                .catch(function () {
+            }).catch(function () {
                 _this.errors.push("please try again later");
                 reject(_this.errors);
             });
@@ -117,7 +114,7 @@ Post.prototype.actuallyUpdate = function () {
                     this.cleanUp();
                     this.validate();
                     if (!!this.errors.length) return [3 /*break*/, 2];
-                    return [4 /*yield*/, postsCollection.findOneAndUpdate({ _id: new mongodb_1.ObjectID(this.requestedPostId) }, { $set: { title: this.data.title, body: this.data.body } })];
+                    return [4 /*yield*/, (postsCollection === null || postsCollection === void 0 ? void 0 : postsCollection.findOneAndUpdate({ _id: new mongodb_1.ObjectID(this.requestedPostId) }, { $set: { title: this.data.title, body: this.data.body } }))];
                 case 1:
                     _a.sent();
                     resolve("success");
@@ -192,10 +189,10 @@ Post.prototype.reusablePostQuery = function (uniqueOperations, visitorId) {
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 3, , 4]);
-                        return [4 /*yield*/, postsCollection.aggregate(aggOperations).toArray()];
+                        return [4 /*yield*/, (postsCollection === null || postsCollection === void 0 ? void 0 : postsCollection.aggregate(aggOperations).toArray())];
                     case 2:
                         posts = _a.sent();
-                        posts = posts.map(function (post) {
+                        posts = posts === null || posts === void 0 ? void 0 : posts.map(function (post) {
                             post.isVisitorOwner = post.authorId.equals(visitorId);
                             post.authorId = undefined;
                             post.author = {
@@ -264,7 +261,7 @@ Post.prototype.deletePost = function (postIdToDelete, currentUserId) {
                 case 1:
                     post = _b.sent();
                     if (!post.isVisitorOwner) return [3 /*break*/, 3];
-                    return [4 /*yield*/, postsCollection.deleteOne({ _id: new mongodb_1.ObjectID(postIdToDelete) })];
+                    return [4 /*yield*/, (postsCollection === null || postsCollection === void 0 ? void 0 : postsCollection.deleteOne({ _id: new mongodb_1.ObjectID(postIdToDelete) }))];
                 case 2:
                     _b.sent();
                     resolve();
@@ -325,7 +322,7 @@ Post.prototype.countPostsByAuthor = function (id) {
             switch (_a.label) {
                 case 0:
                     _a.trys.push([0, 2, , 3]);
-                    return [4 /*yield*/, postsCollection.countDocuments({ author: id })];
+                    return [4 /*yield*/, (postsCollection === null || postsCollection === void 0 ? void 0 : postsCollection.countDocuments({ author: id }))];
                 case 1:
                     postCount = _a.sent();
                     resolve(postCount);
@@ -344,12 +341,10 @@ Post.prototype.getFeed = function (id) {
         var followedUsers;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, followsCollection
-                        .find({ authorId: new mongodb_1.ObjectID(id) })
-                        .toArray()];
+                case 0: return [4 /*yield*/, (followsCollection === null || followsCollection === void 0 ? void 0 : followsCollection.find({ authorId: new mongodb_1.ObjectID(id) }).toArray())];
                 case 1:
                     followedUsers = _a.sent();
-                    followedUsers = followedUsers.map(function (followDoc) {
+                    followedUsers = followedUsers === null || followedUsers === void 0 ? void 0 : followedUsers.map(function (followDoc) {
                         return followDoc.followedId;
                     });
                     // Look for posts where author is in the above array of followed users

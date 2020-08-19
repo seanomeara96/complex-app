@@ -1,9 +1,8 @@
-import { Collection } from "mongodb";
 import bcrypt from "bcryptjs";
-import laconnection from "../db";
+import { globalClient } from "../db";
 import md5 from "md5";
 import validator from "validator";
-const usersCollection = laconnection.client?.db().collection("users");
+const usersCollection = globalClient?.db().collection("users");
 interface userInput {
   username: string;
   email: string;

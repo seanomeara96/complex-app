@@ -1,9 +1,9 @@
-import laconnection from "../db";
+import { globalClient } from "../db";
 import { ObjectID } from "mongodb";
 import User from "./User";
 
-const usersCollection = laconnection.client?.db().collection("users");
-const followsCollection = laconnection.client?.db().collection("follows");
+const usersCollection = globalClient?.db().collection("users");
+const followsCollection = globalClient?.db().collection("follows");
 
 class Follow {
   followedUsername: string;
