@@ -152,16 +152,11 @@ User.prototype.login = function () {
 };
 User.prototype.register = function () {
   return new Promise(async (resolve, reject) => {
-    // Step no.1 validate user data
     this.cleanUp();
     await this.validate();
-    // If there are no validation errors save the user data into a database
     if (!this.errors.length) {
-      // Hash user password
       let salt = bcrypt.genSaltSync(10);
-      // Overide the users password
       this.data.password = bcrypt.hashSync(this.data.password, salt);
-      // Adds the new user to the database
       await this.usersCollection.insertOne(this.data);
       this.getAvatar();
       resolve();
@@ -177,10 +172,8 @@ User.prototype.getAvatar = function () {
 User.prototype.findByUserName = function (username: string) {
   return new Promise((resolve, reject) => {
     if (typeof username != "string") {
-      // Dont allow people to pass objects onto mongodb
       reject();
     }
-    // Object is what we want to find in our database
     this.usersCollection
       .findOne({ username: username })
       .then(function (userDoc: any) {
