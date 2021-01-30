@@ -5,9 +5,15 @@ import CreatePostForm from "../components/posts/CreatePostForm";
 import Flash from "../components/Flash";
 import { createPost } from "../actions";
 const CreatePost = (props) => {
-  const onSubmit = (formValues) =>
-    props.createPost({ ...formValues, userId: props.auth.auth._id });
-
+  const onSubmit = (formValues) => {
+    getLocation().then((location) => {
+      props.createPost({
+        ...formValues,
+        userId: props.auth.auth._id,
+        location,
+      });
+    });
+  };
   return props.auth.isSignedIn === true ? (
     <div className="container py-md-5 container--narrow">
       <Flash />
@@ -27,3 +33,17 @@ const mapStateToProps = (state) => {
 };
 
 export default connect(mapStateToProps, { createPost })(CreatePost);
+
+function getLocation() {
+  return new Promise((resolve, reject) => {
+    window.navigator.geolocation.getCurrentPosition(
+      ({ coords }) => {
+        resolve({
+          lat: coords.latitude,
+          long: coords.longitude,
+        });
+      },
+      (err) => reject(err)
+    );
+  });
+}
