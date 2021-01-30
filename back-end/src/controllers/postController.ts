@@ -4,18 +4,12 @@ sendGrid.setApiKey(process.env.SENDGRIDAPIKEY!);
 import { Request, Response } from "express";
 import { ObjectID } from "mongodb";
 export const create = function (req: Request, res: Response) {
+  console.log(req.body, "received this from client: req.body");
   let post = new Post(req.body, req.session?.user._id);
   post
     .create()
     .then(() => {
-      sendGrid.send({
-        to: "redabihsot@gmail.com",
-        from: "test@test.com",
-        subject: "congrats on creating this post",
-        text: "you did a great job of creating a post",
-        html: "you did a <strong>Great</strong> job of creating a post",
-      });
-
+      alertUser();
       req.session?.save(() => {
         res.status(201).send(post);
       });
@@ -121,3 +115,13 @@ export const search = function (req: Request, res: Response) {
       res.json([]);
     });
 };
+
+function alertUser() {
+  sendGrid.send({
+    to: "redabihsot@gmail.com",
+    from: "seanom96@gmail.com",
+    subject: "congrats on creating this post",
+    text: "you did a great job of creating a post",
+    html: "you did a <strong>Great</strong> job of creating a post",
+  });
+}

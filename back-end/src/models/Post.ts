@@ -6,6 +6,10 @@ import sanitizeHTML from "sanitize-html";
 interface postData {
   title: string;
   body: string;
+  location: {
+    lat: number | null;
+    long: number | null;
+  };
   createdDate?: Date;
   author?: ObjectID;
 }
@@ -43,6 +47,7 @@ class Post {
 }
 
 Post.prototype.create = function () {
+  console.log(this.data, "this is the data in the Post model");
   return new Promise((resolve, reject) => {
     this.cleanUp();
     this.validate();
@@ -108,6 +113,15 @@ Post.prototype.cleanUp = function () {
   if (typeof this.data.body != "string") {
     this.data.body = "";
   }
+  if (
+    typeof this.data.location?.lat != "number" ||
+    typeof this.data.location.long != "number" ||
+    isValidCoordinates(this.data.location.lat, this.data.location.long) == false
+  ) {
+    this.data.location.lat = null;
+    this.data.location.long = null;
+  }
+
   // Get rid of any bogus properties
   this.data = {
     title: sanitizeHTML(this.data.title.trim(), {
@@ -118,12 +132,9 @@ Post.prototype.cleanUp = function () {
       allowedTags: [],
       allowedAttributes: {},
     }),
-    // First argument is what you are trying to sanitize
-    // Second is an object with configuration options
     createdDate: new Date(),
-    // We use this ObjectID function because mongo
-    // prefers that we store IDs as objects ratgher than strings of text
     author: new ObjectID(this.userid),
+    location: this.data.location,
   };
 };
 
@@ -285,3 +296,17 @@ Post.prototype.getFeed = async function (id: ObjectID) {
 };
 
 export default Post;
+
+function isValidCoordinates(lat: number | null, long: number | null): boolean {
+  if (typeof lat == null || typeof long == null) {
+    return false;
+  }
+  if (typeof lat == "number" && typeof long == "number") {
+    return isBetween(lat, -90, 90) && isBetween(long, -180, 180);
+  }
+  return false;
+}
+
+function isBetween(value: number, bottomEnd: number, topEnd: number): boolean {
+  return bottomEnd <= value && topEnd >= value;
+}
