@@ -2,6 +2,7 @@ import { globalClient, fetchCollection } from "../db";
 import { ObjectID, Collection } from "mongodb";
 import User from "./User";
 import sanitizeHTML from "sanitize-html";
+import axios from "axios";
 
 interface postData {
   title: string;
@@ -10,6 +11,7 @@ interface postData {
     lat: number | null;
     long: number | null;
   };
+  weather: string;
   createdDate?: Date;
   author?: ObjectID;
 }
@@ -45,10 +47,14 @@ class Post {
   countPostsByAuthor!: (id: ObjectID) => Promise<number>;
   getFeed!: (id: ObjectID) => Promise<Post[]>;
 }
-
+// ideally location parameters would not be passed to getWeather before they were cleaned
 Post.prototype.create = function () {
   console.log(this.data, "this is the data in the Post model");
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
+    this.data.weather = await getWeather(
+      this.data.location.lat,
+      this.data.location.lat
+    );
     this.cleanUp();
     this.validate();
     if (!this.errors.length) {
@@ -113,6 +119,9 @@ Post.prototype.cleanUp = function () {
   if (typeof this.data.body != "string") {
     this.data.body = "";
   }
+  if (typeof this.data.weather != "string") {
+    this.data.weather = "";
+  }
   if (
     typeof this.data.location?.lat != "number" ||
     typeof this.data.location.long != "number" ||
@@ -133,6 +142,10 @@ Post.prototype.cleanUp = function () {
       allowedAttributes: {},
     }),
     createdDate: new Date(),
+    weather: sanitizeHTML(this.data.weather.trim(), {
+      allowedTags: [],
+      allowedAttributes: {},
+    }),
     author: new ObjectID(this.userid),
     location: this.data.location,
   };
@@ -309,4 +322,25 @@ function isValidCoordinates(lat: number | null, long: number | null): boolean {
 
 function isBetween(value: number, bottomEnd: number, topEnd: number): boolean {
   return bottomEnd <= value && topEnd >= value;
+}
+async function getWeather(
+  lat: number | null,
+  long: number | null
+): Promise<string> {
+  return new Promise(async (resolve, reject) => {
+    if (typeof lat == "number" && typeof long == "number") {
+      try {
+        const res: any = await axios.get(
+          `https://api.darksky.net/forecast/${process.env.WEATHER_API_KEY}/${lat},${long}`
+        );
+        console.log(res, "response from darksky");
+        resolve(res.data.currently.summary);
+      } catch (err) {
+        console.error("error contacting darksky api", err);
+        reject("");
+      }
+    } else {
+      reject("");
+    }
+  });
 }
