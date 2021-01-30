@@ -4,18 +4,6 @@ import User from "./User";
 import sanitizeHTML from "sanitize-html";
 import axios from "axios";
 
-interface postData {
-  title: string;
-  body: string;
-  location: {
-    lat: number | null;
-    long: number | null;
-  };
-  weather: string;
-  createdDate?: Date;
-  author?: ObjectID;
-}
-
 class Post {
   data: postData;
   errors: string[];
@@ -119,9 +107,6 @@ Post.prototype.cleanUp = function () {
   if (typeof this.data.body != "string") {
     this.data.body = "";
   }
-  if (typeof this.data.weather != "string") {
-    this.data.weather = "";
-  }
   if (
     typeof this.data.location?.lat != "number" ||
     typeof this.data.location.long != "number" ||
@@ -142,10 +127,7 @@ Post.prototype.cleanUp = function () {
       allowedAttributes: {},
     }),
     createdDate: new Date(),
-    weather: sanitizeHTML(this.data.weather.trim(), {
-      allowedTags: [],
-      allowedAttributes: {},
-    }),
+    weather: this.data.weather,
     author: new ObjectID(this.userid),
     location: this.data.location,
   };
@@ -326,7 +308,7 @@ function isBetween(value: number, bottomEnd: number, topEnd: number): boolean {
 async function getWeather(
   lat: number | null,
   long: number | null
-): Promise<string> {
+): Promise<currentWeather> {
   return new Promise(async (resolve, reject) => {
     if (typeof lat == "number" && typeof long == "number") {
       try {
@@ -334,13 +316,47 @@ async function getWeather(
           `https://api.darksky.net/forecast/${process.env.WEATHER_API_KEY}/${lat},${long}`
         );
         console.log(res, "response from darksky");
-        resolve(res.data.currently.summary);
+        resolve(res.data.currently);
       } catch (err) {
         console.error("error contacting darksky api", err);
-        reject("");
+        reject();
       }
     } else {
-      reject("");
+      reject();
     }
   });
+}
+
+interface postData {
+  title: string;
+  body: string;
+  location: {
+    lat: number | null;
+    long: number | null;
+  };
+  weather: currentWeather;
+  createdDate?: Date;
+  author?: ObjectID;
+}
+
+interface currentWeather {
+  time: number;
+  summary: string;
+  icon: string;
+  nearestStormDistance: number;
+  nearestStormBearing: number;
+  precipIntensity: number;
+  precipProbability: number;
+  temperature: number;
+  apparentTemperature: number;
+  dewPoint: number;
+  humidity: number;
+  pressure: number;
+  windSpeed: number;
+  windGust: number;
+  windBearing: number;
+  cloudCover: number;
+  uvIndex: number;
+  visibility: number;
+  ozone: number;
 }
