@@ -1,9 +1,9 @@
-import { globalClient, fetchCollection } from "../db";
+import { globalClient, fetchCollection } from "../../db";
 import { ObjectID, Collection } from "mongodb";
-import User from "./User";
+import User from "../User";
 import sanitizeHTML from "sanitize-html";
 import axios from "axios";
-
+import create, { currentWeather } from "./create";
 class Post {
   data: postData;
   errors: string[];
@@ -36,33 +36,7 @@ class Post {
   getFeed!: (id: ObjectID) => Promise<Post[]>;
 }
 // ideally location parameters would not be passed to getWeather before they were cleaned
-Post.prototype.create = function () {
-  console.log(this.data, "this is the data in the Post model");
-  return new Promise(async (resolve, reject) => {
-    this.data.weather = await getWeather(
-      this.data.location.lat,
-      this.data.location.lat
-    );
-    this.cleanUp();
-    this.validate();
-    if (!this.errors.length) {
-      // Save post to database
-      fetchCollection("posts")
-        ?.insertOne(this.data)
-        .then((info: any) => {
-          // fix this
-          resolve(info.ops[0]._id);
-        })
-        .catch(() => {
-          this.errors.push("please try again later");
-          reject(this.errors);
-        });
-    } else {
-      //reject
-      reject(this.errors);
-    }
-  });
-};
+Post.prototype.create = create;
 
 Post.prototype.update = function () {
   return new Promise(async (resolve, reject) => {
@@ -305,27 +279,6 @@ function isValidCoordinates(lat: number | null, long: number | null): boolean {
 function isBetween(value: number, bottomEnd: number, topEnd: number): boolean {
   return bottomEnd <= value && topEnd >= value;
 }
-async function getWeather(
-  lat: number | null,
-  long: number | null
-): Promise<currentWeather> {
-  return new Promise(async (resolve, reject) => {
-    if (typeof lat == "number" && typeof long == "number") {
-      try {
-        const res: any = await axios.get(
-          `https://api.darksky.net/forecast/${process.env.WEATHER_API_KEY}/${lat},${long}`
-        );
-        console.log(res, "response from darksky");
-        resolve(res.data.currently);
-      } catch (err) {
-        console.error("error contacting darksky api", err);
-        reject();
-      }
-    } else {
-      reject();
-    }
-  });
-}
 
 interface postData {
   title: string;
@@ -337,26 +290,4 @@ interface postData {
   weather: currentWeather;
   createdDate?: Date;
   author?: ObjectID;
-}
-
-interface currentWeather {
-  time: number;
-  summary: string;
-  icon: string;
-  nearestStormDistance: number;
-  nearestStormBearing: number;
-  precipIntensity: number;
-  precipProbability: number;
-  temperature: number;
-  apparentTemperature: number;
-  dewPoint: number;
-  humidity: number;
-  pressure: number;
-  windSpeed: number;
-  windGust: number;
-  windBearing: number;
-  cloudCover: number;
-  uvIndex: number;
-  visibility: number;
-  ozone: number;
 }

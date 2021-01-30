@@ -1,5 +1,5 @@
 import User from "../models/User";
-import Post from "../models/Post";
+import Post from "../models/Post/Post";
 import Follow from "../models/Follow";
 // import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
