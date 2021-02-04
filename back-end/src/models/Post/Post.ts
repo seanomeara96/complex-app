@@ -3,7 +3,7 @@ import { ObjectID, Collection } from "mongodb";
 import User from "../User";
 import sanitizeHTML from "sanitize-html";
 import axios from "axios";
-import create, { currentWeather } from "./create";
+import create from "./create";
 class Post {
   data: postData;
   errors: string[];
@@ -36,7 +36,7 @@ class Post {
   getFeed!: (id: ObjectID) => Promise<Post[]>;
 }
 // ideally location parameters would not be passed to getWeather before they were cleaned
-Post.prototype.create = create;
+Post.prototype.create = create(this);
 
 Post.prototype.update = function () {
   return new Promise(async (resolve, reject) => {
@@ -290,4 +290,25 @@ interface postData {
   weather: currentWeather;
   createdDate?: Date;
   author?: ObjectID;
+}
+export interface currentWeather {
+  time: number;
+  summary: string;
+  icon: string;
+  nearestStormDistance: number;
+  nearestStormBearing: number;
+  precipIntensity: number;
+  precipProbability: number;
+  temperature: number;
+  apparentTemperature: number;
+  dewPoint: number;
+  humidity: number;
+  pressure: number;
+  windSpeed: number;
+  windGust: number;
+  windBearing: number;
+  cloudCover: number;
+  uvIndex: number;
+  visibility: number;
+  ozone: number;
 }
