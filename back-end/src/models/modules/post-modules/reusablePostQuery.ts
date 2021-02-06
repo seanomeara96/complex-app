@@ -1,6 +1,6 @@
-import { fetchCollection } from "../../db";
-import User from "../User";
-import Post from "./Post";
+import { fetchCollection } from "../../../db";
+import User from "../../User";
+import Post from "./base";
 import { ObjectID } from "mongodb";
 export default function (
   uniqueOperations: any,

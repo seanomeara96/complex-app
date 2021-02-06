@@ -1,4 +1,4 @@
-import Post from "./Post";
+import Post from "./base";
 import sanitizeHTML from "sanitize-html";
 import { ObjectID } from "mongodb";
 export default function (this: Post) {

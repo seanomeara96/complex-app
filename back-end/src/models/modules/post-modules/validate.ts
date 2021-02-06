@@ -1,4 +1,4 @@
-import Post from "./Post";
+import Post from "./base";
 export default function (this: Post) {
   if (this.data.title == "") {
     this.errors.push("you must provide a title");

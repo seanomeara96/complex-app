@@ -1,6 +1,6 @@
 import { ObjectID } from "mongodb";
-import { fetchCollection } from "../../db";
-import Post from "./Post";
+import { fetchCollection } from "../../../db";
+import Post from "./base";
 export default async function (id: ObjectID) {
   // Create an array of the user ids that the current user follows
   let followedUsers = await fetchCollection("follows")

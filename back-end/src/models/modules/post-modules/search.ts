@@ -1,4 +1,4 @@
-import Post from "./Post";
+import Post from "./base";
 export default function (searchTerm: string): Promise<Post[]> {
   return new Promise(async (resolve, reject) => {
     if (typeof searchTerm == "string") {

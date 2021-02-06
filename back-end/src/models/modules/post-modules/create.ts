@@ -1,5 +1,5 @@
-import Post, { currentWeather } from "./Post";
-import { fetchCollection } from "../../db";
+import Post, { currentWeather } from "./base";
+import { fetchCollection } from "../../../db";
 import axios from "axios";
 
 export default function (this: Post): Promise<string> {

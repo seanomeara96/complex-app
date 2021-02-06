@@ -1,4 +1,4 @@
-import Post from "./Post";
+import Post from "./base";
 export default function (this: Post): Promise<string> {
   return new Promise(async (resolve, reject) => {
     try {

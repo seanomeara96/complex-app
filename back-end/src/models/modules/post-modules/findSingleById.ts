@@ -1,5 +1,5 @@
 import { ObjectID } from "mongodb";
-import Post from "./Post";
+import Post from "./base";
 export default function (id: ObjectID, visitorId: ObjectID): Promise<Post> {
   return new Promise(async function (resolve, reject) {
     if (typeof id != "string" || !ObjectID.isValid(id)) {

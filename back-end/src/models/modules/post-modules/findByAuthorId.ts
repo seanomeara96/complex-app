@@ -1,4 +1,4 @@
-import Post from "./Post";
+import Post from "./base";
 export default function (authorId: string) {
   return Post.prototype.reusablePostQuery([
     { $match: { author: authorId } },

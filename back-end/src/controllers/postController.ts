@@ -1,4 +1,4 @@
-import Post from "../models/Post/Post";
+import Post from "../models/Post";
 import sendGrid from "@sendgrid/mail";
 sendGrid.setApiKey(process.env.SENDGRIDAPIKEY!);
 import { Request, Response } from "express";

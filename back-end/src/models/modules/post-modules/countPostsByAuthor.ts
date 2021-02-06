@@ -1,5 +1,5 @@
 import { ObjectID } from "mongodb";
-import { fetchCollection } from "../../db";
+import { fetchCollection } from "../../../db";
 export default function (id: ObjectID): Promise<number> {
   return new Promise(async (resolve, reject) => {
     try {

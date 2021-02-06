@@ -1,5 +1,5 @@
-import Post from "./Post";
-import { fetchCollection } from "../../db";
+import Post from "./base";
+import { fetchCollection } from "../../../db";
 import { ObjectID } from "mongodb";
 export default function (this: Post): Promise<string> {
   return new Promise(async (resolve, reject) => {

@@ -1,6 +1,6 @@
 import { ObjectID } from "mongodb";
-import Post from "./Post";
-import { fetchCollection } from "../../db";
+import Post from "./base";
+import { fetchCollection } from "../../../db";
 export default function (
   postIdToDelete: ObjectID,
   currentUserId: ObjectID
