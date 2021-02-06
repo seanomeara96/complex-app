@@ -4,7 +4,7 @@ import validate from "./modules/user-modules/validate";
 import login from "./modules/user-modules/login";
 import register from "./modules/user-modules/register";
 import getAvatar from "./modules/user-modules/getAvatar";
-import findByUserName from "./modules/user-modules/findByUsername";
+import findByUserName from "./modules/user-modules/findByUserName";
 import doesEmailExist from "./modules/user-modules/doesEmailExist";
 User.prototype.cleanUp = cleanUp;
 User.prototype.validate = validate;
