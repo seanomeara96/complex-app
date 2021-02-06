@@ -7,28 +7,29 @@ import setVisitorId from "./utils/setVisitorId";
 import { Server } from "http";
 import connectToDatabase, { setGlobalClient } from "./db";
 import sanitizeHTML from "sanitize-html";
+import { MongoClient } from "mongodb";
+import corsConfig from "./config/corsConfig";
 const MongoStore = require("connect-mongo")(session);
 const app = express();
 const server: Server = require("http").createServer(app);
-const corsConfig = {
-  credentials: true,
-  origin: "http://localhost:3000",
+const sessionConfig = (client: MongoClient) => {
+  return {
+    secret: "TypeScript is toit",
+    store: new MongoStore({ client }),
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      maxAge: 1000 * 60 * 60 * 24,
+      httpOnly: true,
+    },
+  };
 };
 let sessionOptions: RequestHandler;
 async function main() {
   try {
     const client = await connectToDatabase();
     setGlobalClient(client);
-    sessionOptions = session({
-      secret: "TypeScript is toit",
-      store: new MongoStore({ client }),
-      resave: false,
-      saveUninitialized: false,
-      cookie: {
-        maxAge: 1000 * 60 * 60 * 24,
-        httpOnly: true,
-      },
-    });
+    sessionOptions = session(sessionConfig(client));
     app.listen(process.env.PORT, () =>
       console.log(`Application listening on port ${process.env.port}`)
     );
