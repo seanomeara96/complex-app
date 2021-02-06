@@ -1,16 +1,11 @@
-import express, {
-  Request,
-  Response,
-  NextFunction,
-  RequestHandler,
-} from "express";
+import express, { RequestHandler } from "express";
 import session from "express-session";
 import filterHTML from "./utils/filterHTML";
 import cors from "cors";
 import router from "./router";
 import setVisitorId from "./utils/setVisitorId";
 import { Server } from "http";
-import connectToDatabase, { setGlobalClient, globalClient } from "./db";
+import connectToDatabase, { setGlobalClient } from "./db";
 import sanitizeHTML from "sanitize-html";
 const MongoStore = require("connect-mongo")(session);
 const app = express();
@@ -20,11 +15,12 @@ const corsConfig = {
   origin: "http://localhost:3000",
 };
 let sessionOptions: RequestHandler;
-connectToDatabase()
-  .then((client) => {
+async function main() {
+  try {
+    const client = await connectToDatabase();
     setGlobalClient(client);
     sessionOptions = session({
-      secret: "Javacript is toit",
+      secret: "TypeScript is toit",
       store: new MongoStore({ client }),
       resave: false,
       saveUninitialized: false,
@@ -36,8 +32,6 @@ connectToDatabase()
     app.listen(process.env.PORT, () =>
       console.log(`Application listening on port ${process.env.port}`)
     );
-  })
-  .then(() => {
     app.use(express.urlencoded({ extended: false }));
     app.use(express.json());
     app.use(cors(corsConfig));
@@ -46,11 +40,8 @@ connectToDatabase()
     app.use(setVisitorId);
     app.use("/", router);
     const io: SocketIO.Server = require("socket.io")(server);
-    // socket represents the connection between server and browser
-    io.use(function (socket, next) {
-      sessionOptions(socket.request, socket.request.res, next);
-    });
-    io.on("connection", function (socket) {
+    io.use(({ request }, next) => sessionOptions(request, request.res, next));
+    io.on("connection", (socket) => {
       if (socket.request.session.user) {
         let user = socket.request.session.user;
         socket.emit("welcome", {
@@ -69,9 +60,10 @@ connectToDatabase()
         });
       }
     });
-  })
-  .catch(() => {
-    console.log("something went wrong...");
-  });
+  } catch (err) {
+    console.error(err);
+  }
+}
+main();
 
 export default server;
