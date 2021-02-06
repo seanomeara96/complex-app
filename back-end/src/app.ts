@@ -5,10 +5,10 @@ import express, {
   RequestHandler,
 } from "express";
 import session from "express-session";
-import filterHTML from "./filterHTML";
+import filterHTML from "./utils/filterHTML";
 import cors from "cors";
 import router from "./router";
-import setVisitorId from "./setVisitorId";
+import setVisitorId from "./utils/setVisitorId";
 import { Server } from "http";
 import connectToDatabase, { setGlobalClient, globalClient } from "./db";
 import sanitizeHTML from "sanitize-html";
