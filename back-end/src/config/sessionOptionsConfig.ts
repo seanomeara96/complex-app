@@ -1,10 +1,10 @@
 import session from "express-session";
-import { MongoClient } from "mongodb";
+import { globalClient } from "../db";
 const MongoStore = require("connect-mongo")(session);
-const sessionConfig = (client: MongoClient) => {
+function sessionConfig() {
   return {
     secret: "TypeScript is toit",
-    store: new MongoStore({ client }),
+    store: new MongoStore({ client: globalClient }),
     resave: false,
     saveUninitialized: false,
     cookie: {
@@ -12,6 +12,6 @@ const sessionConfig = (client: MongoClient) => {
       httpOnly: true,
     },
   };
-};
-
-export default sessionConfig;
+}
+const sessionOptions = session(sessionConfig());
+export default sessionOptions;

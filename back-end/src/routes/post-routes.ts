@@ -1,22 +1,12 @@
-import express from "express";
-const router = express.Router();
+import { Router } from "express";
 import { mustBeLoggedIn } from "../controllers/userController";
-import {
-  create,
-  viewSingle,
-  viewEditScreen,
-  edit,
-  deletePost,
-  search,
-} from "../controllers/postController";
-
+import * as Post from "../controllers/postController";
+const router = Router();
 // Post related routes
-
-router.post("/create-post", mustBeLoggedIn, create);
-router.get("/post/:id", viewSingle);
-router.get("/post/:id/edit", mustBeLoggedIn, viewEditScreen);
-router.post("/post/:id/edit", mustBeLoggedIn, edit);
-router.post("/post/:id/delete", mustBeLoggedIn, deletePost);
-router.post("/search", search);
-
+router.post("/create-post", mustBeLoggedIn, Post.create);
+router.get("/post/:id", Post.viewSingle);
+router.get("/post/:id/edit", mustBeLoggedIn, Post.viewEditScreen);
+router.post("/post/:id/edit", mustBeLoggedIn, Post.edit);
+router.post("/post/:id/delete", mustBeLoggedIn, Post.deletePost);
+router.post("/search", Post.search);
 export default router;

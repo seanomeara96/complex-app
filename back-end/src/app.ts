@@ -1,19 +1,12 @@
-import { RequestHandler } from "express";
 import connectToDatabase, { setGlobalClient } from "./db";
-import sessionConfig from "./config/sessionConfig";
-import session from "express-session";
-import appConfig from "./config/appConfig";
-import socketConfig from "./config/socketConfig";
-let sessionOptions: RequestHandler;
 async function main() {
-  try {
-    const client = await connectToDatabase();
-    setGlobalClient(client);
-    sessionOptions = session(sessionConfig(client));
-    appConfig(sessionOptions);
-    socketConfig(sessionOptions);
-  } catch (err) {
-    console.error(err);
-  }
+  const client = await connectToDatabase();
+  setGlobalClient(client);
+  const server = await import("./config/socketConfig");
+  server.default.listen(process.env.PORT);
 }
 main();
+// connect to database
+// make client globally acessible
+// configure sessionOptions (dependant on client being accessible)
+// configure application modules that require access to session options

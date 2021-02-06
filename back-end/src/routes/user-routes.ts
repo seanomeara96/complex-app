@@ -1,23 +1,12 @@
-import express from "express";
-const router = express.Router();
-
-import {
-  validateSession,
-  home,
-  register,
-  login,
-  doesUsernameExist,
-  doesEmailExist,
-  logout,
-} from "../controllers/userController";
-
+import { Router } from "express";
+import * as User from "../controllers/userController";
+const router = Router();
 // User related routes
-router.get("/", validateSession);
-router.get("/posts", home);
-router.post("/register", register);
-router.post("/login", login);
-router.post("/doesUsernameExist", doesUsernameExist);
-router.post("/doesEmailExist", doesEmailExist);
-router.post("/logout", logout);
-
+router.get("/", User.validateSession);
+router.get("/posts", User.home);
+router.post("/register", User.register);
+router.post("/login", User.login);
+router.post("/doesUsernameExist", User.doesUsernameExist);
+router.post("/doesEmailExist", User.doesEmailExist);
+router.post("/logout", User.logout);
 export default router;
