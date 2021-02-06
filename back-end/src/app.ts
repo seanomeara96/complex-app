@@ -1,5 +1,4 @@
 import express, { RequestHandler } from "express";
-import session from "express-session";
 import filterHTML from "./utils/filterHTML";
 import cors from "cors";
 import router from "./router";
@@ -7,23 +6,11 @@ import setVisitorId from "./utils/setVisitorId";
 import { Server } from "http";
 import connectToDatabase, { setGlobalClient } from "./db";
 import sanitizeHTML from "sanitize-html";
-import { MongoClient } from "mongodb";
 import corsConfig from "./config/corsConfig";
-const MongoStore = require("connect-mongo")(session);
+import sessionConfig from "./config/sessionConfig";
+import session from "express-session";
 const app = express();
 const server: Server = require("http").createServer(app);
-const sessionConfig = (client: MongoClient) => {
-  return {
-    secret: "TypeScript is toit",
-    store: new MongoStore({ client }),
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      maxAge: 1000 * 60 * 60 * 24,
-      httpOnly: true,
-    },
-  };
-};
 let sessionOptions: RequestHandler;
 async function main() {
   try {
