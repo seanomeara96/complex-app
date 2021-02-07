@@ -1,15 +1,24 @@
-import { ObjectID } from "mongodb";
+import { Collection, ObjectID } from "mongodb";
+import db from "../../../db";
 class Post {
-  data: postData;
+  data: PostDocument;
   errors: string[];
   userid: ObjectID;
   requestedPostId?: ObjectID;
   isVisitorOwner?: boolean;
-  constructor(data: postData, userid: ObjectID, requestedPostId?: ObjectID) {
+  postsCollection: Collection;
+  followsCollection: Collection;
+  constructor(
+    data: PostDocument,
+    userid: ObjectID,
+    requestedPostId?: ObjectID
+  ) {
     this.data = data;
     this.errors = [];
     this.userid = userid;
     this.requestedPostId = requestedPostId;
+    this.postsCollection = db.fetchCollection("posts");
+    this.followsCollection = db.fetchCollection("follows");
   }
   create!: () => Promise<string>;
   update!: () => Promise<string>;
@@ -20,19 +29,19 @@ class Post {
     postIdToDelete: ObjectID,
     currentUserId: ObjectID
   ) => Promise<string>;
-  findSingleById!: (id: ObjectID, visitorId: ObjectID) => Promise<Post>;
+  findSingleById!: (id: ObjectID, visitorId: ObjectID) => Promise<PostDocument>;
   reusablePostQuery!: (
     uniqueOperations: any,
     visitorId?: ObjectID
-  ) => Promise<Post[]>;
-  findByAuthorId!: (authorId: string) => Promise<Post[]>;
-  search!: (searchTerm: string) => Promise<Post[]>;
+  ) => Promise<PostDocument[]>;
+  findByAuthorId!: (authorId: string) => Promise<PostDocument[]>;
+  search!: (searchTerm: string) => Promise<PostDocument[]>;
   countPostsByAuthor!: (id: ObjectID) => Promise<number>;
-  getFeed!: (id: ObjectID) => Promise<Post[]>;
+  getFeed!: (id: ObjectID) => Promise<PostDocument[]>;
 }
 
 export default Post;
-interface postData {
+export interface PostDocument {
   title: string;
   body: string;
   location: {

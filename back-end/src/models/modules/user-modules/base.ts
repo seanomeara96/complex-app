@@ -1,5 +1,5 @@
 import { Collection } from "mongodb";
-import { fetchCollection } from "../../../db";
+import db from "../../../db";
 interface userInput {
   username: string;
   email: string;
@@ -18,7 +18,7 @@ class User {
   constructor(data: userInput, getAvatar?: boolean) {
     this.data = { ...data };
     this.errors = [];
-    this.usersCollection = fetchCollection("users");
+    this.usersCollection = db.fetchCollection("users");
     if (getAvatar == undefined) {
       getAvatar = false;
     }

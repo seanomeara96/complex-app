@@ -1,15 +1,16 @@
 import Post from "../models/Post";
-import sendGrid from "@sendgrid/mail";
-sendGrid.setApiKey(process.env.SENDGRIDAPIKEY!);
-import { Request, Response } from "express";
 import { ObjectID } from "mongodb";
+import { Request, Response } from "express";
+import sendGrid from "../config/sendgridConfig";
+import * as EmailTemplate from "../utils/emailTemplates";
 export const create = function (req: Request, res: Response) {
-  console.log(req.body, "received this from client: req.body");
-  let post = new Post(req.body, req.session?.user._id);
+  const postData = req.body;
+  const userId = req.session?.user._id;
+  let post = new Post(postData, userId);
   post
     .create()
     .then(() => {
-      alertUser();
+      sendGrid.send(EmailTemplate.postCreated());
       req.session?.save(() => {
         res.status(201).send(post);
       });
@@ -22,13 +23,14 @@ export const create = function (req: Request, res: Response) {
 };
 
 export const viewSingle = async function (req: Request, res: Response) {
+  const postId = new ObjectID(req.params.id);
+  const visitorId = new ObjectID(req.visitorId);
   try {
-    let post = await Post.prototype.findSingleById(
-      new ObjectID(req.params.id),
-      new ObjectID(req.visitorId)
-    );
-    res.send({ post: post, title: post.data.title });
-  } catch {
+    let post = await Post.prototype.findSingleById(postId, visitorId);
+    console.log("this is the post i received", post);
+    res.send({ post: post, title: post.title }); // need to differentiate between Post Class and Post Document
+  } catch (err) {
+    console.log(err);
     res.status(404).send({
       errors: ["Post not found"],
     });
@@ -36,11 +38,10 @@ export const viewSingle = async function (req: Request, res: Response) {
 };
 
 export const viewEditScreen = async function (req: Request, res: Response) {
+  const postId = new ObjectID(req.params.id);
+  const visitorId = new ObjectID(req.visitorId!);
   try {
-    let post = await Post.prototype.findSingleById(
-      new ObjectID(req.params.id),
-      req.visitorId!
-    );
+    let post = await Post.prototype.findSingleById(postId, visitorId);
     if (post.isVisitorOwner) {
       res.status(200).send({ post: post });
     } else {
@@ -115,13 +116,3 @@ export const search = function (req: Request, res: Response) {
       res.json([]);
     });
 };
-
-function alertUser() {
-  sendGrid.send({
-    to: "redabihsot@gmail.com",
-    from: "seanom96@gmail.com",
-    subject: "congrats on creating this post",
-    text: "you did a great job of creating a post",
-    html: "you did a <strong>Great</strong> job of creating a post",
-  });
-}

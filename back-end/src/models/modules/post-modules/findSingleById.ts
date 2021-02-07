@@ -1,13 +1,17 @@
 import { ObjectID } from "mongodb";
-import Post from "./base";
-export default function (id: ObjectID, visitorId: ObjectID): Promise<Post> {
+import Post, { PostDocument } from "./base";
+export default function (
+  id: ObjectID,
+  visitorId: ObjectID
+): Promise<PostDocument> {
   return new Promise(async function (resolve, reject) {
-    if (typeof id != "string" || !ObjectID.isValid(id)) {
+    if (!ObjectID.isValid(id)) {
+      console.error("user did not submit a valid user Id");
       //OjectID converts the string into mongodb format
       reject();
       return;
     }
-    let posts: Post[] = await Post.prototype.reusablePostQuery(
+    let posts: PostDocument[] = await Post.prototype.reusablePostQuery(
       [{ $match: { _id: id } }],
       visitorId
     );

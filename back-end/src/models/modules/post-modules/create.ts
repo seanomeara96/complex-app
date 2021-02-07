@@ -1,5 +1,4 @@
 import Post, { currentWeather } from "./base";
-import { fetchCollection } from "../../../db";
 import axios from "axios";
 
 export default function (this: Post): Promise<string> {
@@ -13,8 +12,8 @@ export default function (this: Post): Promise<string> {
     this.validate();
     if (!this.errors.length) {
       // Save post to database
-      fetchCollection("posts")
-        ?.insertOne(this.data)
+      this.postsCollection
+        .insertOne(this.data)
         .then((info: any) => {
           // fix post
           resolve(info.ops[0]._id);

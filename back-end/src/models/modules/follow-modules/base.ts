@@ -1,5 +1,5 @@
 import { ObjectID, Collection } from "mongodb";
-import { fetchCollection } from "../../../db";
+import db from "../../../db";
 class Follow {
   followedUsername: string;
   authorId: ObjectID;
@@ -11,8 +11,8 @@ class Follow {
     this.followedUsername = followedUsername;
     this.authorId = authorId;
     this.errors = [];
-    this.followsCollection = fetchCollection("follows");
-    this.usersCollection = fetchCollection("users");
+    this.followsCollection = db.fetchCollection("follows");
+    this.usersCollection = db.fetchCollection("users");
   }
 
   cleanUp!: () => void;

@@ -1,11 +1,17 @@
 import { ObjectID } from "mongodb";
-import { fetchCollection } from "../../../db";
+import db from "../../../db";
 import Post from "./base";
-export default async function (id: ObjectID) {
-  // Create an array of the user ids that the current user follows
-  let followedUsers = await fetchCollection("follows")
-    .find({ authorId: new ObjectID(id) })
-    .toArray();
+export default async function (this: Post, id: ObjectID) {
+  // Create an array of the user ids that the current user follow
+  let followedUsers;
+  try {
+    followedUsers = await db
+      .fetchCollection("follows")
+      .find({ authorId: new ObjectID(id) })
+      .toArray();
+  } catch (err) {
+    console.error(err);
+  }
   followedUsers = followedUsers?.map(function (followDoc: any) {
     return followDoc.followedId;
   });

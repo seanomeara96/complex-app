@@ -1,6 +1,6 @@
 import { ObjectID } from "mongodb";
 import Post from "./base";
-import { fetchCollection } from "../../../db";
+import db from "../../../db";
 export default function (
   postIdToDelete: ObjectID,
   currentUserId: ObjectID
@@ -12,7 +12,8 @@ export default function (
         currentUserId
       );
       if (post.isVisitorOwner) {
-        await fetchCollection("posts")?.deleteOne({
+        // where am i setting isVisitorOwner
+        await db.fetchCollection("posts").deleteOne({
           _id: new ObjectID(postIdToDelete),
         });
         resolve("deleted");

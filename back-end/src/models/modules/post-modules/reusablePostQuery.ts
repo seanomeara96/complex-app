@@ -1,13 +1,13 @@
-import { fetchCollection } from "../../../db";
+import db from "../../../db";
 import User from "../../User";
-import Post from "./base";
+import { PostDocument } from "./base";
 import { ObjectID } from "mongodb";
 export default function (
   uniqueOperations: any,
   visitorId?: ObjectID
-): Promise<Post[]> {
+): Promise<PostDocument[]> {
   console.log("reusable post query called");
-  return new Promise(async function (resolve, reject) {
+  return new Promise(async (resolve, reject) => {
     let aggOperations = uniqueOperations.concat([
       {
         $lookup: {
@@ -28,11 +28,12 @@ export default function (
       },
     ]);
     try {
-      console.log("logging collection", fetchCollection("posts"));
-      let posts = await fetchCollection("posts")
+      let posts = await db
+        .fetchCollection("posts")
         .aggregate(aggOperations)
         .toArray();
-      posts = posts!.map(function (post: any) {
+      console.log("posts before its fucked with", posts);
+      posts = posts!.map((post: PostDocument) => {
         post.isVisitorOwner = post.authorId.equals(visitorId);
         post.authorId = undefined;
         post.author = {
@@ -41,6 +42,7 @@ export default function (
         };
         return post;
       });
+
       resolve(posts);
     } catch (err) {
       console.log("Error from reusablepost query", err);

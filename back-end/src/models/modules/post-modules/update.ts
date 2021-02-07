@@ -7,6 +7,7 @@ export default function (this: Post): Promise<string> {
         this.userid
       );
       if (post.isVisitorOwner) {
+        // fix this
         // Update the db
         let status = await this.actuallyUpdate();
         resolve(status);
