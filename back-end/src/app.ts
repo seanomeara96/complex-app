@@ -1,9 +1,10 @@
-import connectToDatabase, { setGlobalClient } from "./db";
+import db from "./db";
 async function main() {
-  const client = await connectToDatabase();
-  setGlobalClient(client);
+  await db.connect();
   const server = await import("./config/socketConfig");
-  server.default.listen(process.env.PORT);
+  server.default.listen(process.env.PORT, () =>
+    console.log("app started successfully")
+  );
 }
 main();
 // connect to database

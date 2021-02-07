@@ -2,27 +2,29 @@
 // without a db connection
 import dotenv from "dotenv";
 import mongodb, { MongoClient } from "mongodb";
+import mongoConfig from "./config/mongoConfig";
 dotenv.config();
-export let globalClient: MongoClient;
-function connectToDatabase(): Promise<MongoClient> {
-  return new Promise(async (resolve, reject) => {
+
+class Connection {
+  client: MongoClient | undefined;
+  connectionString: string;
+  constructor(connectionString: string) {
+    this.connectionString = connectionString;
+  }
+
+  async connect() {
     try {
-      let res: MongoClient = await mongodb.connect(
-        process.env.CONNECTIONSTRING!,
-        {
-          useUnifiedTopology: true,
-        }
-      );
-      resolve(res);
+      this.client = await mongodb.connect(this.connectionString, mongoConfig);
     } catch (err) {
-      reject(err);
+      console.error(err);
     }
-  });
+  }
+
+  fetchCollection(collection: string) {
+    return this.client!.db().collection(collection);
+  }
 }
-export const setGlobalClient = (client: MongoClient) => {
-  globalClient = client;
-};
-export const fetchCollection = (collection: string) => {
-  return globalClient.db().collection(collection);
-};
-export default connectToDatabase;
+
+const db = new Connection(process.env.CONNECTIONSTRING!);
+
+export default db;
