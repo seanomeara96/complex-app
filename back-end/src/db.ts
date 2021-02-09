@@ -1,3 +1,5 @@
+// Prevents application from starting
+// without a db connection
 import dotenv from "dotenv";
 import mongodb from "mongodb";
 import mongoConfig from "./config/mongoConfig";
