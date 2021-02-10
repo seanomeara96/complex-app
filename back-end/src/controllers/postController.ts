@@ -3,6 +3,7 @@ import { ObjectID } from "mongodb";
 import { Request, Response } from "express";
 import sendGrid from "../config/sendgridConfig";
 import * as EmailTemplate from "../utils/emailTemplates";
+import { PostDocument } from "../models/modules/post-modules/base";
 export const create = function (req: Request, res: Response) {
   const postData = req.body;
   const userId = req.session?.user._id;
@@ -109,7 +110,7 @@ export const search = function (req: Request, res: Response) {
   console.log("search term", req.body);
   Post.prototype
     .search(req.body.searchTerm)
-    .then((posts: Post[]) => {
+    .then((posts: PostDocument[]) => {
       res.json(posts);
     })
     .catch(() => {
