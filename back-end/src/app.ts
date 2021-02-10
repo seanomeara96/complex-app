@@ -1,10 +1,9 @@
-import server from "./config/socketConfig";
-import client from "./db";
-const start = async () => {
-  await client();
-  server.listen(process.env.PORT, () =>
+import db from "./db";
+async function main() {
+  await db.connect();
+  const server = await import("./config/socketConfig");
+  server.default.listen(process.env.PORT, () =>
     console.log("app started successfully")
   );
-};
-start();
-// implement top level await to make this work
+}
+main();
