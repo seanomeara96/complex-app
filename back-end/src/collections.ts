@@ -1,6 +1,6 @@
-import client from "./db";
+import db from "./db";
 function fetchCollection(collectionName: string) {
-  return client.db().collection(collectionName);
+  return db.client!.db().collection(collectionName);
 }
 export const usersCollection = fetchCollection("users"),
   postsCollection = fetchCollection("posts"),

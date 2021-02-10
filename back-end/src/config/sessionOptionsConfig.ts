@@ -4,7 +4,7 @@ import db from "../db";
 const MongoStore = require("connect-mongo")(session);
 function sessionConfig() {
   return {
-    secret: "TypeScript is toit",
+    secret: process.env.SESSION_SECRET,
     store: new MongoStore({ client: db.client }),
     resave: false,
     saveUninitialized: false,
