@@ -1,11 +1,11 @@
 import session from "express-session";
-import db from "../db";
+import client from "../db";
 
 const MongoStore = require("connect-mongo")(session);
 function sessionConfig() {
   return {
     secret: "TypeScript is toit",
-    store: new MongoStore({ client: db.client }),
+    store: new MongoStore({ client }),
     resave: false,
     saveUninitialized: false,
     cookie: {
