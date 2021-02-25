@@ -1,9 +1,6 @@
 import { ObjectID } from "mongodb";
 import Post, { PostDocument } from "./base";
-export default function (
-  id: ObjectID,
-  visitorId: ObjectID
-): Promise<PostDocument> {
+export default function (id: string, visitorId: string): Promise<PostDocument> {
   return new Promise(async function (resolve, reject) {
     if (!ObjectID.isValid(id)) {
       console.error("user did not submit a valid user Id");
@@ -13,7 +10,7 @@ export default function (
     }
     let posts: PostDocument[] = await Post.prototype.reusablePostQuery(
       [{ $match: { _id: id } }],
-      visitorId
+      new ObjectID(visitorId)
     );
     if (posts.length) {
       console.log("findsingleByid", posts[0]);

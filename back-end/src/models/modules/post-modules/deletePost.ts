@@ -2,8 +2,8 @@ import { ObjectID } from "mongodb";
 import Post from "./base";
 import db from "../../../db";
 export default function (
-  postIdToDelete: ObjectID,
-  currentUserId: ObjectID
+  postIdToDelete: string,
+  currentUserId: string
 ): Promise<string> {
   return new Promise(async (resolve, reject) => {
     try {

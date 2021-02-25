@@ -8,11 +8,7 @@ class Post {
   isVisitorOwner?: boolean;
   postsCollection: Collection;
   followsCollection: Collection;
-  constructor(
-    data: PostDocument,
-    userid: ObjectID,
-    requestedPostId?: ObjectID
-  ) {
+  constructor(data: PostDocument, userid: string, requestedPostId?: string) {
     this.data = data;
     this.errors = [];
     this.userid = userid;
@@ -26,10 +22,10 @@ class Post {
   cleanUp!: () => void;
   validate!: () => void;
   deletePost!: (
-    postIdToDelete: ObjectID,
+    postIdToDelete: string,
     currentUserId: ObjectID
   ) => Promise<string>;
-  findSingleById!: (id: ObjectID, visitorId: ObjectID) => Promise<PostDocument>;
+  findSingleById!: (id: string, visitorId: string) => Promise<PostDocument>;
   reusablePostQuery!: (
     uniqueOperations: any,
     visitorId?: ObjectID

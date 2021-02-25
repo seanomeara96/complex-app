@@ -10,10 +10,10 @@ export const create = function (req: Request, res: Response) {
   let post = new Post(postData, userId);
   post
     .create()
-    .then(() => {
+    .then((postId) => {
       sendGrid.send(EmailTemplate.postCreated());
       req.session?.save(() => {
-        res.status(201).send(post);
+        res.status(201).send(postId);
       });
     })
     .catch((errors: string[]) => {
@@ -24,12 +24,11 @@ export const create = function (req: Request, res: Response) {
 };
 
 export const viewSingle = async function (req: Request, res: Response) {
-  const postId = new ObjectID(req.params.id);
-  const visitorId = new ObjectID(req.visitorId);
+  const postId = req.params.id;
+  const visitorId = req.visitorId;
   try {
     let post = await Post.prototype.findSingleById(postId, visitorId);
-    console.log("this is the post i received", post);
-    res.send({ post: post, title: post.title }); // need to differentiate between Post Class and Post Document
+    res.send({ post: post, title: post.title });
   } catch (err) {
     console.log(err);
     res.status(404).send({
@@ -39,8 +38,8 @@ export const viewSingle = async function (req: Request, res: Response) {
 };
 
 export const viewEditScreen = async function (req: Request, res: Response) {
-  const postId = new ObjectID(req.params.id);
-  const visitorId = new ObjectID(req.visitorId!);
+  const postId = req.params.id;
+  const visitorId = req.visitorId!;
   try {
     let post = await Post.prototype.findSingleById(postId, visitorId);
     if (post.isVisitorOwner) {
@@ -60,7 +59,7 @@ export const viewEditScreen = async function (req: Request, res: Response) {
 };
 
 export const edit = function (req: Request, res: Response) {
-  let post = new Post(req.body, req.visitorId!, new ObjectID(req.params.id));
+  let post = new Post(req.body, req.visitorId!, req.params.id);
   post
     .update()
     .then((status) => {
@@ -89,8 +88,10 @@ export const edit = function (req: Request, res: Response) {
 };
 
 export const deletePost = function (req: Request, res: Response) {
+  const postId = req.params.id;
+  const visitorId = req.visitorId!;
   Post.prototype
-    .deletePost(new ObjectID(req.params.id), req.visitorId!)
+    .deletePost(postId, visitorId)
     .then(() => {
       req.session?.save(() => {
         res.sendStatus(200);
