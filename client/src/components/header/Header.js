@@ -1,6 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
-import { signIn, signOut, openChatBox, closeChatBox } from "../../actions";
+import { signIn, signOut } from "../../actions/auth-actions";
+import { openChatBox, closeChatBox } from "../../actions/chat-actions";
 import UserLoggedIn from "./UserLoggedIn";
 import UserLoggedOut from "./UserLoggedOut";
 import { Link } from "react-router-dom";

@@ -2,7 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import SignupForm from "./SignupForm";
 import Flash from "../Flash";
-import { registerUser } from "../../actions";
+import { registerUser } from "../../actions/auth-actions";
 class GuestHome extends React.Component {
   onSubmit = async (data) => {
     this.props.registerUser(data);

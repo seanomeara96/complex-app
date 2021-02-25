@@ -4,7 +4,7 @@ import styles from "./UserLoggedIn.module.css";
 import Search from "../Search";
 import SignOutButton from "./SignOutButton";
 import { connect } from "react-redux";
-import { signOut } from "../../actions";
+import { signOut } from "../../actions/auth-actions";
 const UserLoggedIn = (props) => {
   const onSubmit = () => {
     props.signOut();

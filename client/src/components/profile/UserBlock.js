@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
-import { getProfilePosts } from "../../actions";
+import { getProfilePosts } from "../../actions/post-actions";
 const UserBlock = ({ username, avatar, getProfilePosts }) => {
   return (
     <Link

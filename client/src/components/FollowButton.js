@@ -1,7 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 
-import { startFollowing, stopFollowing } from "../actions";
+import { startFollowing, stopFollowing } from "../actions/follow-actions";
 
 const FollowButton = (props) => {
   if (props.profile.isVisitorsProfile) {

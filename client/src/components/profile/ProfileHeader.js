@@ -4,11 +4,11 @@ import { connect } from "react-redux";
 import PostFeed from "../posts/PostFeed";
 import UserList from "./UserList";
 import style from "./ProfileHeader.module.css";
+import { getProfilePosts } from "../../actions/post-actions";
 import {
   getProfileFollowers,
   getProfileFollowing,
-  getProfilePosts,
-} from "../../actions";
+} from "../../actions/follow-actions";
 class ProfileHeader extends React.Component {
   state = { currentPage: "posts" };
   renderList() {

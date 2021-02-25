@@ -4,7 +4,7 @@ import api from "../axios/config";
 import DOMPurify from "dompurify";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
-import { setPost } from "../actions";
+import { setPost } from "../actions/post-actions";
 class Search extends React.Component {
   state = {
     focused: false,

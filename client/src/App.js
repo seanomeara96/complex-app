@@ -5,7 +5,7 @@ import HomePage from "./pages/home";
 import CreatePost from "./pages/create-post";
 import Profile from "./pages/profile";
 import SinglePostScreen from "./pages/single-post";
-import { validateSession } from "./actions";
+import { validateSession } from "./actions/auth-actions";
 import Layout from "./components/Layout";
 const App = (props) => {
   const { validateSession } = props;

@@ -1,7 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import EmptyFeed from "./EmptyFeed";
-import { fetchPosts } from "../../actions";
+import { fetchPosts } from "../../actions/post-actions";
 import Flash from "../Flash";
 import PostFeed from "../posts/PostFeed";
 class HomeDashboard extends React.Component {

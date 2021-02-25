@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import AuthorPostControls from "../components/posts/AuthorPostControls";
 import Flash from "../components/Flash";
 
-import { fetchSinglePost } from "../actions";
+import { fetchSinglePost } from "../actions/post-actions";
 const SinglePostScreen = (props) => {
   const { fetchSinglePost } = props;
   useEffect(() => {

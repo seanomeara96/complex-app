@@ -4,7 +4,7 @@ import { Redirect } from "react-router-dom";
 
 import Flash from "../components/Flash";
 import ProfileHeader from "../components/profile/ProfileHeader";
-import { getProfilePosts } from "../actions";
+import { getProfilePosts } from "../actions/post-actions";
 import ErrorPage from "./404";
 class Profile extends React.Component {
   componentDidMount() {

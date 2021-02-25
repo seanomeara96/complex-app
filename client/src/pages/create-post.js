@@ -3,7 +3,7 @@ import { Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 import CreatePostForm from "../components/posts/CreatePostForm";
 import Flash from "../components/Flash";
-import { createPost } from "../actions";
+import { createPost } from "../actions/post-actions";
 const CreatePost = (props) => {
   const onSubmit = (formValues) => {
     getLocation().then((location) => {
