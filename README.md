@@ -42,3 +42,4 @@ Share content: You can share part or all of your entry text via Twitter or Email
 - Life Journal automatically saves entries so you don't have to worry about losing your writing.
 - Changing the date of an entry automatically re-sorts it. We also get the weather information for the new date/time!
 - Application works great and looks beautiful on high resolution screens
+- Diary submissions can be added retrospectively
