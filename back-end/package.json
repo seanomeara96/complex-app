@@ -6,8 +6,15 @@
   "scripts": {
     "dev": "nodemon --exec ts-node -T ./src/app.ts --watch ./src",
     "prod": "nodemon ./prod/app.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest --watchAll --no-cache",
     "build": "gulp clean && tsc"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "setupFilesAfterEnv": [
+      "./src/test/setup.ts"
+    ]
   },
   "keywords": [],
   "author": "",

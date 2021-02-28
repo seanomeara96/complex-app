@@ -1,12 +1,20 @@
 import { Router } from "express";
-import * as User from "../controllers/userController";
+import * as userController from "../controllers/userController";
+import {
+  userHomefeedURL,
+  userRegistrationURL,
+  userLoginURL,
+  doesUsernameExistURL,
+  doesEmailExistURL,
+  userLogoutURL,
+} from "./api-urls";
 const router = Router();
 // User related routes
-router.get("/", User.validateSession);
-router.get("/posts", User.home);
-router.post("/register", User.register);
-router.post("/login", User.login);
-router.post("/doesUsernameExist", User.doesUsernameExist);
-router.post("/doesEmailExist", User.doesEmailExist);
-router.post("/logout", User.logout);
+router.get("/", userController.validateSession); // this is definitely poor pracctice
+router.get(userHomefeedURL, userController.home);
+router.post(userRegistrationURL, userController.register);
+router.post(userLoginURL, userController.login);
+router.post(doesUsernameExistURL, userController.doesUsernameExist);
+router.post(doesEmailExistURL, userController.doesEmailExist);
+router.post(userLogoutURL, userController.logout);
 export default router;

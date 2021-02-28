@@ -1,5 +1,6 @@
 import request from "supertest";
-import server from "../../app";
+import app from "../../app";
+import { doesUsernameExistURL } from "../api-urls";
 it("validates the user's current session", async () => {
   // stuff goes here
 });
@@ -22,6 +23,10 @@ it("it responds true/false if username exists", async () => {
 
 it("it responds true/false if email exists", async () => {
   // stuff goes here
+  await request(app)
+    .post(doesUsernameExistURL)
+    .send({ username: "username" })
+    .expect(true);
 });
 
 it("it responds with 200 when the user has logged out", async () => {

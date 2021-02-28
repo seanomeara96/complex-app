@@ -1,24 +1,29 @@
 import { Router } from "express";
-import * as User from "../controllers/userController";
+import * as userController from "../controllers/userController";
+import {
+  userProfileFollowersURL,
+  userProfileFollowingURL,
+  userProfilePostsURL,
+} from "./api-urls";
 const router = Router();
 // Profile related routes
 router.get(
-  "/profile/:username/posts",
-  User.ifUserExists,
-  User.sharedProfileData,
-  User.profilePostsScreen
+  userProfilePostsURL,
+  userController.ifUserExists,
+  userController.sharedProfileData,
+  userController.profilePostsScreen
 );
 router.get(
-  "/profile/:username/followers",
-  User.ifUserExists,
-  User.sharedProfileData,
-  User.profileFollowersScreen
+  userProfileFollowersURL,
+  userController.ifUserExists,
+  userController.sharedProfileData,
+  userController.profileFollowersScreen
 );
 router.get(
-  "/profile/:username/following",
-  User.ifUserExists,
-  User.sharedProfileData,
-  User.profileFollowingScreen
+  userProfileFollowingURL,
+  userController.ifUserExists,
+  userController.sharedProfileData,
+  userController.profileFollowingScreen
 );
 
 export default router;

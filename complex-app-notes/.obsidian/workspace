@@ -1,0 +1,96 @@
+{
+  "main": {
+    "id": "42ac049b749f4ae3",
+    "type": "split",
+    "children": [
+      {
+        "id": "da9e71b99264ce38",
+        "type": "leaf",
+        "active": true,
+        "state": {
+          "type": "graph",
+          "state": {}
+        }
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "875927fba48554cf",
+    "type": "split",
+    "children": [
+      {
+        "id": "2d1ee4c83cb8c44f",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "91856d12d1d1050d",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {}
+            }
+          },
+          {
+            "id": "84eca49be41cb73a",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "b4501c9a6181e091",
+    "type": "split",
+    "children": [
+      {
+        "id": "f3c387e70b2e8d91",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "d8a17360b8989f03",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "lastOpenFiles": [
+    "app features.md",
+    "Untitled.md",
+    "accurate, location-aware weather information.md",
+    "database/Untitled.md",
+    "entries.md",
+    "templates/5 minute journal.md",
+    "Exercise Diary.md",
+    "Food Diary.md",
+    "Pure Productivity Template.md",
+    "Five Minute Journal Template.md"
+  ]
+}
