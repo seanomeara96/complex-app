@@ -6,6 +6,10 @@ it("validates the user's current session", async () => {
 });
 
 it("fetches the posts for the homepage", async () => {
+  // create three users a, b, and c
+  // create some posts as user b and c
+  // login as user a and request homefeed
+  // expect a post length > 1
   // stuff goes here
 });
 
