@@ -1,5 +1,5 @@
 import request from "supertest";
-import server from "../../app";
+import server from "../../config/socketConfig";
 
 it("responds with 201 when post is successfully created", async () => {
   // stuff goes here

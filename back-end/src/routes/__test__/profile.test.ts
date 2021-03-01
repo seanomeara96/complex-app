@@ -1,5 +1,5 @@
 import request from "supertest";
-import server from "../../app";
+import server from "../../config/socketConfig";
 it("responds with all post associated with a username", async () => {
   // stuff goes here
 });

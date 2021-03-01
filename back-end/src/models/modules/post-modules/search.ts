@@ -1,5 +1,5 @@
-import Post from "./base";
-export default function (searchTerm: string): Promise<Post[]> {
+import Post, { PostDocument } from "./base";
+export default function (searchTerm: string): Promise<PostDocument[]> {
   return new Promise(async (resolve, reject) => {
     if (typeof searchTerm == "string") {
       try {

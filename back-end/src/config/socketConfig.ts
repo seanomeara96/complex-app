@@ -1,6 +1,5 @@
 import { Server } from "http";
 import sanitizeHTML from "sanitize-html";
-import { RequestHandler } from "express";
 import appConfig from "./appConfig";
 import sessionOptions from "./sessionOptionsConfig";
 const server: Server = require("http").createServer(appConfig);

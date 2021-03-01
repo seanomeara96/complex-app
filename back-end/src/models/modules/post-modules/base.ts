@@ -3,8 +3,8 @@ import db from "../../../db";
 class Post {
   data: PostDocument;
   errors: string[];
-  userid: ObjectID;
-  requestedPostId?: ObjectID;
+  userid: string;
+  requestedPostId?: string;
   isVisitorOwner?: boolean;
   postsCollection: Collection;
   followsCollection: Collection;
@@ -23,7 +23,7 @@ class Post {
   validate!: () => void;
   deletePost!: (
     postIdToDelete: string,
-    currentUserId: ObjectID
+    currentUserId: string
   ) => Promise<string>;
   findSingleById!: (id: string, visitorId: string) => Promise<PostDocument>;
   reusablePostQuery!: (

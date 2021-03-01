@@ -2,10 +2,10 @@
   "name": "complex-app",
   "version": "1.0.0",
   "description": "",
-  "main": "app.js",
+  "main": "index.js",
   "scripts": {
-    "dev": "nodemon --exec ts-node -T ./src/app.ts --watch ./src",
-    "prod": "nodemon ./prod/app.js",
+    "dev": "nodemon --exec ts-node -T ./src/index.ts --watch ./src",
+    "prod": "nodemon ./prod/index.js",
     "test": "jest --watchAll --no-cache",
     "build": "gulp clean && tsc"
   },

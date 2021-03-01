@@ -1,5 +1,5 @@
 import request from "supertest";
-import server from "../../app";
+import server from "../../index";
 
 it("responds with 201 if a when a follow has been created", async () => {
   // stuff goes here
