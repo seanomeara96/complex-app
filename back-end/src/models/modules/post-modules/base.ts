@@ -47,6 +47,7 @@ export interface PostDocument {
   weather: currentWeather;
   createdDate?: Date;
   author?: ObjectID;
+  isVisitorOwner: boolean;
 }
 export interface currentWeather {
   time: number;
