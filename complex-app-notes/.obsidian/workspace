@@ -10,7 +10,7 @@
         "state": {
           "type": "markdown",
           "state": {
-            "file": "general.md",
+            "file": "required types.md",
             "mode": "source"
           }
         }
@@ -69,7 +69,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "general.md",
+                "file": "required types.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -87,6 +87,7 @@
   },
   "lastOpenFiles": [
     "Untitled.md",
+    "general.md",
     "app features.md",
     "accurate, location-aware weather information.md",
     "database/Untitled.md",
@@ -94,7 +95,6 @@
     "templates/5 minute journal.md",
     "Exercise Diary.md",
     "Food Diary.md",
-    "Pure Productivity Template.md",
-    "Five Minute Journal Template.md"
+    "Pure Productivity Template.md"
   ]
 }

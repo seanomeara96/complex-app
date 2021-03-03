@@ -4,16 +4,8 @@ export default function (this: User): Promise<string> {
   console.log("login function was called");
   return new Promise((resolve, reject) => {
     this.cleanUp();
-    // findOne() takes two parameters
-    // The first is an object that describes what we want to find
-    // The second is a function that .findOne() is going to call once the first-
-    // operation has had a chance to complete
-    // because we dont know how long the search is going to take
     this.usersCollection
-      .findOne(
-        { username: this.data.username }
-        // .findOne() and all of mongodb's other functions will return a promise
-      )
+      .findOne({ username: this.data.username })
       .then((attemptedUser: any) => {
         // fix this any
         // Hash the login password to check against hashed database password
