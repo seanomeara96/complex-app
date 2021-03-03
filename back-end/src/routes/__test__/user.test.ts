@@ -15,14 +15,20 @@ it("fetches the posts for the homepage", async () => {
 
 it("responds with 201 when it registers a new user", async () => {
   // stuff goes here
+  // should also respond with a cookie or jwt that verfiies a session has been created
+  // they should match the credentials of the user
+  // they should not contain any sensitive information ie userId or password
 });
 
 it("reponds with 200 when a user signs in", async () => {
   // stuff goes here
+  // again cookie/token should match sign in credentials
+  // cookie token should not contain sensitive information
 });
 
 it("it responds true/false if username exists", async () => {
   // stuff goes here
+  // register a user then attempt to register a user by the same name
 });
 
 it("it responds true/false if email exists", async () => {
@@ -35,4 +41,5 @@ it("it responds true/false if email exists", async () => {
 
 it("it responds with 200 when the user has logged out", async () => {
   // stuff goes here
+  // expires value in the past?
 });
