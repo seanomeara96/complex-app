@@ -23,7 +23,7 @@ export default function (this: Follow, id: ObjectId): Promise<Follow[]> {
           },
         ])
         .toArray();
-      followers = followers?.map(function (follower: any) {
+      followers = followers?.map((follower: any) => {
         // fix this any
         //create a user
         let user = new User(follower, true);
