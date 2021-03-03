@@ -3,7 +3,7 @@ import User from "../../User";
 export default function (this: User): Promise<string> {
   return new Promise(async (resolve, reject) => {
     this.cleanUp();
-    await this.validate();
+    this.validate(); // should this be an async function?
     if (!this.errors.length) {
       let salt = bcrypt.genSaltSync(10);
       this.data.password = bcrypt.hashSync(this.data.password, salt);
