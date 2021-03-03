@@ -5,7 +5,7 @@ export default function (this: User, email: string): Promise<boolean> {
       resolve(false);
       return;
     }
-    let user = await this.usersCollection.findOne({ email: email });
+    let user = await this.usersCollection.findOne({ email });
     if (user) {
       resolve(true);
     } else {
