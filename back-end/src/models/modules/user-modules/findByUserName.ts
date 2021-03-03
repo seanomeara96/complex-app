@@ -6,7 +6,7 @@ export default function (this: User, username: string): Promise<User> {
     }
     this.usersCollection
       .findOne({ username: username })
-      .then(function (userDoc: any) {
+      .then((userDoc: any) => {
         // fix this any
         if (userDoc) {
           userDoc = new User(userDoc, true);
