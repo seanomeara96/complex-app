@@ -1,4 +1,5 @@
-import Post, { PostDocument } from "./base";
+import Post from "./_postBase";
+import { PostDocument } from "./postTypes";
 export default function (searchTerm: string): Promise<PostDocument[]> {
   return new Promise(async (resolve, reject) => {
     if (typeof searchTerm == "string") {

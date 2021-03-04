@@ -1,6 +1,10 @@
-import Post, { currentWeather } from "./base";
+import Post from "./_postBase";
 import axios from "axios";
-
+import { currentWeather } from "./postTypes";
+/**
+ * Cleans, validates and transforms post submission and stores it in the database
+ * @param this Post object
+ */
 export default function (this: Post): Promise<string> {
   console.log(this.data, "post is the data in the Post model");
   return new Promise(async (resolve, reject) => {
@@ -12,6 +16,7 @@ export default function (this: Post): Promise<string> {
     this.validate();
     if (!this.errors.length) {
       // Save post to database
+      console.log(this.data);
       this.postsCollection
         .insertOne(this.data)
         .then((info: any) => {

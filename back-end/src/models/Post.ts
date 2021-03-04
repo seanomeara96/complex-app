@@ -1,4 +1,4 @@
-import Post from "./modules/post-modules/base";
+import Post from "./modules/post-modules/_postBase";
 import create from "./modules/post-modules/create";
 import update from "./modules/post-modules/update";
 import actuallyUpdate from "./modules/post-modules/actuallyUpdate";

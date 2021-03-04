@@ -1,10 +1,16 @@
 import { ObjectID } from "mongodb";
-import Post, { PostDocument } from "./base";
+import Post from "./_postBase";
+import { PostDocument } from "./postTypes";
+/**
+ * Find single post by its ID
+ * @param id is the postId you wish to find
+ * @param visitorId is the requesting user's id
+ */
 export default function (id: string, visitorId: string): Promise<PostDocument> {
-  return new Promise(async function (resolve, reject) {
+  return new Promise(async (resolve, reject) => {
     if (!ObjectID.isValid(id)) {
       console.error("user did not submit a valid user Id");
-      //OjectID converts the string into mongodb format
+      // OjectID converts the string into mongodb format
       reject();
       return;
     }

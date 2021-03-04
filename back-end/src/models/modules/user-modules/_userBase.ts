@@ -5,6 +5,10 @@ interface userInput {
   email: string;
   password: string;
 }
+/**
+ * User class instantiates a User Object
+ * @param data user data that includes username email & password
+ */
 class User {
   avatar?: string;
   data: {
@@ -16,7 +20,7 @@ class User {
   errors: string[];
   usersCollection: Collection;
   constructor(data: userInput, getAvatar?: boolean) {
-    this.data = { ...data };
+    this.data = data;
     this.errors = [];
     this.usersCollection = db.fetchCollection("users");
     if (getAvatar == undefined) {

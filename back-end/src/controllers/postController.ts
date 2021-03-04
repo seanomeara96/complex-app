@@ -3,7 +3,7 @@ import { ObjectID } from "mongodb";
 import { Request, Response } from "express";
 import sendGrid from "../config/sendgridConfig";
 import * as EmailTemplate from "../utils/emailTemplates";
-import { PostDocument } from "../models/modules/post-modules/base";
+import { PostDocument } from "../models/modules/post-modules/_postBase";
 export const create = function (req: Request, res: Response) {
   const postData = req.body;
   const userId = req.session?.user._id;

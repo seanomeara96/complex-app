@@ -1,7 +1,13 @@
 import db from "../../../db";
 import User from "../../User";
-import { PostDocument } from "./base";
+import { PostDocument } from "./postTypes";
 import { ObjectID } from "mongodb";
+/**
+ * Reusable Post Query takes an array of unique operations depending on your use case
+ * And a visitor Id so that it can be determined if the visitor is the author
+ * @param uniqueOperations
+ * @param visitorId
+ */
 export default function (
   uniqueOperations: any,
   visitorId?: ObjectID

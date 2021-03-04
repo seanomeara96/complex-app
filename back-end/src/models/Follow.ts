@@ -1,4 +1,4 @@
-import Follow from "./modules/follow-modules/base";
+import Follow from "./modules/follow-modules/_followBase";
 import cleanUp from "./modules/follow-modules/cleanUp";
 import validate from "./modules/follow-modules/validate";
 import create from "./modules/follow-modules/create";

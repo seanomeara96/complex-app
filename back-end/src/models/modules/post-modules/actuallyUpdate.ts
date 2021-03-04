@@ -1,5 +1,9 @@
-import Post from "./base";
+import Post from "./_postBase";
 import { ObjectID } from "mongodb";
+/**
+ * Updates the post in the database
+ * @param this Post object
+ */
 export default function (this: Post): Promise<string> {
   return new Promise(async (resolve, reject) => {
     this.cleanUp();

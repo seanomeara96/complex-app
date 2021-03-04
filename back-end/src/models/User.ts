@@ -1,4 +1,4 @@
-import User from "./modules/user-modules/base";
+import User from "./modules/user-modules/_userBase";
 import cleanUp from "./modules/user-modules/cleanUp";
 import validate from "./modules/user-modules/validate";
 import login from "./modules/user-modules/login";

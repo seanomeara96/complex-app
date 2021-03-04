@@ -1,6 +1,10 @@
-import Post from "./base";
+import Post from "./_postBase";
 import sanitizeHTML from "sanitize-html";
 import { ObjectID } from "mongodb";
+/**
+ * Sanitizes HTML, ensures submission fields are correct types and that location is valid
+ * @param this Post object
+ */
 export default function (this: Post) {
   if (typeof this.data.title != "string") {
     this.data.title = "";
@@ -33,16 +37,11 @@ export default function (this: Post) {
     location: this.data.location,
   };
 }
+const isBetween = (value: number, bottomEnd: number, topEnd: number): boolean =>
+  bottomEnd <= value && topEnd >= value;
 function isValidCoordinates(lat: number | null, long: number | null): boolean {
-  if (typeof lat == null || typeof long == null) {
-    return false;
-  }
-  if (typeof lat == "number" && typeof long == "number") {
+  if (typeof lat == null || typeof long == null) return false;
+  if (typeof lat == "number" && typeof long == "number")
     return isBetween(lat, -90, 90) && isBetween(long, -180, 180);
-  }
   return false;
-}
-
-function isBetween(value: number, bottomEnd: number, topEnd: number): boolean {
-  return bottomEnd <= value && topEnd >= value;
 }
