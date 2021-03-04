@@ -40,7 +40,7 @@ export default function (
         .toArray();
       console.log("posts before its fucked with", posts);
       posts = posts!.map((post: PostDocument) => {
-        post.isVisitorOwner = post.authorId.equals(visitorId);
+        post.isVisitorOwner = post.authorId!.equals(visitorId);
         post.authorId = undefined;
         post.author = {
           username: post.author.username,
