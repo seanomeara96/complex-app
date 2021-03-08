@@ -32,10 +32,12 @@ it("it responds true/false if username exists", async () => {
 });
 
 it("it responds true/false if email exists", async () => {
+  const username = "test@test.com";
+  await global.registerUser(username);
   // stuff goes here
   await request(server)
     .post(doesUsernameExistURL)
-    .send({ username: "username" })
+    .send({ username })
     .expect(true);
 });
 

@@ -1,5 +1,10 @@
 import bcrypt from "bcryptjs";
 import User from "../../User";
+/**
+ * Logs the user in by comparing password to attempted password
+ * @param this the User class
+ * @returns
+ */
 export default function (this: User): Promise<string> {
   console.log("login function was called");
   return new Promise((resolve, reject) => {

@@ -19,6 +19,14 @@ class Connection {
   fetchCollection(collection: string) {
     return this.client!.db().collection(collection);
   }
+  fetchCollections() {
+    return this.client!.db().collections();
+  }
+  closeConnection() {
+    return new Promise((resolve, reject) => {
+      this.client!.close().then(resolve).catch(reject);
+    });
+  }
 }
 const db = new Connection();
 export default db;

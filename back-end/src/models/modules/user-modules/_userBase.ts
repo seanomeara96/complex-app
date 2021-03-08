@@ -5,10 +5,6 @@ interface userInput {
   email: string;
   password: string;
 }
-/**
- * User class instantiates a User Object
- * @param data user data that includes username email & password
- */
 class User {
   avatar?: string;
   data: {
@@ -19,6 +15,11 @@ class User {
   };
   errors: string[];
   usersCollection: Collection;
+  /**
+   * This is the user model
+   * @param data includes information such as username, email & password
+   * @param getAvatar when true generates a url for a gravatar pic
+   */
   constructor(data: userInput, getAvatar?: boolean) {
     this.data = data;
     this.errors = [];

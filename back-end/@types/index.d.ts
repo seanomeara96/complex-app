@@ -3,7 +3,7 @@ import { ObjectID, ObjectId } from "mongodb";
 export declare global {
   namespace Express {
     interface Request {
-      visitorId: ObjectId | undefined;
+      visitorId: string | undefined;
       isVisitorsProfile: boolean;
       isFollowing: boolean;
       postCount: number;

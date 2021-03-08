@@ -39,10 +39,13 @@ export default function (
         .aggregate(aggOperations)
         .toArray();
       console.log("posts before its fucked with", posts);
-      posts = posts!.map((post: PostDocument) => {
+      posts = posts!.map((post: any) => {
         post.isVisitorOwner = post.authorId!.equals(visitorId);
         post.authorId = undefined;
         post.author = {
+          /**
+           * in my db "author" is just a string so where the fuck is all this shit coming form
+           */
           username: post.author.username,
           avatar: new User(post.author, true).avatar,
         };

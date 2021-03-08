@@ -1,9 +1,8 @@
 import Post from "../models/Post";
-import { ObjectID } from "mongodb";
 import { Request, Response } from "express";
 import sendGrid from "../config/sendgridConfig";
 import * as EmailTemplate from "../utils/emailTemplates";
-import { PostDocument } from "../models/modules/post-modules/_postBase";
+import { PostDocument } from "../models/modules/post-modules/postTypes";
 export const create = function (req: Request, res: Response) {
   const postData = req.body;
   const userId = req.session?.user._id;
@@ -23,9 +22,14 @@ export const create = function (req: Request, res: Response) {
     });
 };
 
+/**
+ * requests a single post by passing the postId and visitorId to the post model's findSingle function
+ * @param req express request object
+ * @param res express response object
+ */
 export const viewSingle = async function (req: Request, res: Response) {
   const postId = req.params.id;
-  const visitorId = req.visitorId;
+  const visitorId = req.visitorId!;
   try {
     let post = await Post.prototype.findSingleById(postId, visitorId);
     res.send({ post: post, title: post.title });
@@ -37,27 +41,33 @@ export const viewSingle = async function (req: Request, res: Response) {
   }
 };
 
+/**
+ * redundant? the client should determine whether they can see edit controls
+ *
+ * @param req
+ * @param res
+ */
 export const viewEditScreen = async function (req: Request, res: Response) {
   const postId = req.params.id;
   const visitorId = req.visitorId!;
   try {
     let post = await Post.prototype.findSingleById(postId, visitorId);
     if (post.isVisitorOwner) {
-      res.status(200).send({ post: post });
+      res.status(200).send({ post });
     } else {
-      req.session?.save(() =>
-        res.status(401).send({
-          errors: ["you do not have permission to perform that action"],
-        })
-      );
+      req.session?.save(() => res.sendStatus(401));
     }
   } catch {
-    res.status(404).send({
-      errors: ["Post not found."],
-    });
+    req.session?.save(() => res.sendStatus(404));
   }
 };
 
+/**
+ * updates the post
+ *
+ * @param req
+ * @param res
+ */
 export const edit = function (req: Request, res: Response) {
   let post = new Post(req.body, req.visitorId!, req.params.id);
   post
@@ -87,6 +97,11 @@ export const edit = function (req: Request, res: Response) {
     });
 };
 
+/**
+ * deletes the post
+ * @param req requires the post id from url params
+ * @param res requires visitorId so that authority can be confirmed
+ */
 export const deletePost = function (req: Request, res: Response) {
   const postId = req.params.id;
   const visitorId = req.visitorId!;
@@ -100,9 +115,7 @@ export const deletePost = function (req: Request, res: Response) {
     })
     .catch(() => {
       req.session?.save(() => {
-        res
-          .status(401)
-          .send({ errors: ["you do have permission to perform that action."] });
+        res.sendStatus(401);
       });
     });
 };
