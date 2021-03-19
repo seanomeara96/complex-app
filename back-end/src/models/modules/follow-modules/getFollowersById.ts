@@ -1,12 +1,12 @@
 import Follow from "../../Follow";
 import User from "../../User";
-import { ObjectId } from "mongodb";
-export default function (this: Follow, id: ObjectId): Promise<Follow[]> {
+import { ObjectID } from "mongodb";
+export default function (this: Follow, id: string): Promise<Follow[]> {
   return new Promise(async (resolve, reject) => {
     try {
       let followers = await this.followsCollection
         .aggregate([
-          { $match: { followedId: id } },
+          { $match: { followedId: new ObjectID(id) } },
           {
             $lookup: {
               from: "users",

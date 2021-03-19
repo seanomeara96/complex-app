@@ -1,9 +1,9 @@
 import { ObjectID } from "mongodb";
 import Follow from "../../Follow";
-export default function (this: Follow, id: ObjectID): Promise<number> {
+export default function (this: Follow, id: string): Promise<number> {
   return new Promise(async (resolve, reject) => {
     let followerCount = await this.followsCollection.countDocuments({
-      followedId: id,
+      followedId: new ObjectID(id),
     });
     resolve(followerCount);
   });

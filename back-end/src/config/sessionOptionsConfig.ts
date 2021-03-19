@@ -2,9 +2,9 @@ import session from "express-session";
 import db from "../db";
 
 const MongoStore = require("connect-mongo")(session);
-function sessionConfig() {
+function sessionConfig(): session.SessionOptions {
   return {
-    secret: process.env.SESSION_SECRET,
+    secret: process.env.SESSION_SECRET!,
     store: new MongoStore({ client: db.client }),
     resave: false,
     saveUninitialized: false,
