@@ -6,6 +6,10 @@ import mongoConfig from "./config/mongoConfig";
 dotenv.config();
 class Connection {
   client: MongoClient | undefined;
+  /**
+   * database connection method
+   * sets client object
+   */
   async connect() {
     try {
       this.client = await mongodb.connect(
@@ -19,6 +23,10 @@ class Connection {
   fetchCollection(collection: string) {
     return this.client!.db().collection(collection);
   }
+  /**
+   *
+   * @returns all collections
+   */
   fetchCollections() {
     return this.client!.db().collections();
   }

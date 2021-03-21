@@ -4,7 +4,12 @@ import Follow from "../models/Follow";
 // import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
 import { send } from "@sendgrid/mail";
-
+/**
+ * Checks to see if the submitted username exists in the datbase
+ *
+ * @param req
+ * @param res
+ */
 export const doesUsernameExist = function (req: Request, res: Response) {
   User.prototype
     .findByUserName(req.body.username)
@@ -15,10 +20,21 @@ export const doesUsernameExist = function (req: Request, res: Response) {
       res.json(false);
     });
 };
+/**
+ * Checks to see if the submitted email exists in the database
+ * @param req
+ * @param res
+ */
 export const doesEmailExist = async function (req: Request, res: Response) {
   let emailBool = await User.prototype.doesEmailExist(req.body.email);
   res.json(emailBool);
 };
+/**
+ * Requests all the data that is shared on a user's profile page
+ * @param req
+ * @param res
+ * @param next
+ */
 export const sharedProfileData = async function (
   req: Request,
   res: Response,
@@ -53,7 +69,13 @@ export const sharedProfileData = async function (
   req.followingCount = followingCount;
   next();
 };
-
+/**
+ * User must be logged in to progress middleware
+ *
+ * @param req
+ * @param res
+ * @param next
+ */
 export const mustBeLoggedIn = function (
   req: Request,
   res: Response,
@@ -68,6 +90,12 @@ export const mustBeLoggedIn = function (
   }
 };
 
+/**
+ * logs the user in, requires a username & password
+ *
+ * @param req express request object
+ * @param res express response object
+ */
 export const login = (req: Request, res: Response) => {
   console.log("logging user in...");
   let user = new User(req.body);
@@ -91,15 +119,24 @@ export const login = (req: Request, res: Response) => {
       });
     });
 };
-
+/**
+ * Requests the destruction of the user's session
+ *
+ * @param req
+ * @param res
+ */
 export const logout = (req: Request, res: Response) => {
   req.session?.destroy(() => {
     res.sendStatus(200);
   });
 };
-
+/**
+ * registers a new user, requires a username email and password on the request body
+ *
+ * @param req express request object
+ * @param res express response object
+ */
 export const register = (req: Request, res: Response) => {
-  console.log("registering user...");
   let user = new User(req.body);
   user
     .register()
@@ -109,9 +146,7 @@ export const register = (req: Request, res: Response) => {
         avatar: user.avatar,
         _id: user.data._id,
       };
-      console.log("user registered", registeredUser);
       req.session!.user = registeredUser;
-      console.log(req.session?.user);
       req.session?.save(() => {
         res.status(201).send(registeredUser);
       });
@@ -126,7 +161,12 @@ export const register = (req: Request, res: Response) => {
     });
 };
 
-// Fetches HomeFeed
+/**
+ * requests a users homefeed
+ *
+ * @param req
+ * @param res
+ */
 export const home = async (req: Request, res: Response) => {
   if (req.session?.user) {
     console.log("fetching homefeed...");
@@ -138,7 +178,13 @@ export const home = async (req: Request, res: Response) => {
   }
 };
 
-// Checks if a user exists in the database
+/**
+ * Checks if a user exists in the database
+ *
+ * @param req
+ * @param res
+ * @param next
+ */
 export const ifUserExists = function (
   req: Request,
   res: Response,
@@ -155,7 +201,12 @@ export const ifUserExists = function (
     });
 };
 
-// Fetches data for a users profile
+/**
+ * Fetches data for a users profile
+ *
+ * @param req
+ * @param res
+ */
 export const profilePostsScreen = function (req: Request, res: Response) {
   Post.prototype
     .findByAuthorId(req.profileUser._id)
@@ -181,7 +232,12 @@ export const profilePostsScreen = function (req: Request, res: Response) {
     });
 };
 
-// Fetches data for a users follower screen
+/**
+ * Fetches data for a users follower screen
+ *
+ * @param req
+ * @param res
+ */
 export const profileFollowersScreen = async function (
   req: Request,
   res: Response
@@ -209,7 +265,12 @@ export const profileFollowersScreen = async function (
   }
 };
 
-// Fetches data for a user's following screen
+/**
+ *  Fetches data for a user's following screen
+ *
+ * @param req express request object
+ * @param res express response object
+ * */
 export const profileFollowingScreen = async function (
   req: Request,
   res: Response

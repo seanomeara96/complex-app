@@ -1,6 +1,11 @@
 import request from "supertest";
 import server from "../../config/socketConfig";
-import { doesUsernameExistURL } from "../api-urls";
+import {
+  doesEmailExistURL,
+  doesUsernameExistURL,
+  userLoginURL,
+  userRegistrationURL,
+} from "../api-urls";
 it("validates the user's current session", async () => {
   // stuff goes here
 });
@@ -14,31 +19,55 @@ it("fetches the posts for the homepage", async () => {
 });
 
 it("responds with 201 when it registers a new user", async () => {
-  // stuff goes here
-  // should also respond with a cookie or jwt that verfiies a session has been created
-  // they should match the credentials of the user
-  // they should not contain any sensitive information ie userId or password
+  const response = await request(server)
+    .post(userRegistrationURL)
+    .send({
+      username: "sean",
+      email: "sean@sean.com",
+      password: "sean@sean.com",
+    })
+    .expect(201);
+  const cookie = response.get("Set-Cookie");
 });
 
 it("reponds with 200 when a user signs in", async () => {
-  // stuff goes here
-  // again cookie/token should match sign in credentials
-  // cookie token should not contain sensitive information
+  await global.registerUser("test", "test@test.com");
+  await request(server)
+    .post(userLoginURL)
+    .send({ username: "test", password: "test@test.com" })
+    .expect(200);
 });
 
-it("it responds true/false if username exists", async () => {
-  // stuff goes here
-  // register a user then attempt to register a user by the same name
-});
-
-it("it responds true/false if email exists", async () => {
-  const username = "test@test.com";
-  await global.registerUser(username);
-  // stuff goes here
+it("it responds 401 if username exists", async () => {
+  const username = "test";
+  const email = "test@test.com";
+  await global.registerUser(username, email);
   await request(server)
     .post(doesUsernameExistURL)
     .send({ username })
-    .expect(true);
+    .expect(401);
+});
+
+it("responds with 200 if username doesnt exist", async () => {
+  await request(server)
+    .post(doesUsernameExistURL)
+    .send({ username: "paddywagon" })
+    .expect(200);
+});
+
+it("it responds 401 if email exists", async () => {
+  const username = "test";
+  const email = "test@test.com";
+  await global.registerUser(username, email);
+  // stuff goes here
+  await request(server).post(doesEmailExistURL).send({ email }).expect(401);
+});
+
+it("responds with 200 if email doesnt exist", async () => {
+  await request(server)
+    .post(doesEmailExistURL)
+    .send({ email: "paddywagon@paddywagon.com" })
+    .expect(200);
 });
 
 it("it responds with 200 when the user has logged out", async () => {
