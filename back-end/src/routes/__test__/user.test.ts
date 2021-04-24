@@ -38,36 +38,36 @@ it("reponds with 200 when a user signs in", async () => {
     .expect(200);
 });
 
-it("it responds 401 if username exists", async () => {
+it("it responds true if username exists", async () => {
   const username = "test";
   const email = "test@test.com";
   await global.registerUser(username, email);
   await request(server)
     .post(doesUsernameExistURL)
     .send({ username })
-    .expect(401);
+    .expect("true");
 });
 
-it("responds with 200 if username doesnt exist", async () => {
+it("responds with false if username doesnt exist", async () => {
   await request(server)
     .post(doesUsernameExistURL)
     .send({ username: "paddywagon" })
-    .expect(200);
+    .expect("false");
 });
 
-it("it responds 401 if email exists", async () => {
+it("it responds true if email exists", async () => {
   const username = "test";
   const email = "test@test.com";
   await global.registerUser(username, email);
   // stuff goes here
-  await request(server).post(doesEmailExistURL).send({ email }).expect(401);
+  await request(server).post(doesEmailExistURL).send({ email }).expect("true");
 });
 
-it("responds with 200 if email doesnt exist", async () => {
+it("responds with false if email doesnt exist", async () => {
   await request(server)
     .post(doesEmailExistURL)
     .send({ email: "paddywagon@paddywagon.com" })
-    .expect(200);
+    .expect("false");
 });
 
 it("it responds with 200 when the user has logged out", async () => {

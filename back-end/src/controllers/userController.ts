@@ -14,9 +14,9 @@ export const doesUsernameExist = async function (req: Request, res: Response) {
   try {
     const response = await User.prototype.findByUserName(req.body.username);
     if (typeof response == "object") {
-      res.sendStatus(401);
+      res.json(true);
     } else {
-      res.sendStatus(200);
+      res.json(false);
     }
   } catch (err) {
     console.log("does username exist err", err);
@@ -103,26 +103,25 @@ export const mustBeLoggedIn = function (
  * @param req express request object
  * @param res express response object
  */
-export const login = (req: Request, res: Response) => {
+export const login = async (req: Request, res: Response) => {
   let user = new User(req.body);
-  user
-    .login()
-    .then(() => {
-      let authenticatedUser = {
-        avatar: user.avatar,
-        username: user.data.username,
-        _id: user.data._id,
-      };
-      req.session!.user = authenticatedUser;
-      req.session?.save(() => {
-        res.send(authenticatedUser);
-      });
-    })
-    .catch((e) => {
-      req.session?.save(() => {
-        res.status(500).send(e); // Internal Server Error
-      });
+  try {
+    await user.login();
+
+    let authenticatedUser = {
+      avatar: user.avatar,
+      username: user.data.username,
+      _id: user.data._id,
+    };
+    req.session!.user = authenticatedUser;
+    req.session?.save(() => {
+      res.send(authenticatedUser);
     });
+  } catch (e) {
+    req.session?.save(() => {
+      res.status(500).send(e); // Internal Server Error
+    });
+  }
 };
 /**
  * Requests the destruction of the user's session
@@ -141,29 +140,28 @@ export const logout = (req: Request, res: Response) => {
  * @param req express request object
  * @param res express response object
  */
-export const register = (req: Request, res: Response) => {
+export const register = async (req: Request, res: Response) => {
   let user = new User(req.body);
-  user
-    .register()
-    .then(() => {
-      let registeredUser = {
-        username: user.data.username,
-        avatar: user.avatar,
-        _id: user.data._id,
-      };
-      req.session!.user = registeredUser;
-      req.session?.save(() => {
-        res.status(201).send(registeredUser);
-      });
-    })
-    .catch((regErrors: string[]) => {
-      regErrors.forEach((error) => {
-        console.error(error);
-      });
-      req.session?.save(() => {
-        res.sendStatus(500);
-      });
+  try {
+    await user.register();
+
+    let registeredUser = {
+      username: user.data.username,
+      avatar: user.avatar,
+      _id: user.data._id,
+    };
+    req.session!.user = registeredUser;
+    req.session?.save(() => {
+      res.status(201).send(registeredUser);
     });
+  } catch (regErrors: any) {
+    regErrors.forEach((error: any) => {
+      console.error(error);
+    });
+    req.session?.save(() => {
+      res.sendStatus(500);
+    });
+  }
 };
 
 /**
@@ -188,20 +186,20 @@ export const home = async (req: Request, res: Response) => {
  * @param res
  * @param next
  */
-export const ifUserExists = function (
+export const ifUserExists = async (
   req: Request,
   res: Response,
   next: NextFunction
-) {
-  User.prototype
-    .findByUserName(req.params.username)
-    .then((userDocument) => {
-      req.profileUser = userDocument;
-      next();
-    })
-    .catch(() => {
-      res.sendStatus(404);
-    });
+) => {
+  try {
+    const userDocument = await User.prototype.findByUserName(
+      req.params.username
+    );
+    req.profileUser = userDocument;
+    next();
+  } catch (err) {
+    res.sendStatus(404);
+  }
 };
 
 /**
@@ -210,29 +208,27 @@ export const ifUserExists = function (
  * @param req
  * @param res
  */
-export const profilePostsScreen = function (req: Request, res: Response) {
-  Post.prototype
-    .findByAuthorId(req.profileUser._id)
-    .then((posts) => {
-      res.send({
-        title: `Profile for ${req.profileUser.username}`,
-        currentPage: "posts",
-        posts: posts,
-        profileUsername: req.profileUser.username,
-        profileAvatar: req.profileUser.avatar,
-        isFollowing: req.isFollowing,
-        isVisitorsProfile: req.isVisitorsProfile,
-        counts: {
-          postCount: req.postCount,
-          followerCount: req.followerCount,
-          followingCount: req.followingCount,
-        },
-      });
-    })
-    .catch((error) => {
-      res.sendStatus(404);
-      console.log(error);
+export const profilePostsScreen = async (req: Request, res: Response) => {
+  try {
+    const posts = await Post.prototype.findByAuthorId(req.profileUser._id);
+    res.send({
+      title: `Profile for ${req.profileUser.username}`,
+      currentPage: "posts",
+      posts: posts,
+      profileUsername: req.profileUser.username,
+      profileAvatar: req.profileUser.avatar,
+      isFollowing: req.isFollowing,
+      isVisitorsProfile: req.isVisitorsProfile,
+      counts: {
+        postCount: req.postCount,
+        followerCount: req.followerCount,
+        followingCount: req.followingCount,
+      },
     });
+  } catch (error) {
+    res.sendStatus(404);
+    console.log(error);
+  }
 };
 
 /**
