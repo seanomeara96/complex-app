@@ -1,5 +1,10 @@
 import bcrypt from "bcryptjs";
 import User from "../../User";
+/**
+ * Registers a new user.
+ * @param this
+ * @returns
+ */
 export default function (this: User): Promise<string> {
   return new Promise(async (resolve, reject) => {
     this.cleanUp();

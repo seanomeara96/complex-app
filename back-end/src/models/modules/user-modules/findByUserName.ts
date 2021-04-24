@@ -1,11 +1,18 @@
 import User from "../../User";
-export default function (this: User, username: string): Promise<User> {
+import db from "../../../db";
+/**
+ * Supply username and get userdoc in return if exists
+ * @param this User Class
+ * @param username String - Unique Username
+ * @returns Promise => userdoc or nothing
+ */
+export default function (this: User, username: string): Promise<User | void> {
   return new Promise((resolve, reject) => {
     if (typeof username != "string") {
-      reject();
+      reject(typeof username);
     }
-    this.usersCollection
-      .findOne({ username: username })
+    db.collections.users
+      .findOne({ username })
       .then((userDoc: any) => {
         // fix this any
         if (userDoc) {
@@ -17,9 +24,9 @@ export default function (this: User, username: string): Promise<User> {
           };
           resolve(userDoc);
         } else {
-          reject();
+          resolve();
         }
       })
-      .catch(reject);
+      .catch((err: any) => reject(err));
   });
 }

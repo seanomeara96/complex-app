@@ -1,5 +1,10 @@
 import validator from "validator";
 import User from "../../User";
+/**
+ * Validates user inputs
+ * @param this
+ * @returns
+ */
 export default function (this: User): Promise<boolean> {
   return new Promise(async (resolve, reject) => {
     if (this.data.username == "") {

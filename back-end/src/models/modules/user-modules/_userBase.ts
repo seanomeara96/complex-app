@@ -30,7 +30,7 @@ class User {
   constructor(data: userInput, getAvatar?: boolean) {
     this.data = data;
     this.errors = [];
-    this.usersCollection = db.fetchCollection("users");
+    this.usersCollection = db.collections.users;
     if (getAvatar == undefined) {
       getAvatar = false;
     }
@@ -67,7 +67,7 @@ class User {
    * supply a username and this method will search the user database for a user with that name
    * @param username valid username string
    */
-  findByUserName!: (username: string) => Promise<User>;
+  findByUserName!: (username: string) => Promise<User | void>;
 }
 /**
  * exports the User class

@@ -6,7 +6,6 @@ import User from "../../User";
  * @returns
  */
 export default function (this: User): Promise<string> {
-  console.log("login function was called");
   return new Promise((resolve, reject) => {
     this.cleanUp();
     this.usersCollection

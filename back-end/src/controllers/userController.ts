@@ -3,22 +3,25 @@ import Post from "../models/Post";
 import Follow from "../models/Follow";
 // import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
-import { send } from "@sendgrid/mail";
+// import { send } from "@sendgrid/mail";
 /**
  * Checks to see if the submitted username exists in the datbase
  *
  * @param req
  * @param res
  */
-export const doesUsernameExist = function (req: Request, res: Response) {
-  User.prototype
-    .findByUserName(req.body.username)
-    .then(() => {
-      res.json(true);
-    })
-    .catch(() => {
-      res.json(false);
-    });
+export const doesUsernameExist = async function (req: Request, res: Response) {
+  try {
+    const response = await User.prototype.findByUserName(req.body.username);
+    if (typeof response == "object") {
+      res.sendStatus(401);
+    } else {
+      res.sendStatus(200);
+    }
+  } catch (err) {
+    console.log("does username exist err", err);
+    res.sendStatus(500);
+  }
 };
 /**
  * Checks to see if the submitted email exists in the database
@@ -26,8 +29,12 @@ export const doesUsernameExist = function (req: Request, res: Response) {
  * @param res
  */
 export const doesEmailExist = async function (req: Request, res: Response) {
-  let emailBool = await User.prototype.doesEmailExist(req.body.email);
-  res.json(emailBool);
+  try {
+    let emailBool = await User.prototype.doesEmailExist(req.body.email);
+    res.json(emailBool);
+  } catch (err) {
+    res.sendStatus(500);
+  }
 };
 /**
  * Requests all the data that is shared on a user's profile page
@@ -97,9 +104,7 @@ export const mustBeLoggedIn = function (
  * @param res express response object
  */
 export const login = (req: Request, res: Response) => {
-  console.log("logging user in...");
   let user = new User(req.body);
-  console.log("the user", user);
   user
     .login()
     .then(() => {
@@ -169,9 +174,7 @@ export const register = (req: Request, res: Response) => {
  */
 export const home = async (req: Request, res: Response) => {
   if (req.session?.user) {
-    console.log("fetching homefeed...");
     let posts = await Post.prototype.getFeed(req.session.user._id);
-    console.log("these are the posts", posts);
     res.json(posts);
   } else {
     res.send({ errors: ["error fetching feed"] });
