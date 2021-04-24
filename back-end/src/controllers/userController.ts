@@ -154,7 +154,7 @@ export const register = async (req: Request, res: Response) => {
     req.session?.save(() => {
       res.status(201).send(registeredUser);
     });
-  } catch (regErrors: any) {
+  } catch (regErrors) {
     regErrors.forEach((error: any) => {
       console.error(error);
     });
