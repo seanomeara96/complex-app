@@ -107,7 +107,6 @@ export const login = async (req: Request, res: Response) => {
   let user = new User(req.body);
   try {
     await user.login();
-
     let authenticatedUser = {
       avatar: user.avatar,
       username: user.data.username,
