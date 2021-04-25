@@ -24,21 +24,21 @@ export const createPostURL = () => `/create-post/`;
  * @param id
  * @returns /post/:id/
  */
-export const viewSinglePostURL = (id?: number) => `/post/${id ? id : ":id"}/`;
+export const viewSinglePostURL = (id?: string) => `/post/${id ? id : ":id"}/`;
 
 /**
  *
  * @param id
  * @returns /post/:id/edit/
  */
-export const editPostURL = (id?: number) => `/post/${id ? id : ":id"}/edit/`; // GET edit screen, POST updates
+export const editPostURL = (id?: string) => `/post/${id ? id : ":id"}/edit/`; // GET edit screen, POST updates
 
 /**
  *
  * @param id
  * @returns /post/:id/delete/
  */
-export const deletePostURL = (id?: number) =>
+export const deletePostURL = (id?: string) =>
   `/post/${id ? id : ":id"}/delete/`;
 
 /**
