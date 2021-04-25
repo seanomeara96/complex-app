@@ -60,7 +60,6 @@ class Connection {
     return new Promise((resolve, reject) => {
       this.client!.close()
         .then(() => {
-          console.log("connection closed");
           resolve();
         })
         .catch(reject);

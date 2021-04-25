@@ -1,10 +1,10 @@
 import request from "supertest";
 import server from "../../config/socketConfig";
-import { createPostURL } from "../URLs/urls";
+import { createPostURL, viewSinglePostURL } from "../URLs/urls";
 
 it("responds with 201 when post is successfully created", async () => {
   const cookie = await global.registerUser("test", "test@test.com");
-  const response = await request(server)
+  await request(server)
     .post(createPostURL())
     .send({
       title: "this is the titile",
@@ -16,12 +16,23 @@ it("responds with 201 when post is successfully created", async () => {
     })
     .set("Cookie", cookie)
     .expect(201);
-  console.log(response);
-});
+}, 15000);
 
 it("responds with the correct post when it is fetched by id", async () => {
-  // stuff goes here
-});
+  const cookie = await global.registerUser("test", "test@test.com");
+  const { body } = await request(server)
+    .post(createPostURL())
+    .send({
+      title: "this is the titile",
+      body: "this is the body",
+      location: {
+        lat: 53,
+        long: -6,
+      },
+    })
+    .set("Cookie", cookie);
+  await request(server).get(viewSinglePostURL(body)).expect(200);
+}, 30000);
 
 it("fetches edit screen?", async () => {
   // stuff goes here

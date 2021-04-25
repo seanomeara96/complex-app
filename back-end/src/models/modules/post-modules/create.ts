@@ -6,30 +6,29 @@ import { currentWeather } from "./postTypes";
  * @param this Post object
  */
 export default function (this: Post): Promise<string> {
-  console.log(this.data, "post is the data in the Post model");
   return new Promise(async (resolve, reject) => {
-    this.data.weather = await getWeather(
-      this.data.location.lat,
-      this.data.location.lat
-    );
-    this.cleanUp();
-    this.validate();
-    if (!this.errors.length) {
-      // Save post to database
-      console.log(this.data);
-      this.postsCollection
-        .insertOne(this.data)
-        .then((info: any) => {
-          // fix post
+    try {
+      this.data.weather = await getWeather(
+        this.data.location.lat,
+        this.data.location.lat
+      );
+      this.cleanUp();
+      this.validate();
+      if (!this.errors.length) {
+        try {
+          const info: any = await this.postsCollection.insertOne(this.data);
           resolve(info.ops[0]._id);
-        })
-        .catch(() => {
+        } catch (err) {
           this.errors.push("please try again later");
           reject(this.errors);
-        });
-    } else {
-      //reject
-      reject(this.errors);
+        }
+      } else {
+        //reject
+        reject(this.errors);
+      }
+    } catch (err) {
+      reject();
+      console.log(err);
     }
   });
 }

@@ -108,8 +108,12 @@ export const deletePost = async function (req: Request, res: Response) {
   }
 };
 
+/**
+ * Search posts by passing a seacrh term throught req.body
+ * @param req body contains search term
+ * @param res
+ */
 export const search = async function (req: Request, res: Response) {
-  console.log("search term", req.body);
   try {
     const posts = await Post.prototype.search(req.body.searchTerm);
     res.json(posts);

@@ -3,6 +3,7 @@ import server from "../config/socketConfig";
 import request from "supertest";
 import db from "../db";
 import { userRegistrationURL } from "../routes/URLs/urls";
+
 let mongo: MongoMemoryServer;
 beforeAll(async () => {
   mongo = new MongoMemoryServer();

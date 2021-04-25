@@ -27,7 +27,6 @@ it("responds with 201 when it registers a new user", async () => {
       password: "sean@sean.com",
     })
     .expect(201);
-  const cookie = response.get("Set-Cookie");
 });
 
 it("reponds with 200 when a user signs in", async () => {
