@@ -1,11 +1,11 @@
 import request from "supertest";
 import server from "../../config/socketConfig";
-import { createPostURL } from "../api-urls";
+import { createPostURL } from "../URLs/urls";
 
 it("responds with 201 when post is successfully created", async () => {
   const cookie = await global.registerUser("test", "test@test.com");
   await request(server)
-    .post(createPostURL)
+    .post(createPostURL())
     .send({
       title: "this is the titile",
       body: "this is the body",

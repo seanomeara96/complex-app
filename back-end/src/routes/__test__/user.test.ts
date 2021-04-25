@@ -5,7 +5,7 @@ import {
   doesUsernameExistURL,
   userLoginURL,
   userRegistrationURL,
-} from "../api-urls";
+} from "../URLs/urls";
 it("validates the user's current session", async () => {
   // stuff goes here
 });
@@ -20,7 +20,7 @@ it("fetches the posts for the homepage", async () => {
 
 it("responds with 201 when it registers a new user", async () => {
   const response = await request(server)
-    .post(userRegistrationURL)
+    .post(userRegistrationURL())
     .send({
       username: "sean",
       email: "sean@sean.com",
@@ -33,7 +33,7 @@ it("responds with 201 when it registers a new user", async () => {
 it("reponds with 200 when a user signs in", async () => {
   await global.registerUser("test", "test@test.com");
   await request(server)
-    .post(userLoginURL)
+    .post(userLoginURL())
     .send({ username: "test", password: "test@test.com" })
     .expect(200);
 });
@@ -43,14 +43,14 @@ it("it responds true if username exists", async () => {
   const email = "test@test.com";
   await global.registerUser(username, email);
   await request(server)
-    .post(doesUsernameExistURL)
+    .post(doesUsernameExistURL())
     .send({ username })
     .expect("true");
 });
 
 it("responds with false if username doesnt exist", async () => {
   await request(server)
-    .post(doesUsernameExistURL)
+    .post(doesUsernameExistURL())
     .send({ username: "paddywagon" })
     .expect("false");
 });
@@ -60,12 +60,15 @@ it("it responds true if email exists", async () => {
   const email = "test@test.com";
   await global.registerUser(username, email);
   // stuff goes here
-  await request(server).post(doesEmailExistURL).send({ email }).expect("true");
+  await request(server)
+    .post(doesEmailExistURL())
+    .send({ email })
+    .expect("true");
 });
 
 it("responds with false if email doesnt exist", async () => {
   await request(server)
-    .post(doesEmailExistURL)
+    .post(doesEmailExistURL())
     .send({ email: "paddywagon@paddywagon.com" })
     .expect("false");
 });

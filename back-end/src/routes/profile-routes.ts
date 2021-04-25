@@ -4,23 +4,23 @@ import {
   userProfileFollowersURL,
   userProfileFollowingURL,
   userProfilePostsURL,
-} from "./api-urls";
+} from "./URLs/urls";
 const router = Router();
 // Profile related routes
 router.get(
-  userProfilePostsURL,
+  userProfilePostsURL(),
   userController.ifUserExists,
   userController.sharedProfileData,
   userController.profilePostsScreen
 );
 router.get(
-  userProfileFollowersURL,
+  userProfileFollowersURL(),
   userController.ifUserExists,
   userController.sharedProfileData,
   userController.profileFollowersScreen
 );
 router.get(
-  userProfileFollowingURL,
+  userProfileFollowingURL(),
   userController.ifUserExists,
   userController.sharedProfileData,
   userController.profileFollowingScreen

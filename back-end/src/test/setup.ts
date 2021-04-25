@@ -2,7 +2,7 @@ import { MongoMemoryServer } from "mongodb-memory-server";
 import server from "../config/socketConfig";
 import request from "supertest";
 import db from "../db";
-import { userRegistrationURL } from "../routes/api-urls";
+import { userRegistrationURL } from "../routes/URLs/urls";
 let mongo: MongoMemoryServer;
 beforeAll(async () => {
   mongo = new MongoMemoryServer();
@@ -25,7 +25,7 @@ afterAll(async () => {
 
 global.registerUser = async (username, email) => {
   const response = await request(server)
-    .post(userRegistrationURL)
+    .post(userRegistrationURL())
     .send(global.getTestUser(username, email))
     .expect(201);
   const cookie = response.get("Set-Cookie");
