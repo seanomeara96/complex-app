@@ -12,7 +12,6 @@ export default function (
   uniqueOperations: any,
   visitorId?: ObjectID
 ): Promise<PostDocument[]> {
-  console.log("reusable post query called");
   return new Promise(async (resolve, reject) => {
     let aggOperations = uniqueOperations.concat([
       {
@@ -34,18 +33,11 @@ export default function (
       },
     ]);
     try {
-      let posts = await db
-        .fetchCollection("posts")
-        .aggregate(aggOperations)
-        .toArray();
-      console.log("posts before its fucked with", posts);
+      let posts = await db.collections.posts.aggregate(aggOperations).toArray();
       posts = posts!.map((post: any) => {
         post.isVisitorOwner = post.authorId!.equals(visitorId);
         post.authorId = undefined;
         post.author = {
-          /**
-           * in my db "author" is just a string so where the fuck is all this shit coming form
-           */
           username: post.author.username,
           avatar: new User(post.author, true).avatar,
         };

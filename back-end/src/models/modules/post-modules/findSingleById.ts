@@ -8,18 +8,16 @@ import { PostDocument } from "./postTypes";
  */
 export default function (id: string, visitorId: string): Promise<PostDocument> {
   return new Promise(async (resolve, reject) => {
-    if (!ObjectID.isValid(id)) {
-      console.error("user did not submit a valid user Id");
-      // OjectID converts the string into mongodb format
+    if (!ObjectID.isValid(visitorId)) {
+      console.log("user did not submit a valid user Id");
       reject();
       return;
     }
     let posts: PostDocument[] = await Post.prototype.reusablePostQuery(
-      [{ $match: { _id: id } }],
+      [{ $match: { _id: new ObjectID(id) } }],
       new ObjectID(visitorId)
     );
     if (posts.length) {
-      console.log("findsingleByid", posts[0]);
       // If this mongodb finds a post (array has more than 0 items) this will return true
       resolve(posts[0]);
     } else {
