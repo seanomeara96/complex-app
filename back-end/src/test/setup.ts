@@ -2,7 +2,7 @@ import { MongoMemoryServer } from "mongodb-memory-server";
 import server from "../config/socketConfig";
 import request from "supertest";
 import db from "../db";
-import { userRegistrationURL } from "../routes/URLs/urls";
+import { createPostURL, userRegistrationURL } from "../routes/URLs/urls";
 
 let mongo: MongoMemoryServer;
 beforeAll(async () => {
@@ -24,7 +24,7 @@ afterAll(async () => {
   await db.closeConnection();
 });
 
-global.registerUser = async (username, email) => {
+global.registerUser = async (username = "test", email = "test@test.com") => {
   const response = await request(server)
     .post(userRegistrationURL())
     .send(global.getTestUser(username, email))
@@ -41,6 +41,23 @@ global.getTestUser = (username, email) => {
   };
 };
 
+global.createTestPost = async (
+  cookie,
+  title = "this is the title",
+  body = "this is the body",
+  location = { lat: 53, long: -8 }
+) => {
+  const response = await request(server)
+    .post(createPostURL())
+    .send({
+      title,
+      body,
+      location,
+    })
+    .set("Cookie", cookie);
+  return response.body;
+};
+
 declare global {
   namespace NodeJS {
     interface Global {
@@ -49,7 +66,11 @@ declare global {
        * @param username unique username to register the new user with
        * @param email unique email string to register the new user with
        */
-      registerUser(username: string, email: string): Promise<string[]>;
+      registerUser(
+        username?: string | undefined,
+        email?: string | undefined
+      ): Promise<string[]>;
+
       /**
        * Generates a username, email and passwrod from an email address because it will suffice for all
        * @param username valid user string
@@ -59,6 +80,19 @@ declare global {
         username: string,
         email: string
       ): { username: string; email: string; password: string };
+
+      /**
+       * returns post id
+       * @param title defaults to "this is the title"
+       * @param body defaults to "this is the body"
+       * @param location defaults to { lat: 53, long: -8 }
+       */
+      createTestPost(
+        cookie: string[],
+        title?: string | undefined,
+        body?: string | undefined,
+        location?: { lat: number; long: number } | undefined
+      ): any;
     }
   }
 }
