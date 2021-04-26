@@ -19,7 +19,7 @@ it("fetches the posts for the homepage", async () => {
 });
 
 it("responds with 201 when it registers a new user", async () => {
-  const response = await request(server)
+  await request(server)
     .post(userRegistrationURL())
     .send({
       username: "sean",
