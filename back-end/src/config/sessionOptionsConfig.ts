@@ -1,5 +1,4 @@
 import session from "express-session";
-import db from "../db";
 import MongoStore from "connect-mongo";
 function sessionConfig(): session.SessionOptions {
   return {

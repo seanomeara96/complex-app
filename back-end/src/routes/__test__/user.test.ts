@@ -1,5 +1,4 @@
 import request from "supertest";
-import server from "../../config/socketConfig";
 import {
   doesEmailExistURL,
   doesUsernameExistURL,
@@ -19,6 +18,7 @@ it("fetches the posts for the homepage", async () => {
 });
 
 it("responds with 201 when it registers a new user", async () => {
+  const server = await global.getServer();
   await request(server)
     .post(userRegistrationURL())
     .send({
@@ -30,6 +30,7 @@ it("responds with 201 when it registers a new user", async () => {
 });
 
 it("reponds with 200 when a user signs in", async () => {
+  const server = await global.getServer();
   await global.registerUser("test", "test@test.com");
   await request(server)
     .post(userLoginURL())
@@ -38,6 +39,7 @@ it("reponds with 200 when a user signs in", async () => {
 });
 
 it("it responds true if username exists", async () => {
+  const server = await global.getServer();
   const username = "test";
   const email = "test@test.com";
   await global.registerUser(username, email);
@@ -48,6 +50,7 @@ it("it responds true if username exists", async () => {
 });
 
 it("responds with false if username doesnt exist", async () => {
+  const server = await global.getServer();
   await request(server)
     .post(doesUsernameExistURL())
     .send({ username: "paddywagon" })
@@ -55,6 +58,7 @@ it("responds with false if username doesnt exist", async () => {
 });
 
 it("it responds true if email exists", async () => {
+  const server = await global.getServer();
   const username = "test";
   const email = "test@test.com";
   await global.registerUser(username, email);
@@ -66,6 +70,7 @@ it("it responds true if email exists", async () => {
 });
 
 it("responds with false if email doesnt exist", async () => {
+  const server = await global.getServer();
   await request(server)
     .post(doesEmailExistURL())
     .send({ email: "paddywagon@paddywagon.com" })

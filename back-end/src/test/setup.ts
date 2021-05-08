@@ -1,15 +1,21 @@
+import { Server } from "mongodb";
 import { MongoMemoryServer } from "mongodb-memory-server";
-import server from "../config/socketConfig";
+//import server from "../config/socketConfig";
 import request from "supertest";
-import db from "../db";
+//import db from "../db";
 import { createPostURL, userRegistrationURL } from "../routes/URLs/urls";
-
 let mongo: MongoMemoryServer;
+let server: any;
+let db: any;
 beforeAll(async () => {
   mongo = new MongoMemoryServer();
   const monogURI = await mongo.getUri();
   process.env.CONNECTIONSTRING = monogURI;
+  const { default: dbImport } = await import("../db");
+  db = dbImport;
   await db.connect();
+  const { default: serverImport } = await import("../config/socketConfig");
+  server = serverImport;
 });
 
 beforeEach(async () => {
@@ -58,6 +64,11 @@ global.createTestPost = async (
   return response.body;
 };
 
+global.getServer = async () => {
+  const { default: server } = await import("../config/socketConfig");
+  return server;
+};
+
 declare global {
   namespace NodeJS {
     interface Global {
@@ -93,6 +104,8 @@ declare global {
         body?: string | undefined,
         location?: { lat: number; long: number } | undefined
       ): any;
+
+      getServer(): any;
     }
   }
 }

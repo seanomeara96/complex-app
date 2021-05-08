@@ -1,8 +1,8 @@
 import request from "supertest";
-import server from "../../config/socketConfig";
 import { createPostURL, editPostURL, viewSinglePostURL } from "../URLs/urls";
 
 it("responds with 201 when post is successfully created", async () => {
+  const server = await global.getServer();
   const cookie = await global.registerUser("test", "test@test.com");
   await request(server)
     .post(createPostURL())
@@ -19,6 +19,7 @@ it("responds with 201 when post is successfully created", async () => {
 });
 
 it("responds with the correct post when it is fetched by id", async () => {
+  const server = await global.getServer();
   const postTitle = "this is the titile";
   const postBody = "this is the body";
   const cookie = await global.registerUser();
