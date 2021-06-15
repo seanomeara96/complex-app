@@ -3,6 +3,7 @@ import {
   doesEmailExistURL,
   doesUsernameExistURL,
   userLoginURL,
+  userLogoutURL,
   userRegistrationURL,
 } from "../URLs/urls";
 it("validates the user's current session", async () => {
@@ -62,7 +63,6 @@ it("it responds true if email exists", async () => {
   const username = "test";
   const email = "test@test.com";
   await global.registerUser(username, email);
-  // stuff goes here
   await request(server)
     .post(doesEmailExistURL())
     .send({ email })
@@ -78,6 +78,6 @@ it("responds with false if email doesnt exist", async () => {
 });
 
 it("it responds with 200 when the user has logged out", async () => {
-  // stuff goes here
-  // expires value in the past?
+  const server = await global.getServer();
+  await request(server).post(userLogoutURL()).send({}).expect(500);
 });
